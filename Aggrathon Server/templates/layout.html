@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>{% if title is defined %}{{ title }} - {% endif %}Aggrathon</title>  
+      
+    <!-- Boot strap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- Own theme -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Aggrathon.com</h1>
+            <div class="btn-group btn-group-lg navigation" role="navigation">
+                <a href="/" class="btn btn-default {% if request.path == '/' %} active {% endif %}">Home</a>
+                <a href="/about" class="btn btn-default {% if request.path == '/about/' %} active {% endif %}">About</a>
+                <a href="/stuff" class="btn btn-default {% if request.path == '/stuff/' %} active {% endif %}">Stuff</a>
+                <a href="/projects" class="btn btn-default {% if request.path == '/projects/' %} active {% endif %}">Projects</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="panel">
+                <h2>{{ title }}</h2>
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+
+    </div>    
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>setupNavigation();</script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
