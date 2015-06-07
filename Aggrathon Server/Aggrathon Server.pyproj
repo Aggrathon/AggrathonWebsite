@@ -29,12 +29,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.py" />
+    <Compile Include="routes.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />
     <Content Include="static\style.css" />
-    <Content Include="templates\layout.html" />
+    <Content Include="templates\page_base.html" />
+    <Content Include="templates\page_featuredprojects.html" />
+    <Content Include="templates\page_sidebar.html" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

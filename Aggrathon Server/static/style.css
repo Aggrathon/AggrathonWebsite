@@ -58,3 +58,9 @@
 .panel h2 {
 	margin-top: 0px;
 }
+
+.container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1400px;
+}
