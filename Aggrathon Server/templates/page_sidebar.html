@@ -1,15 +1,53 @@
 ﻿{% extends "page_base.html" %}
 {% block content %}
-{{ super() }}
 <div class="row">
-    <div class="col-xs-12 col-md-8 col-lg-9">
+    <div class="col-xs-12 col-md-8 col-lg-9">        
+        {{ super() }}
     </div>
-    <!--<div class="col-xs-12 col-md-4 col-lg-3">
-        <div class="panel">
-            {% block sidebar %}
-            {% endblock %}
-            <h2>Featured Projects</h2>
-        </div>
-    </div>-->
+    <div class="col-xs-12 col-md-4 col-lg-3">
+        {% block sidebar %}
+
+        {% if sidebarhtml is defined %} 
+            <div class="panel sidebar-block">{{ sidebarhtml | safe }}</div>
+        {% endif %}
+
+        {% if sidebarpage is defined %} 
+            <div class="panel sidebar-block">{% include sidebarpage %}</div>
+        {% endif %}
+
+        {% if sidebarFeaturedPages is defined %} 
+            <div class="panel sidebar-block">
+            <h3>Featured Pages</h3>
+            <ul class="media-list">
+            {% for item in sidebarFeaturedPages %}
+				<li class="media"><a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
+					{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
+					<div class="media-body">
+						<h4 class="media-heading">{{ item.title }}</h4>
+						{{ item.description }}
+					</div>
+				</a></li>
+            {% endfor %}
+            </ul></div>
+        {% endif %}
+
+        {% if sidebarFeaturedProjects is defined %}
+            <div class="panel sidebar-block">
+            <h3>Featured Projects</h3>
+            <ul class="media-list">
+            {% for item in sidebarFeaturedProjects %}
+				<li class="media"><a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
+					{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}"/></div>{% endif %}
+					<div class="media-body">
+						<h4 class="media-heading">{{ item.title }}</h4>
+						{{ item.description }}
+					</div>
+				</a></li>
+            {% endfor %}
+            </ul></div>
+        {% endif %}
+
+        {% endblock %}
+    </div>
 </div>
 {% endblock %}

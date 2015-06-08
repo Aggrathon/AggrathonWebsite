@@ -29,7 +29,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.py" />
-    <Compile Include="routes.py">
+    <Compile Include="views.py" />
+    <Compile Include="page.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -38,7 +39,6 @@
     <Content Include="static\background.jpg" />
     <Content Include="static\style.css" />
     <Content Include="templates\page_base.html" />
-    <Content Include="templates\page_featuredprojects.html" />
     <Content Include="templates\page_sidebar.html" />
   </ItemGroup>
   <ItemGroup>

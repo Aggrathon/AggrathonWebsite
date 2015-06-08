@@ -21,6 +21,7 @@
 	font-family: 'Special Elite', cursive;
     display: inline-block;
     margin-top: 7px;
+	color: #eee;
 }
 
 .page-header div {
@@ -59,8 +60,37 @@
 	margin-top: 0px;
 }
 
+.panel h3 {
+	margin-top: 0px;
+	text-align: center;
+}
+
 .container-fluid {
   margin-right: auto;
   margin-left: auto;
   max-width: 1400px;
+}
+
+.alert-info {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #e6e6e6;
+}
+
+.sidebar-block{
+    display: inline-block;
+	width: 100%;
+}
+
+.media-body {
+	text-align: left;
+	white-space: normal;
+}
+
+.sidebar-block .media-object {
+	width: 64px;
+}
+
+.sidebar-block .btn {
+	padding: 6px;
 }
