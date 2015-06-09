@@ -1,0 +1,23 @@
+﻿{#
+	This file contains the header and is called by the page.html file when a page is rendered
+
+	The header recievces data in the following form (copied from page.html):
+
+	site = {name, header, sidebar}
+		name: shown in the title
+		header: the big text in the title
+		menu: list of menu-items = {url, title}
+			url: target of the link
+			title: text to show on the button
+#}
+
+<a href="/"><h1>{{ site.header | safe }}</h1></a>
+
+<div class="btn-group btn-group-lg navigation" role="navigation">
+	{% for item in site.menu %}
+		<a href="{{ item.url }}" class="btn btn-default {% if request.path == item.url %} active {% endif %}">{{ item.title }}</a>
+	{% else %}
+		<a href="/" class="btn btn-default {% if request.path == '/' %} active {% endif %}">Home</a>
+		<a href="/projects/" class="btn btn-default {% if request.path == '/projects/' %} active {% endif %}">Projects</a>
+	{% endfor %}
+</div>

@@ -1,0 +1,29 @@
+﻿{#
+	This file renders the page-content, and is called by content.html or sidebar.html
+
+	The page recievces data in the following form (copied from content.html):
+
+	content = {title, alert, html, page}
+		title: the header of the page (also shown in the title)
+		alert: html/text to be shown in an dismissable alert box above the main content
+		html: the content of the page as a string (may contain html)
+		page: url to a file containing the content of the page (can be jinja2)
+#}
+
+{% if content.alert is defined %}
+	<div class="alert alert-info">
+		{{ content.alert | safe }}
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+{% endif %}
+
+<div class="panel">
+	{% block panel %}
+	{% if content.title is defined %}<h2>{{ content.title }}</h2>{% endif %}
+
+	{% if content.html is defined %} {{ content.html | safe }} {% endif %}
+	{% if content.page is defined %} {% include content.page %} {% endif %}
+	{% endblock %}
+</div>

@@ -38,8 +38,10 @@
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />
     <Content Include="static\style.css" />
-    <Content Include="templates\page_base.html" />
-    <Content Include="templates\page_sidebar.html" />
+    <Content Include="templates\page.html" />
+    <Content Include="templates\sidebar.html" />
+    <Content Include="templates\header.html" />
+    <Content Include="templates\content.html" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
