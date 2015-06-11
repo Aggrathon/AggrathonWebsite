@@ -1,29 +1,30 @@
 from flask import Flask
 from app import app
-from page import show_page, render_page
+from page import *
+import sys
 
 #ROUTES
 
 @app.route('/')
 def main():
-    return render_page(html="This is the mainpage")
+	return render_page_standard({'html':"This is the mainpage"})
 
 @app.route('/projects/')
 def projects():
-    return show_page("Projects", None, "This is the projects page", None, "Here is a custom sidebar", None, False)
+    return show_page_html_sidebar_html("Projects", "This is the projects page", "Here is a custom sidebar")
 
 @app.route('/stuff/')
 def stuff():
-    return render_page(title="Stuff", html="stuff stuff stuff stuff stuff stuff stuff stuff stuff")
+	return show_page_html("Stuff", "stuff stuff stuff stuff stuff stuff stuff stuff stuff")
 
 @app.route('/pages/<page>/')
 def page(page):
-    return render_page(title=page, html="Page: "+page)
+    return show_page_html(page, "Page: "+page)
 
 @app.route('/projects/<project>/')
 def project(project):
-    return render_page(title=project, html="Custom Project: "+project)
+    return show_page_html(project, "Custom Project: "+project)
 
 @app.route('/<path:url>/')
 def catcher(url):
-    return render_page(html="This is the main page", alert='Page not found, returning to main')
+    return render_page_standard({'html':"This is the main page", 'alert':'Page not found, returning to main'})
