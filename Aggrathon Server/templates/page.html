@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+
+{#
+	This file is the base template for the page
+	It calls the file header.html for the header and content.html or sidebar.html depending on wich is needed
+
+	The page recievces data in the following form:
+
+	site = {name, header, menu}
+		name: shown in the title
+		header: the big text in the title
+		menu: list of menu-items = {url, title}
+			url: target of the link
+			title: text to show on the button
+
+	content = {title, alert, html, page}
+		title: the header of the page (also shown in the title)
+		alert: html/text to be shown in an dismissable alert box above the main content
+		html: the content of the page as a string (may contain html)
+		page: url to a file containing the content of the page (can be jinja2)
+	
+	sidebar = {html, page, featuredPages, featuredProjects}: if this object is present the sidebar is shown (otherwise no sidebar)
+		html: text/html that is a custom sidebar
+		page: url to a file containing a custom sidebar		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
+		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
+		featuredProjects: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
+			url: link target
+			img: url to thumbnail
+			title: header
+			description: short text describing the item
+#}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{% if page.title is defined %}{{ page.title }} - {% endif %}{{ site.name }}</title>  
+      
+    <!-- Boot strap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Own theme -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+
+        <div class="page-header">
+			{% block header %}
+				{% include "page_header.html" %}
+			{% endblock %}
+        </div>
+
+        <div class="content">
+            {% block content %}
+				{% if sidebar is defined %}
+					{% include "sidebar.html" %}
+				{% else %}
+					{% include "content.html" %}
+				{% endif %}
+            {% endblock %}
+        </div>      
+
+    </div>    
+    
+    <!-- Bootstrap core JavaScript | Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</body>
+</html>
