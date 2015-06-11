@@ -5,7 +5,7 @@ from flask import render_template
 
 
 """
-	Main methods for rendering pages
+	Main method for rendering pages
 
 	arguments:
 		siteInfo = {name, header, menu}
@@ -29,17 +29,15 @@ from flask import render_template
 				title: header
 				description: short text describing the item
 """
-def render_page(siteInfo, pageInfo, sidebarInfo=None):
-	if(sidebarInfo is None):
-		return render_template("page.html", site=siteInfo, page=pageInfo)
-	else:
-		return render_template("page.html", site=siteInfo, page=pageInfo, sidebar=sidebarInfo)
+def __render_page(siteInfo, pageInfo, sidebarInfo=None):
+	return render_template("page.html", site=siteInfo, content=pageInfo, sidebar=sidebarInfo)
 
+# renders the page with the standard siteInfo
 def render_page(pageInfo, sidebarInfo=None):
-	return render_page(__getSiteInfo(), pageInfo, sidebarInfo)
+	return __render_page(__getSiteInfo(), pageInfo, sidebarInfo)
 
-# renders the page with the standard siteInfo and a sidebar  with featured content (use sidebarInfo=None for no sidebar)
-def render_page(pageInfo):
+# renders the page with the standard siteInfo and sidebar
+def render_page_standard(pageInfo):
 	return render_page(pageInfo, __getFeaturedSidebar())
 
 
@@ -53,7 +51,9 @@ def __getSiteInfo():
 
 def __getFeaturedSidebar():
 	#Call methods for getting featured pages and projects
-	return {'featuredPages': __featured_sidebar_pages(), 'featuredProjects': __featured_sidebar_projects()}
+	projects = __featured_sidebar_projects()
+	pages = __featured_sidebar_pages()
+	return {'featuredPages': pages, 'featuredProjects': projects}
 
 def __featured_sidebar_pages():
     #Create featured sidebar
@@ -68,44 +68,24 @@ def __featured_sidebar_projects():
 	Simple Methods for rendering pages
 """
 #Pages with standard sidebar
-def show_page_html(title, html):
-	return render_page({'title':title, 'html':html})
-def show_page_html(title, html, alert):
-	return render_page({'title':title, 'alert':alert, 'html':html})
-
-def show_page_file(title, file):
-	return render_page({'title':title, 'page':file})
-def show_page_file(title, file, alert):
-	return render_page({'title':title, 'alert':alert, 'page':file})
+def show_page_html(title, html, alert=None):
+	return render_page_standard({'title':title, 'alert':alert, 'html':html})
+def show_page_file(title, file, alert=None):
+	return render_page_standard({'title':title, 'alert':alert, 'page':file})
 
 #Pages with no sidebar
-def show_page_html_nosidebar(title, html):
-	return render_page({'title':title, 'html':html}, None)
-def show_page_html_nosidebar(title, html, alert):
+def show_page_html_nosidebar(title, html, alert=None):
 	return render_page({'title':title, 'alert':alert, 'html':html}, None)
-
-def show_page_file_nosidebar(title, file):
-	return render_page({'title':title, 'page':file}, None)
-def show_page_file_nosidebar(title, file, alert):
+def show_page_file_nosidebar(title, file, alert=None):
 	return render_page({'title':title, 'alert':alert, 'page':file}, None)
 
 #Pages with custom sidebar
-def show_page_html_sidebar_html(title, html, sidebar):
-	return render_page({'title':title, 'html':html}, {'html':sidebar})
-def show_page_html_sidebar_html(title, html, alert, sidebar):
+def show_page_html_sidebar_html(title, html, sidebar, alert=None):
 	return render_page({'title':title, 'alert':alert, 'html':html}, {'html':sidebar})
-
-def show_page_file_sidebar_html(title, file, sidebar):
-	return render_page({'title':title, 'page':file}, {'html':sidebar})
-def show_page_file_sidebar_html(title, file, alert, sidebar):
+def show_page_file_sidebar_html(title, file, sidebar, alert=None):
 	return render_page({'title':title, 'alert':alert, 'page':file}, {'html':sidebar})
 
-def show_page_html_sidebar_file(title, html, sidebar):
-	return render_page({'title':title, 'html':html}, {'page':sidebar})
-def show_page_html_sidebar_file(title, html, alert, sidebar):
+def show_page_html_sidebar_file(title, html, sidebar, alert=None):
 	return render_page({'title':title, 'alert':alert, 'html':html}, {'page':sidebar})
-
-def show_page_file_sidebar_file(title, file, sidebar):
-	return render_page({'title':title, 'page':file}, {'page':sidebar})
-def show_page_file_sidebar_file(title, file, alert, sidebar):
+def show_page_file_sidebar_file(title, file, sidebar, alert=None):
 	return render_page({'title':title, 'alert':alert, 'page':file}, {'page':sidebar})

@@ -10,7 +10,7 @@
 		page: url to a file containing the content of the page (can be jinja2)
 #}
 
-{% if content.alert is defined %}
+{% if content.alert %}
 	<div class="alert alert-info">
 		{{ content.alert | safe }}
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -21,9 +21,9 @@
 
 <div class="panel">
 	{% block panel %}
-	{% if content.title is defined %}<h2>{{ content.title }}</h2>{% endif %}
+	{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
 
-	{% if content.html is defined %} {{ content.html | safe }} {% endif %}
-	{% if content.page is defined %} {% include content.page %} {% endif %}
+	{% if content.html %} {{ content.html | safe }} {% endif %}
+	{% if content.page %} {% include content.page %} {% endif %}
 	{% endblock %}
 </div>

@@ -33,7 +33,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>{% if page.title is defined %}{{ page.title }} - {% endif %}{{ site.name }}</title>  
+    <title>{% if content.title %}{{ page.title }} - {% endif %}{{ site.name }}</title>
       
     <!-- Boot strap -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,19 +51,19 @@
 
         <div class="page-header">
 			{% block header %}
-				{% include "page_header.html" %}
+				{% include 'header.html' %}
 			{% endblock %}
         </div>
 
-        <div class="content">
+		<div class="content">
             {% block content %}
-				{% if sidebar is defined %}
+				{% if sidebar %}
 					{% include "sidebar.html" %}
 				{% else %}
 					{% include "content.html" %}
 				{% endif %}
             {% endblock %}
-        </div>      
+        </div>
 
     </div>    
     
