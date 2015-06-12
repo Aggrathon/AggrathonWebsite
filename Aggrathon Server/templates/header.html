@@ -1,4 +1,4 @@
-﻿{#
+{#
 	This file contains the header and is called by the page.html file when a page is rendered
 
 	The header recievces data in the following form (copied from page.html):
@@ -15,7 +15,7 @@
 
 <div class="btn-group btn-group-lg navigation" role="navigation">
 	{% for item in site.menu %}
-		<a href="{{ item.url }}" class="btn btn-default {% if request.path == item.url %} active {% endif %}">{{ item.title }}</a>
+		<a href="{{ item.url }}" class="btn btn-default {% if request.path == item.url %} active {% endif %}">{{ item.title | safe }}</a>
 	{% else %}
 		<a href="/" class="btn btn-default {% if request.path == '/' %} active {% endif %}">Home</a>
 		<a href="/projects/" class="btn btn-default {% if request.path == '/projects/' %} active {% endif %}">Projects</a>

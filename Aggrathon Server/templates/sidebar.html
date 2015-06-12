@@ -1,64 +1,27 @@
-﻿{#
+{#
 	This page renders the page with a sidebar, calls content.html and is acalled by page.html
 
 	The header recievces data in the following form (copied from page.html):
 
-	sidebar = {html, page, featuredPages, featuredProjects}: if this object is present the sidebar is shown (otherwise no sidebar)
+	sidebar = {html, file, data}: if this object is present the sidebar is shown (otherwise no sidebar)
 		html: text/html that is a custom sidebar
-		page: url to a file containing a custom sidebar		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
-		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
-		featuredProjects: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
-			url: link target
-			img: url to thumbnail
-			title: header
-			description: short text describing the item
+		file: url to a file containing a custom sidebar
+		data: the data to send to the sidebarfile
 #}
 
 <div class="row">
-    <div class="col-xs-12 col-md-8 col-lg-9">        
-        {% include "content.html" %}
-    </div>
+	<div class="col-xs-12 col-md-8 col-lg-9">
+		{% include 'content.html' %}
+	</div>
     <div class="col-xs-12 col-md-4 col-lg-3">
         {% block sidebar %}
 
-        {% if sidebar.html %} 
-            <div class="panel sidebar-block">{{ sidebar.html | safe }}</div>
+        {% if sidebar.html %}
+            <div class="panel">{{ sidebar.html | safe }}</div>
         {% endif %}
 
-        {% if sidebar.page %} 
-            <div class="panel sidebar-block">{% include sidebar.page %}</div>
-        {% endif %}
-
-        {% if sidebar.featuredPages %} 
-            <div class="panel sidebar-block">
-            <h3>Featured Pages</h3>
-            <ul class="media-list">
-            {% for item in sidebar.featuredPages %}
-				<li class="media"><a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
-					{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
-					<div class="media-body">
-						<h4 class="media-heading">{{ item.title }}</h4>
-						{{ item.description }}
-					</div>
-				</a></li>
-            {% endfor %}
-            </ul></div>
-        {% endif %}
-
-        {% if sidebar.featuredProjects %}
-            <div class="panel sidebar-block">
-            <h3>Featured Projects</h3>
-            <ul class="media-list">
-            {% for item in sidebar.featuredProjects %}
-				<li class="media"><a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
-					{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}"/></div>{% endif %}
-					<div class="media-body">
-						<h4 class="media-heading">{{ item.title }}</h4>
-						{{ item.description }}
-					</div>
-				</a></li>
-            {% endfor %}
-            </ul></div>
+        {% if sidebar.file %}
+            <div class="panel">{% include sidebar.file %}</div>
         {% endif %}
 
         {% endblock %}

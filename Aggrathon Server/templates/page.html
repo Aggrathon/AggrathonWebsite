@@ -13,21 +13,18 @@
 			url: target of the link
 			title: text to show on the button
 
-	content = {title, alert, html, page}
+	content = {title, alert, html, file, data}
 		title: the header of the page (also shown in the title)
 		alert: html/text to be shown in an dismissable alert box above the main content
 		html: the content of the page as a string (may contain html)
-		page: url to a file containing the content of the page (can be jinja2)
+		file: url to a file containing the content of the page (can be jinja2)
+		data: the data to send to the contentfile
+
 	
-	sidebar = {html, page, featuredPages, featuredProjects}: if this object is present the sidebar is shown (otherwise no sidebar)
+	sidebar = {html, file, data}: if this object is present the sidebar is shown (otherwise no sidebar)
 		html: text/html that is a custom sidebar
-		page: url to a file containing a custom sidebar		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
-		featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
-		featuredProjects: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
-			url: link target
-			img: url to thumbnail
-			title: header
-			description: short text describing the item
+		file: url to a file containing a custom sidebar
+		data: the data to send to the sidebarfile
 #}
 
 <html lang="en">

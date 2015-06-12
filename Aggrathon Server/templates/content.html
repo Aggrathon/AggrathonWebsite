@@ -1,13 +1,15 @@
-﻿{#
+{#
 	This file renders the page-content, and is called by content.html or sidebar.html
 
 	The page recievces data in the following form (copied from content.html):
 
-	content = {title, alert, html, page}
+	content = {title, alert, html, file, data}
 		title: the header of the page (also shown in the title)
 		alert: html/text to be shown in an dismissable alert box above the main content
 		html: the content of the page as a string (may contain html)
-		page: url to a file containing the content of the page (can be jinja2)
+		file: url to a file containing the content of the page (can be jinja2)
+		data: the data to send to the contentfile
+
 #}
 
 {% if content.alert %}
@@ -22,8 +24,7 @@
 <div class="panel">
 	{% block panel %}
 	{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
-
 	{% if content.html %} {{ content.html | safe }} {% endif %}
-	{% if content.page %} {% include content.page %} {% endif %}
+	{% if content.file %} {% include content.file %} {% endif %}
 	{% endblock %}
 </div>

@@ -1,0 +1,54 @@
+{#
+	This file is the template for rendering the standard sidebar for featured content and is calld by setting: sidebar.file = "featured.html"
+	This file recieves data in the form of:
+
+	sidebar.data.featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
+	sidebar.data.featuredProjects: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
+		url: link target
+		img: url to thumbnail
+		title: header
+		description: short text describing the item
+#}
+
+{% if sidebar.data.featuredPages %}
+<div class="sidebar-featured">
+	<h3>Featured Pages</h3>
+	<ul class="media-list">
+		{% for item in sidebar.data.featuredPages %}
+		<li class="media">
+			<a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
+				{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
+				<div class="media-body">
+					<h4 class="media-heading">{{ item.title }}</h4>
+					{{ item.description }}
+				</div>
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+{% if sidebar.data.featuredPages and sidebar.data.featuredProjects %}
+	</div>
+	<div class="panel">
+{% endif %}
+
+{% if sidebar.data.featuredProjects %}	
+<div class="sidebar-featured">
+	<h3>Featured Projects</h3>
+	<ul class="media-list">
+		{% for item in sidebar.data.featuredProjects %}
+		<li class="media">
+			<a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
+				{% if item.img is defined %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
+				<div class="media-body">
+					<h4 class="media-heading">{{ item.title }}</h4>
+					{{ item.description }}
+				</div>
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}

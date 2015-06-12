@@ -77,20 +77,15 @@
     border-color: #e6e6e6;
 }
 
-.sidebar-block{
-    display: inline-block;
-	width: 100%;
-}
-
-.media-body {
+.sidebar-featured .media-body {
 	text-align: left;
 	white-space: normal;
 }
 
-.sidebar-block .media-object {
+.sidebar-featured .media-object {
 	width: 64px;
 }
 
-.sidebar-block .btn {
+.sidebar-featured .btn {
 	padding: 6px;
 }
