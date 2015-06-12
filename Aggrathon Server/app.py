@@ -1,7 +1,11 @@
 from flask import Flask
+import sqlalchemy
+
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
+app.config.from_pyfile("config.py")
+
 
 # Make the WSGI interface available at the top level so wfastcgi can get it.
 wsgi_app = app.wsgi_app
