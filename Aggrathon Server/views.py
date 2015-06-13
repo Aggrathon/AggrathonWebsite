@@ -1,6 +1,7 @@
 from flask import Flask
 from app import app
 from page import *
+import database
 
 #ROUTES
 
@@ -16,14 +17,17 @@ def projects():
 def stuff():
 	return show_page("Stuff", "stuff stuff stuff stuff stuff stuff stuff stuff stuff")
 
-@app.route('/pages/<page>/')
-def page(page):
-    return show_page(page, "Page: "+page)
+@app.route('/pages/<path:path>/')
+def page(path):
+	path = "/pages/"+path+"/"
+	print (path)
+	page = database.getPage(path)
+	return show_page(page.title, page.content)
 
 @app.route('/projects/<project>/')
 def project(project):
-    return show_page(project, "Custom Project: "+project)
+	return show_page(project, "Custom Project: "+project)
 
 @app.route('/<path:url>/')
 def catcher(url):
-    return render_page_standard({'html':"This is the main page", 'alert':'Page not found, returning to main'})
+	return render_page_standard({'html':"This is the main page", 'alert':'Page not found, returning to main'})

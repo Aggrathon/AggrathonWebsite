@@ -1,5 +1,4 @@
 from flask import Flask
-import sqlalchemy
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True

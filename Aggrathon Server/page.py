@@ -2,6 +2,7 @@
 	File containing all methods required for rendering pages
 """
 from flask import render_template
+import database
 
 
 """
@@ -12,10 +13,9 @@ from flask import render_template
 	siteInfo = {name, header, menu}
 		name: shown in the title
 		header: the big text in the title
-		menu: list of menu-items = {url, title}
-			url: target of the link
+		menu: list of menu-items = {title, target}
+			target: target of the link
 			title: text to show on the button
-			data: the data to send to the sidebarfile
 	pageInfo = {title, alert, html, file, data}
 		title: the header of the page (also shown in the title)
 		alert: html/text to be shown in an dismissable alert box above the main content
@@ -56,7 +56,8 @@ def create_custom_sidebar(file, **data):
 """
 def __getSiteInfo():
 	#Create the standard site info
-	return {'name':"Aggrathon", 'header':"Aggrathon.com", 'menu':[{'url':"/", 'title':"Home"},{'url':"/stuff/", 'title':"Stuff"},{'url':"/about/", 'title':"About"},{'url':"/projects/", 'title':"Projects"}]}
+	return database.getSiteInfo()
+	#return {'name':"Aggrathon", 'header':"Aggrathon.com", 'menu':[{'target':"/", 'title':"Home"},{'target':"/stuff/", 'title':"Stuff"},{'target':"/about/", 'title':"About"},{'target':"/projects/", 'title':"Projects"}]}
 
 def create_featured_sidebar():
 	pages = __featured_sidebar_pages()
@@ -67,9 +68,8 @@ def create_featured_sidebar():
 		return create_custom_sidebar("featured.html", featuredPages=pages, featuredProjects=projects)
 
 def __featured_sidebar_pages():
-    #Create featured sidebar
-	#return None
-    return [{'url':"/pages/test/", 'title':'page1', 'description':'hjdfkas afhfsadjfasd asdfjhfdaskhka'}, {'img':"", 'url':"/stuff/", 'title':'page2', 'description':'hjdfkas afhf sadj fasd asdfjhfd askhka'}]
+	return database.getFeaturedPages()
+
 def __featured_sidebar_projects():
     #Create featured sidebar
 	#return None
