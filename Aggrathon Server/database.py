@@ -10,24 +10,14 @@ def create_db(siteName="Website", siteHeader="Website", siteLanguage="en"):
 	db.create_all()
 	setup(siteName, siteHeader, siteLanguage)
 
-def reset_db():
+def reset_db(siteName="Website", siteHeader="Website", siteLanguage="en"):
 	db.drop_all()
-	create_db()
+	create_db(siteName, siteHeader, siteLanguage)
 
-def setup(name, header, language):
-	site = Site.query.first()
-	if(site is None):
-		site = Site(name, header, language)
-		db.session.add(site)
-	else:
-		site.name = name
-		site.header = header
-		site.language = language
-	db.session.commit()
-
-def check_setup():
+def check_if_setup():
 	try:
-		Site.query.first()
+		if(Site.query.first() is None):
+			raise Exception
 		Menu.query.first()
 
 		Page.query.first()
@@ -40,6 +30,17 @@ def check_setup():
 	except:
 		return False
 	return True
+
+def setup(name, header, language):
+	site = Site.query.first()
+	if(site is None):
+		site = Site(name, header, language)
+		db.session.add(site)
+	else:
+		site.name = name
+		site.header = header
+		site.language = language
+	db.session.commit()
 
 
 ### GETTERS ###
@@ -59,18 +60,79 @@ def getPage(path):
 		abort(404)
 	return page
 
-"""
-url: link target
-		img: url to thumbnail
-		title: header
-		description: short text describing the item
-"""
 def getFeaturedPages():
 	pages = db.session.query(
 		Page.path.label('url'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
 		.join(FeaturedPage).filter(FeaturedPage.page_id==Page.id).join(PageBlurb).filter(PageBlurb.page_id==Page.id)\
 		.order_by(FeaturedPage.priority).all()
 	return pages
+
+def getFeaturedProjects():
+	projects = db.session.query(
+		Project.path.label('url'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
+		.join(FeaturedProject).filter(FeaturedProject.page_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.page_id==Project.id)\
+		.order_by(FeaturedProject.priority).all()
+	return projects
+
+
+### SETTERS ###
+
+def setMenu(menu):
+	oldmenu = Menu.query.all()
+	curr = 0
+	while( curr < len(oldmenu) and curr < len(menu) ):
+		oldmenu[curr].title = menu[curr]['title']
+		oldmenu[curr].target = menu[curr]['target']
+		curr += 1
+	while(curr < len(menu)):
+		db.session.add(Menu(menu[curr]['title'], menu[curr]['target']))
+		curr += 1
+	while(curr < len(oldmenu)):
+		db.session.delete(oldmenu[curr])
+		curr += 1
+	db.session.commit()
+	
+def setPage(path, title, content, featured=False, priority=0, description="", thumbnail=""):
+	page = Page.query.filter_by(path="/pages/test/").first()
+	if(page is None):
+		page = Page(path, title, content)
+		db.session.add(page)
+		if(featured):
+			db.session.add( FeaturedPage(page, priority) )
+			db.session.add( PageBlurb(page, description, thumbnail) )
+		elif(description != "" or thumbnail != ""):
+			db.session.add( PageBlurb(page, description, thumbnail) )
+	else:
+		page.path = path
+		page.title = title
+		page.content = content
+
+		if(featured):
+			feature = FeaturedPage.query.get(page.id)
+			if(feature is None):
+				db.session.add( FeaturedPage(page, priority) )
+			else:
+				feature.priority = priority
+		else:
+			feature = FeaturedPage.query.get(page.id)
+			if(feature is not None):
+				db.session.delete(feature)
+
+		desc = description != ""
+		thumb = thumbnail != ""
+		blurb = PageBlurb.query.get(page.id)
+		if(blurb is None):
+			if(desc or thumb or featured):
+				db.session.add( PageBlurb(page, description, thumbnail) )
+		else:
+			if(not desc and not thumb):
+				db.session.delete(blurb)
+			else:
+				blurb.description = description
+				blurb.image = thumbnail
+
+	db.session.commit()
+
 
 
 ### TABLES ###
