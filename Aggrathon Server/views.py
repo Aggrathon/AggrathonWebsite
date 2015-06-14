@@ -19,6 +19,12 @@ def admin():
 def setup():
 	if request.method == 'POST':
 		flash("Settings not saved yet")
+		if(request.form['reset']):
+			database.reset_db()
+			flash("Database has been reset, all is lost", "danger")
+		if(request.form['test']):
+			database.createTestData()
+			flash("Data for testing has been created", "warning")
 	return render_page(create_custom_page("Setup", "admin/setup.html"),None)
 
 @app.route('/projects/')

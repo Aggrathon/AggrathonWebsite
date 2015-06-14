@@ -69,9 +69,9 @@ def __featured_sidebar_pages():
 	return database.getFeaturedPages()
 
 def __featured_sidebar_projects():
-	#return database.getFeaturedProjects()
-	return [{'img':"/static/background.jpg", 'url':"/projects/test", 'title':'poject1', 'description':'hjdfkas afhfsadjfasd asdfjhfdaskhka'},\
-	   {'img':"", 'url':"/projects/", 'title':'asd assad jkd as sdajahsd kjdh', 'description':'hjdfkas afhf sadj fasd asdfjhfd askhka klas a asdklj daskas kdjsad jasöljd skaljas kjdkasj das djkljd klas djas'}]
+	return database.getFeaturedProjects()
+	#return [{'img':"/static/background.jpg", 'url':"/projects/test", 'title':'poject1', 'description':'hjdfkas afhfsadjfasd asdfjhfdaskhka'},\
+	#   {'img':"", 'url':"/projects/", 'title':'asd assad jkd as sdajahsd kjdh', 'description':'hjdfkas afhf sadj fasd asdfjhfd askhka klas a asdklj daskas kdjsad jasöljd skaljas kjdkasj das djkljd klas djas'}]
 
 
 

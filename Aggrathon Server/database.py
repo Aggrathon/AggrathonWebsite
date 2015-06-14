@@ -6,13 +6,13 @@ db = SQLAlchemy(app)
 
 ### SETUP ####
 
-def create_db(siteName="Website", siteHeader="Website", siteLanguage="en"):
+def create_db():
 	db.create_all()
-	setup(siteName, siteHeader, siteLanguage)
+	setup()
 
-def reset_db(siteName="Website", siteHeader="Website", siteLanguage="en"):
+def reset_db():
 	db.drop_all()
-	create_db(siteName, siteHeader, siteLanguage)
+	create_db()
 
 def check_if_setup():
 	try:
@@ -31,7 +31,7 @@ def check_if_setup():
 		return False
 	return True
 
-def setup(name, header, language):
+def setup(name="Website", header="Website", language="en"):
 	site = Site.query.first()
 	if(site is None):
 		site = Site(name, header, language)
@@ -70,7 +70,7 @@ def getFeaturedPages():
 def getFeaturedProjects():
 	projects = db.session.query(
 		Project.path.label('url'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
-		.join(FeaturedProject).filter(FeaturedProject.page_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.page_id==Project.id)\
+		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.project_id==Project.id)\
 		.order_by(FeaturedProject.priority).all()
 	return projects
 
@@ -133,6 +133,24 @@ def setPage(path, title, content, featured=False, priority=0, description="", th
 
 	db.session.commit()
 
+def createTestData():
+	page = Page("/pages/test/", "Test Page 1", "[insert content here]")
+	db.session.add(page)
+	db.session.add(Page("/pages/test2/", "Test Page 2", "[insert content here]"))
+	db.session.add(Page("/pages/test3/", "Test Page 3", "[insert content here]"))
+	db.session.add(FeaturedPage(page, 10))
+	db.session.add(PageBlurb(page, "Description for test page 1", "/static/background.jpg"))
+
+	db.session.add(Menu("Home","/"))
+	db.session.add(Menu("About","/about/"))
+	db.session.add(Menu("Stuff","/stuff/"))
+	db.session.add(Menu("Projects","/projects/"))
+	
+	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
+	db.session.add(FeaturedProject(proj, 10))
+	db.session.add(ProjectBlurb(proj, "Test Project 1 description here", ""))
+
+	db.session.commit();
 
 
 ### TABLES ###
@@ -200,7 +218,7 @@ class PageBlurb(db.Model):
 	description = db.Column(db.Text)
 	image = db.Column(db.Text)
 
-	def __init__(self, page, description, image):
+	def __init__(self, page, description, image=""):
 		self.page = page
 		self.description = description
 		self.image = image
@@ -213,7 +231,7 @@ class FeaturedPage(db.Model):
 	page = db.relationship('Page')
 	priority = db.Column(db.Integer)
 
-	def __init__(self, page, priority):
+	def __init__(self, page, priority=0):
 		self.page = page
 		self.priority = priority
 
@@ -228,11 +246,10 @@ class Project(db.Model):
 	title = db.Column(db.Text)
 	content = db.Column(db.Text)
 
-	def __init__(self, title, path, content, description):
+	def __init__(self, path, title, content):
 		self.title = title
 		self.path = path
 		self.content = content
-		self.description = description
 
 	def __repr__(self):
 		return '<Project %r>' %self.title
@@ -243,7 +260,7 @@ class ProjectBlurb(db.Model):
 	description = db.Column(db.Text)
 	image = db.Column(db.Text)
 
-	def __init__(self, project, description, image):
+	def __init__(self, project, description, image=""):
 		self.project = project
 		self.description = description
 		self.image = image
@@ -256,7 +273,7 @@ class FeaturedProject(db.Model):
 	project = db.relationship('Project')
 	priority = db.Column(db.Integer)
 
-	def __init__(self, project, priority):
+	def __init__(self, project, priority=0):
 		self.project = project
 		self.priority = priority
 
