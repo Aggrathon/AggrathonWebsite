@@ -94,3 +94,16 @@
 	border-color: #A94442;
 	background-color: rgba(255, 205, 205, 0.8);
 }
+.alert-warning {
+	background-color: rgba(255, 245, 193, 0.85);
+	border-color: #8A6D3B;
+}
+.alert-success {
+	background-color: rgba(220, 255, 205, 0.8);
+	border-color: #3C763D;
+}
+
+label {
+	font-size: 15px;
+	font-weight: normal;
+}

@@ -3,33 +3,65 @@
 	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Website</h3></div></div></div>
 	<div class="form-group form-group-lg">
 		<label for="name" class="col-sm-2 control-label">Website Name</label>
-		<div class="col-sm-10"><input type="text" class="form-control col-sm-10" placeholder="Website" id="name" /></div>
+		<div class="col-sm-10"><input type="text" class="form-control col-sm-10" placeholder="Website" id="name" name="name" value="{{ content.data.name }}" /></div>
 	</div>
 	<div class="form-group">
 		<label for="header" class="col-sm-2 control-label">Website Header</label>
-		<div class="col-sm-10"><textarea class="form-control" rows="1" placeholder="Website" id="header"></textarea></div>
+		<div class="col-sm-10"><textarea class="form-control" rows="1" placeholder="Website" id="header" name="header">{{ content.data.header }}</textarea></div>
+	</div>
+	<div class="form-group">
+		<label for="language" class="col-sm-2 control-label">Language Code</label>
+		<div class="col-sm-1"><input type="text" class="form-control col-sm-10" placeholder="Website" id="language" name="language" value="{{ content.data.language }}"/></div>
 	</div>
 
 
 	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Menu</h3></div></div></div>
 	<div class="form-group form-control-static">
-		<div class="col-sm-5 col-sm-offset-2">Title</div>
-		<div class="col-sm-5">Target</div>
+		<div class="col-sm-5 col-sm-offset-2"><big>Title</big></div>
+		<div class="col-sm-5"><big>Target</big></div>
 	</div>
 	<div class="form-group">
 		<label for="menu" class="col-sm-2 control-label">Menu Items</label>
 		<div class="col-sm-10" id="menu">
-			<div class="row">
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" /></div>
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" /></div>
+			{% for item in content.data.menu %}
+			<div class="row menuitem">
+				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" value="{{ item.title }}" name="menu_title" /></div>
+				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" value="{{ item.target }}" name="menu_target" /></div>
 			</div>
-			<div class="row">
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" /></div>
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" /></div>
-			</div>
-			<div class="row">
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" /></div>
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" /></div>
+			{% else %}
+			<div class="form-control-static">No Menu</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="menusize" class="col-sm-2 control-label">Menu Size</label>
+		
+		<div class="col-sm-10" id="menusize">
+			<script>
+				function addMenuItem() {
+					var menu = $('div#menu');
+					if ($('div.menuitem').length == 0)
+						menu.html('');
+					menu.append('<div class="row menuitem">\n'
+						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" name="menu_title" /></div>\n'
+						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" name="menu_target" /></div>\n'
+						+ '</div>');
+				}
+				function removeMenuItem() {
+					items = $('div.menuitem');
+					if (items.length == 1) {
+						$('div#menu').html('<div class="form-control-static">No Menu</div>');
+					}
+					items.last().remove();
+				}
+			</script>
+			<div class="btn-group" role="group">
+				<button class="btn btn-primary" type="button" onclick="addMenuItem();">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"><span class="sr-only">Add menu item</span></span>
+				</button>
+				<button class="btn btn-primary" type="button" onclick="removeMenuItem();">
+					<span class="glyphicon glyphicon-minus" aria-hidden="true"><span class="sr-only">Remove menu item</span></span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -38,11 +70,11 @@
 	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Database</h3></div></div></div>
 	<div class="form-group">
 		<label for="reset" class="col-sm-2 control-label">Reset Database</label>
-		<div class="col-sm-10"><label class="btn btn-danger"><input type="checkbox" value="reset" id="reset" name="reset" /> This will remove all content form the site, including all pages</label></div>
+		<div class="col-sm-10"><label class="btn btn-danger"><input type="checkbox" name="reset" id="reset" /> This will remove all content form the site, including all pages</label></div>
 	</div>
 	<div class="form-group">
 		<label for="test" class="col-sm-2 control-label">Create Test Data</label>
-		<div class="col-sm-10"><label class="btn btn-warning"><input type="checkbox" value="test" name="test" id="test" /> This will create useless content for testing the software</label></div>
+		<div class="col-sm-10"><label class="btn btn-warning"><input type="checkbox" name="test" id="test" /> This will create useless test-content</label></div>
 	</div>
 
 	<div class="form-group">
