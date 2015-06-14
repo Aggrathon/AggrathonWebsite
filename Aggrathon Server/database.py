@@ -224,11 +224,13 @@ class FeaturedPage(db.Model):
 
 class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
+	path = db.Column(db.Text, unique=True)
 	title = db.Column(db.Text)
 	content = db.Column(db.Text)
 
-	def __init__(self, title, content, description):
+	def __init__(self, title, path, content, description):
 		self.title = title
+		self.path = path
 		self.content = content
 		self.description = description
 

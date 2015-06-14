@@ -3,7 +3,7 @@
 
 	The header recievces data in the following form (copied from page.html):
 
-	site = {name, header, menu}
+	site = {name, header, language, menu}
 		name: shown in the title
 		header: the big text in the title
 		menu: list of menu-items = {title, target}
@@ -13,11 +13,10 @@
 
 <a href="/"><h1>{{ site.header | safe }}</h1></a>
 
+{% if site.menu %}
 <div class="btn-group btn-group-lg navigation" role="navigation">
 	{% for item in site.menu %}
 		<a href="{{ item.target }}" class="btn btn-default {% if request.path == item.target %}active{% endif %}">{{ item.title | safe }}</a>
-	{% else %}
-		<a href="/" class="btn btn-default {% if request.path == '/' %} active {% endif %}">Home</a>
-		<a href="/projects/" class="btn btn-default {% if request.path == '/projects/' %} active {% endif %}">Projects</a>
 	{% endfor %}
 </div>
+{% endif %}

@@ -55,9 +55,7 @@ def create_custom_sidebar(file, **data):
 	Methods for getting the standard siteInfo and sidebar
 """
 def __getSiteInfo():
-	#Create the standard site info
 	return database.getSiteInfo()
-	#return {'name':"Aggrathon", 'header':"Aggrathon.com", 'language':'en' 'menu':[{'target':"/", 'title':"Home"},{'target':"/stuff/", 'title':"Stuff"},{'target':"/about/", 'title':"About"},{'target':"/projects/", 'title':"Projects"}]}
 
 def create_featured_sidebar():
 	pages = __featured_sidebar_pages()
@@ -71,9 +69,9 @@ def __featured_sidebar_pages():
 	return database.getFeaturedPages()
 
 def __featured_sidebar_projects():
-    #Create featured sidebar
-	#return None
-	return [{'img':"/static/background.jpg", 'url':"/projects/test", 'title':'poject1', 'description':'hjdfkas afhfsadjfasd asdfjhfdaskhka'}, {'img':"", 'url':"/projects/", 'title':'asd assad jkd as sdajahsd kjdh', 'description':'hjdfkas afhf sadj fasd asdfjhfd askhka klas a asdklj daskas kdjsad jasöljd skaljas kjdkasj das djkljd klas djas'}]
+	#return database.getFeaturedProjects()
+	return [{'img':"/static/background.jpg", 'url':"/projects/test", 'title':'poject1', 'description':'hjdfkas afhfsadjfasd asdfjhfdaskhka'},\
+	   {'img':"", 'url':"/projects/", 'title':'asd assad jkd as sdajahsd kjdh', 'description':'hjdfkas afhf sadj fasd asdfjhfd askhka klas a asdklj daskas kdjsad jasöljd skaljas kjdkasj das djkljd klas djas'}]
 
 
 
