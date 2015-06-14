@@ -1,13 +1,25 @@
-from flask import Flask
+from flask import Flask, request, flash
 from app import app
 from page import *
 import database
 
 #ROUTES
 
+#main
 @app.route('/')
 def main():
-	return render_page_standard({'html':"This is the mainpage"})
+	return render_page_standard({'html':"This is the mainpage<br /><a href='admin/setup/'>Setup</a>"})
+
+#admin
+@app.route('/admin/')
+def admin():
+	return show_page_sidebar("Admin", "Important data here", '<h3>Admin</h3><a href="setup/">Setup</a><br />other links')
+
+@app.route('/admin/setup/', methods=['GET', 'POST'])
+def setup():
+	if request.method == 'POST':
+		flash("Settings not saved yet")
+	return render_page(create_custom_page("Setup", "admin/setup.html"),None)
 
 @app.route('/projects/')
 def projects():

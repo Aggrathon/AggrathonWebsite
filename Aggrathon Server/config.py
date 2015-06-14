@@ -3,6 +3,8 @@
 # DEBUG should not be True on any kind of live server
 DEBUG = True
 
+# Used for sessions
+SECRET_KEY = 'development key'
 
 
 ### Database Config ###

@@ -44,6 +44,7 @@
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />
     <Content Include="static\style.css" />
+    <Content Include="templates\admin\setup.html" />
     <Content Include="templates\featured.html" />
     <Content Include="templates\page.html" />
     <Content Include="templates\sidebar.html" />
