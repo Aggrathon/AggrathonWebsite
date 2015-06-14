@@ -1,4 +1,4 @@
-from flask import Flask, request, flash
+from flask import Flask, request, flash, redirect, url_for
 from app import app
 from page import *
 import database
@@ -40,6 +40,7 @@ def page(path):
 def project(project):
 	return show_page(project, "Custom Project: "+project)
 
-@app.route('/<path:url>/')
-def catcher(url):
-	return render_page_standard({'html':"This is the main page", 'alert':'Page not found, returning to main'})
+@app.errorhandler(404)
+def page_not_found(error):
+	flash("Page not found, returning to main", "danger")
+	return redirect(url_for('main'), 303)

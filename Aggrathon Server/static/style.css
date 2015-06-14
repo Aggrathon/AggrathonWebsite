@@ -77,15 +77,20 @@
     border-color: #e6e6e6;
 }
 
-.sidebar-featured .media-body {
+.blurb-list .media-body {
 	text-align: left;
 	white-space: normal;
 }
 
-.sidebar-featured .media-object {
+.blurb-list .media-object {
 	width: 64px;
 }
 
-.sidebar-featured .btn {
+.blurb-list .btn {
 	padding: 6px;
+}
+
+.alert-danger {
+	border-color: #A94442;
+	background-color: rgba(255, 205, 205, 0.8);
 }

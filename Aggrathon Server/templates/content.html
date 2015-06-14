@@ -3,28 +3,25 @@
 
 	The page recievces data in the following form (copied from content.html):
 
-	content = {title, alert, html, file, data}
+	content = {title, html, file, data}
 		title: the header of the page (also shown in the title)
-		alert: html/text to be shown in an dismissable alert box above the main content
 		html: the content of the page as a string (may contain html)
 		file: url to a file containing the content of the page (can be jinja2)
 		data: the data to send to the contentfile
 
 #}
 
-{% if content.alert %}
-	<div class="alert alert-info">
-		{{ content.alert | safe }}
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
+{% for category, message in get_flashed_messages(with_categories=true) %}
+	<div class="alert alert-{% if category == 'message' %}info{% else %}{{ category }}{% endif %}">
+		{{ message | safe }}
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	</div>
-{% endif %}
+{% endfor %}
 
-<div class="panel">
-	{% block panel %}
-	{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
-	{% if content.html %} {{ content.html | safe }} {% endif %}
-	{% if content.file %} {% include content.file %} {% endif %}
-	{% endblock %}
-</div>
+	<div class="panel">
+		{% block panel %}
+		{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
+		{% if content.html %} {{ content.html | safe }} {% endif %}
+		{% if content.file %} {% include content.file %} {% endif %}
+		{% endblock %}
+	</div>

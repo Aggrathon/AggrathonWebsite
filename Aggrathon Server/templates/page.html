@@ -6,16 +6,16 @@
 
 	The page recievces data in the following form:
 
-	site = {name, header, menu}
+	site = {name, header, menu, language}
 		name: shown in the title
 		header: the big text in the title
+		language: language-code eg. "en"
 		menu: list of menu-items = {title, target}
 			target: target of the link
 			title: text to show on the button
 
-	content = {title, alert, html, file, data}
+	content = {title, html, file, data}
 		title: the header of the page (also shown in the title)
-		alert: html/text to be shown in an dismissable alert box above the main content
 		html: the content of the page as a string (may contain html)
 		file: url to a file containing the content of the page (can be jinja2)
 		data: the data to send to the contentfile
@@ -27,7 +27,7 @@
 		data: the data to send to the sidebarfile
 #}
 
-<html lang="en">
+<html lang="{{ site.language }}">
 <head>
     <meta charset="utf-8" />
     <title>{% if content.title %}{{ content.title }} - {% endif %}{{ site.name }}</title>

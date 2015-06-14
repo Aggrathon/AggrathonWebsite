@@ -10,15 +10,15 @@ import database
 
 	arguments:
 
-	siteInfo = {name, header, menu}
+	siteInfo = {name, header, language, menu}
 		name: shown in the title
 		header: the big text in the title
+		language: language-code eg. "en"
 		menu: list of menu-items = {title, target}
 			target: target of the link
 			title: text to show on the button
-	pageInfo = {title, alert, html, file, data}
+	pageInfo = {title, html, file, data}
 		title: the header of the page (also shown in the title)
-		alert: html/text to be shown in an dismissable alert box above the main content
 		html: the content of the page as a string (may contain html)
 		file: url to a file containing the content of the page (can be jinja2)
 		data: the data to send to the contentfile	
@@ -43,8 +43,8 @@ def render_page_standard(pageInfo):
 """
 	Methods for creating custom pages and sidebars
 """
-def create_custom_page(title, file, alert=None, **data):
-	return {'title':title, 'file':file, 'alert':alert, 'data':data}
+def create_custom_page(title, file, **data):
+	return {'title':title, 'file':file, 'data':data}
 
 def create_custom_sidebar(file, **data):
 	return {'file':"featured.html", 'data':data}
@@ -57,7 +57,7 @@ def create_custom_sidebar(file, **data):
 def __getSiteInfo():
 	#Create the standard site info
 	return database.getSiteInfo()
-	#return {'name':"Aggrathon", 'header':"Aggrathon.com", 'menu':[{'target':"/", 'title':"Home"},{'target':"/stuff/", 'title':"Stuff"},{'target':"/about/", 'title':"About"},{'target':"/projects/", 'title':"Projects"}]}
+	#return {'name':"Aggrathon", 'header':"Aggrathon.com", 'language':'en' 'menu':[{'target':"/", 'title':"Home"},{'target':"/stuff/", 'title':"Stuff"},{'target':"/about/", 'title':"About"},{'target':"/projects/", 'title':"Projects"}]}
 
 def create_featured_sidebar():
 	pages = __featured_sidebar_pages()
@@ -81,13 +81,13 @@ def __featured_sidebar_projects():
 	Simple Methods for rendering pages
 """
 #Pages with standard sidebar
-def show_page(title, html, alert=None):
-	return render_page_standard({'title':title, 'alert':alert, 'html':html})
+def show_page(title, html):
+	return render_page_standard({'title':title, 'html':html})
 
 #Pages with no sidebar
-def show_page_nosidebar(title, html, alert=None):
-	return render_page({'title':title, 'alert':alert, 'html':html}, None)
+def show_page_nosidebar(title, html):
+	return render_page({'title':title, 'html':html}, None)
 
 #Pages with sidebar
-def show_page_sidebar(title, html, sidebar, alert=None):
-	return render_page({'title':title, 'alert':alert, 'html':html}, {'html':sidebar})
+def show_page_sidebar(title, html, sidebar):
+	return render_page({'title':title, 'html':html}, {'html':sidebar})
