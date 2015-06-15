@@ -107,3 +107,13 @@ label {
 	font-size: 15px;
 	font-weight: normal;
 }
+
+.floating-dropdown-toggle {
+	position: absolute !important;
+	right: 0px !important;
+	z-index: 100 !important;
+}
+
+.button-list-gap:not(:first-child) {
+	margin-top: 5px
+}

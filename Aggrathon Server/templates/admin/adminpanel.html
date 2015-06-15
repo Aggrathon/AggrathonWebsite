@@ -1,0 +1,30 @@
+{#
+	This file renders the sidebar for the adminpages
+#}
+{% set links = [
+	('/admin/', 'Overview', []),
+	('/admin/setup/', 'Setup', []),
+	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')]),
+	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')]),
+	('/admin/files/', 'Files', [('/admin/files/upload/', 'Upload File')])
+] %}
+<h2>Adminpanel</h2>
+
+{% for url, title, dropdown in links %}
+{% if dropdown %}
+<div class="btn-group btn-group-lg button-list-gap" style="width:100%;">
+	<a href="{{ url }}" class="btn btn-default btn-block {% if request.path == url %}active{% endif %}">{{ title }}</a>
+	<a class="floating-dropdown-toggle btn btn-default pull-right dropdown-toggle{% if request.path == url %} active{% endif %}" data-toggle="dropdown" aria-expanded="false">
+		<span class="caret"></span>
+		<span class="sr-only">Toggle Dropdown</span>
+	</a>
+	<ul class="dropdown-menu pull-right" role="menu">
+		{% for url2, title2 in dropdown %}
+		<li><a href="{{ url2 }}">{{ title2 }}</a></li>
+		{% endfor %}
+	</ul>
+</div>
+{% else %}
+	<a href="{{ url }}" class="btn btn-default btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">{{ title }}</a>
+{% endif %}
+{% endfor %}

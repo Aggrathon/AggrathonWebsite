@@ -40,6 +40,8 @@ def setup(name="Website", header="Website", language="en"):
 		site.name = name
 		site.header = header
 		site.language = language
+	if(Page.query.filter_by(path = '/').first() is None):
+		db.session.add( Page('/', '', 'This is the main page') )
 	db.session.commit()
 
 
@@ -142,8 +144,8 @@ def createTestData():
 	db.session.add(PageBlurb(page, "Description for test page 1", "/static/background.jpg"))
 
 	db.session.add(Menu("Home","/"))
-	db.session.add(Menu("About","/about/"))
 	db.session.add(Menu("Stuff","/stuff/"))
+	db.session.add(Menu("Admin","/admin/"))
 	db.session.add(Menu("Projects","/projects/"))
 	
 	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")

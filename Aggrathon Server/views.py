@@ -3,14 +3,14 @@ from app import app
 from page import *
 import database
 
-#ROUTES
+### ROUTES ###
 
-#main
+### main ###
 @app.route('/')
 def main():
-	return render_page_standard({'html':"This is the mainpage<br /><a href='admin/setup/'>Setup</a>"})
+	return show_page('/')
 
-#admin
+### admin ###
 @app.route('/admin/')
 def admin():
 	if not database.check_if_setup():
@@ -20,57 +20,65 @@ def admin():
 		except:
 			flash("Unable to setup database, check config or use the 'Reset Database' function to remove old data", "danger")
 		return redirect(url_for('setup'))
-	return show_page_sidebar("Admin", "Important data here", '<h3>Admin</h3><a href="setup/">Setup</a><br />other links')
+	return render_page({'title':"Admin", 'html':"Important data here"}, {'file':"admin/adminpanel.html"})
 
 @app.route('/admin/setup/', methods=['GET', 'POST'])
 def setup():
 	if request.method == 'POST':
 		#reset
-		if(request.values.getlist('reset')):#.form['reset']):
+		if(request.values.getlist('reset')):
 			database.reset_db()
 			flash("Database has been reset, all is lost", "danger")
 		#testdata
-		if(request.values.getlist('test')):#form['test']):
+		if(request.values.getlist('test')):
 			database.createTestData()
 			flash("Data for testing has been created", "warning")
-		#website
-		name = request.form['name']
-		header = request.form['header']
-		lang = request.form['language']
-		database.setup(name, header, lang)
-		#menu
-		titles = request.values.getlist('menu_title')
-		targets = request.values.getlist('menu_target')
-		menu = []
-		curr = 0
-		while curr < len(titles):
-			menu.append({'title': titles[curr], 'target':targets[curr]})
-			curr += 1
-		database.setMenu(menu)
-		flash("Settings updated", "success")
+		else:
+			#website
+			name = request.form['name']
+			header = request.form['header']
+			lang = request.form['language']
+			database.setup(name, header, lang)
+			#menu
+			titles = request.values.getlist('menu_title')
+			targets = request.values.getlist('menu_target')
+			menu = []
+			curr = 0
+			while curr < len(titles):
+				menu.append({'title': titles[curr], 'target':targets[curr]})
+				curr += 1
+			database.setMenu(menu)
+			flash("Settings updated", "success")
 	site = database.getSiteInfo()
-	return render_page(create_custom_page("Setup", "admin/setup.html", **site),None)
+	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/adminpanel.html"))
 
-
-@app.route('/projects/')
-def projects():
-    return show_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
-
-@app.route('/stuff/')
-def stuff():
-	return show_page("Stuff", "stuff stuff stuff stuff stuff stuff stuff stuff stuff")
+### pages ###
+@app.route('/pages/<path:path>/edit/')
+def page_edit(path):
+	path = "/pages/"+path+"/"
+	flash("Page editing not yet implemented", "warning")
+	return show_page(path)
 
 @app.route('/pages/<path:path>/')
 def page(path):
-	path = "/pages/"+path+"/"
-	print (path)
-	page = database.getPage(path)
-	return show_page(page.title, page.content)
+	return show_page("/pages/"+path+"/")
+
+@app.route('/pages/')
+def pages(path):
+	return create_page("Pages", "Here is a list of all the pages")
+
+### projects ###
+@app.route('/projects/')
+def projects():
+    return create_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
 
 @app.route('/projects/<project>/')
 def project(project):
-	return show_page(project, "Custom Project: "+project)
+	return create_page(project, "Custom Project: "+project)
 
+### misc ###
+
+### errors ###
 @app.errorhandler(404)
 def page_not_found(error):
 	flash("Page not found, returning to main", "danger")

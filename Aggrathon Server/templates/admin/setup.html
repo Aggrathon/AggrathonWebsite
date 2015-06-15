@@ -11,20 +11,18 @@
 	</div>
 	<div class="form-group">
 		<label for="language" class="col-sm-2 control-label">Language Code</label>
-		<div class="col-sm-1"><input type="text" class="form-control col-sm-10" placeholder="Website" id="language" name="language" value="{{ content.data.language }}"/></div>
+		<div class="col-sm-2"><input type="text" class="form-control col-sm-10" placeholder="Website" id="language" name="language" value="{{ content.data.language }}"/></div>
 	</div>
 
 
 	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Menu</h3></div></div></div>
-	<div class="form-group form-control-static">
-		<div class="col-sm-5 col-sm-offset-2"><big>Title</big></div>
-		<div class="col-sm-5"><big>Target</big></div>
-	</div>
 	<div class="form-group">
 		<label for="menu" class="col-sm-2 control-label">Menu Items</label>
-		<div class="col-sm-10" id="menu">
+		<div class="col-sm-5"><big>Title</big></div>
+		<div class="col-sm-5"><big>Target</big></div>
+		<div class="col-sm-10 col-sm-offset-2" id="menu">
 			{% for item in content.data.menu %}
-			<div class="row menuitem">
+			<div class="row menuitem" style="padding-bottom:1px;">
 				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" value="{{ item.title }}" name="menu_title" /></div>
 				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" value="{{ item.target }}" name="menu_target" /></div>
 			</div>
@@ -42,7 +40,7 @@
 					var menu = $('div#menu');
 					if ($('div.menuitem').length == 0)
 						menu.html('');
-					menu.append('<div class="row menuitem">\n'
+					menu.append('<div class="row menuitem" style="padding-bottom:1px;">\n'
 						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" name="menu_title" /></div>\n'
 						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" name="menu_target" /></div>\n'
 						+ '</div>');
@@ -68,13 +66,33 @@
 
 
 	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Database</h3></div></div></div>
+	<script>
+		function switchResetButton() {
+			if ($('input#reset').is(':checked')) {
+				$('label#resetlabel').addClass("btn-danger");
+				$('label#resetlabel').removeClass("btn-default");
+			} else {
+				$('label#resetlabel').addClass("btn-default");
+				$('label#resetlabel').removeClass("btn-danger");
+			}
+		}
+		function switchTestButton() {
+			if ($('input#test').is(':checked')) {
+				$('label#testlabel').addClass("btn-warning");
+				$('label#testlabel').removeClass("btn-default");
+			} else {
+				$('label#testlabel').addClass("btn-default");
+				$('label#testlabel').removeClass("btn-warning");
+			}
+		}
+	</script>
 	<div class="form-group">
 		<label for="reset" class="col-sm-2 control-label">Reset Database</label>
-		<div class="col-sm-10"><label class="btn btn-danger"><input type="checkbox" name="reset" id="reset" /> This will remove all content form the site, including all pages</label></div>
+		<div class="col-sm-10"><label class="btn btn-default" id="resetlabel" onclick="switchResetButton();"><input type="checkbox" name="reset" id="reset" /> This will remove all content form the site, including all pages</label></div>
 	</div>
 	<div class="form-group">
 		<label for="test" class="col-sm-2 control-label">Create Test Data</label>
-		<div class="col-sm-10"><label class="btn btn-warning"><input type="checkbox" name="test" id="test" /> This will create useless test-content</label></div>
+		<div class="col-sm-10"><label class="btn btn-default" id="testlabel" onclick="switchTestButton();"><input type="checkbox" name="test" id="test" /> This will create useless test-content</label></div>
 	</div>
 
 	<div class="form-group">
