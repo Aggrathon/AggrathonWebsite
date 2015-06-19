@@ -52,6 +52,26 @@ def setup():
 	site = database.getSiteInfo()
 	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/sidebar.html"))
 
+@app.route('/admin/pages/', methods=['GET', 'POST'])
+def pages_admin():
+	flash("Not implemented", "danger")
+	return redirect(url_for('admin'), 303)
+
+@app.route('/admin/projects/', methods=['GET', 'POST'])
+def projects_admin():
+	flash("Not implemented", "danger")
+	return redirect(url_for('admin'), 303)
+
+@app.route('/admin/files/', methods=['GET', 'POST'])
+def files():
+	flash("Not implemented", "danger")
+	return redirect(url_for('admin'), 303)
+
+@app.route('/admin/messages/', methods=['GET', 'POST'])
+def messages():
+	flash("Not implemented", "danger")
+	return redirect(url_for('admin'), 303)
+
 ### pages ###
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):
@@ -61,20 +81,37 @@ def page_edit(path):
 
 @app.route('/pages/<path:path>/')
 def page(path):
+	flash("Not implemented", "danger")
 	return show_page("/pages/"+path+"/")
 
 @app.route('/pages/')
 def pages(path):
+	flash("Not implemented", "danger")
 	return create_page("Pages", "Here is a list of all the pages")
 
 ### projects ###
+@app.route('/projects/<path:path>/edit/')
+def page_edit(path):
+	path = "/projects/"+path+"/"
+	flash("Project editing not yet implemented", "warning")
+	return show_page(path)
+
 @app.route('/projects/')
 def projects():
-    return create_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
+	flash("Not implemented", "danger")
+	return create_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
 
 @app.route('/projects/<project>/')
 def project(project):
+	flash("Projects not fully implemented", "warning")
 	return create_page(project, "Custom Project: "+project)
+
+### contact ###
+@app.route('/contact/', methods=['GET', 'POST'])
+def contact():
+	flash("Not implemented", "danger")
+	return create_page("Contact", "[Insert contact form]")
+
 
 ### misc ###
 
