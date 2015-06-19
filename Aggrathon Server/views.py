@@ -20,7 +20,7 @@ def admin():
 		except:
 			flash("Unable to setup database, check config or use the 'Reset Database' function to remove old data", "danger")
 		return redirect(url_for('setup'))
-	return render_page({'title':"Admin", 'html':"Important data here"}, {'file':"admin/adminpanel.html"})
+	return render_page(create_custom_page("Admin", "admin/overview.html", **database.getStats()), create_custom_sidebar("admin/sidebar.html"))
 
 @app.route('/admin/setup/', methods=['GET', 'POST'])
 def setup():
@@ -50,7 +50,7 @@ def setup():
 			database.setMenu(menu)
 			flash("Settings updated", "success")
 	site = database.getSiteInfo()
-	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/adminpanel.html"))
+	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/sidebar.html"))
 
 ### pages ###
 @app.route('/pages/<path:path>/edit/')

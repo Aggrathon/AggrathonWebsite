@@ -76,6 +76,11 @@ def getFeaturedProjects():
 		.order_by(FeaturedProject.priority).all()
 	return projects
 
+def getStats():
+	pages = Page.query.count()
+	projects = Project.query.count()
+	return {'pages':pages, 'projects':projects}
+
 
 ### SETTERS ###
 

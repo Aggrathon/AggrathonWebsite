@@ -1,0 +1,24 @@
+﻿{#
+	This file renders the main admin page with stats and overviews for the site
+#}
+
+<!--  STATS  -->
+{% set stats = [
+	('pages/', 'Pages', content.data.pages),
+	('projecs/', 'Projects', content.data.projects),
+	('messages/', 'Messages', 'not implemented'),
+	('views/', 'Views', 'not implemented')
+] %}
+<div class="panel" id="stats">
+	<h3>Website stats</h3>
+	<div class="btn-group-vertical" role="group" style="width:100%">
+		{% for url, title, stat in stats %}
+		<a class="btn btn-default" href={{ url }}>
+			<div class="row">
+				<div class="col-xs-9 text-left">{{ title }}</div>
+				<div class="col-xs-3 text-right">{{ stat }}</div>
+			</div>
+		</a>
+		{% endfor %}
+	</div>
+</div>
