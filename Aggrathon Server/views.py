@@ -77,6 +77,10 @@ def messages():
 	flash("Not implemented", "danger")
 	return redirect(url_for('admin'), 303)
 
+def edit_page(page):
+	flash("Page editing not yet implemented", "warning")
+	return show_page(path)
+
 ### pages ###
 @app.route('/pages/')
 def pages():
@@ -85,9 +89,7 @@ def pages():
 
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):
-	path = "/pages/"+path+"/"
-	flash("Page editing not yet implemented", "warning")
-	return show_page(path)
+	return edit_page("/pages/"+path+"/")
 
 @app.route('/pages/<path:path>/')
 def page(path):
@@ -119,6 +121,9 @@ def contact():
 
 
 ### misc ###
+@app.route('/edit/', methods=['GET', 'POST'])
+def main_edit():
+	return edit_page('/')
 
 ### errors ###
 @app.errorhandler(404)

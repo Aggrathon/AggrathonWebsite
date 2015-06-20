@@ -1,19 +1,24 @@
 {#
 	This file renders the sidebar for the adminpages
 #}
+{# link form: (url, title, dropdown, badge) #}
 {% set links = [
-	('/admin/', 'Overview', []),
-	('/admin/setup/', 'Setup', []),
-	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')]),
-	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')]),
-	('/admin/files/', 'Files', [('/admin/files/upload/', 'Upload File')])
+	('/admin/', 'Overview', [], ''),
+	('/admin/setup/', 'Setup', [], ''),
+	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')], 'X'),
+	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')], 'X'),
+	('/admin/files/', 'Files', [('/admin/files/upload/', 'Upload File')], 'X'),
+	('/admin/messages/', 'Messages', [], 'X')
 ] %}
 <h2>Adminpanel</h2>
 
-{% for url, title, dropdown in links %}
+{% for url, title, dropdown, badge in links %}
 {% if dropdown %}
 <div class="btn-group btn-group-lg button-list-gap" style="width:100%;">
-	<a href="{{ url }}" class="btn btn-default btn-block {% if request.path == url %}active{% endif %}">{{ title }}</a>
+	<a href="{{ url }}" class="btn btn-default btn-block {% if request.path == url %}active{% endif %}">		
+		{{ title }}
+		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
+	</a>
 	<a class="floating-dropdown-toggle btn btn-default pull-right dropdown-toggle{% if request.path == url %} active{% endif %}" data-toggle="dropdown" aria-expanded="false">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>
@@ -25,6 +30,9 @@
 	</ul>
 </div>
 {% else %}
-	<a href="{{ url }}" class="btn btn-default btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">{{ title }}</a>
+	<a href="{{ url }}" class="btn btn-default btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">
+		{{ title }}
+		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
+	</a>
 {% endif %}
 {% endfor %}
