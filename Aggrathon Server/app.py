@@ -11,7 +11,7 @@ wsgi_app = app.wsgi_app
 
 
 #Include all routes
-from views import *
+from routes import *
 
 if __name__ == '__main__':
     import os

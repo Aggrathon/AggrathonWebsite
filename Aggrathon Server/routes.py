@@ -1,7 +1,7 @@
 from flask import Flask, request, flash, redirect, url_for
 from app import app
-from page import *
-import database
+from view import *
+import model
 
 ### ROUTES ###
 
@@ -13,31 +13,35 @@ def main():
 ### admin ###
 @app.route('/admin/')
 def admin():
-	if not database.check_if_setup():
+	if not model.check_if_setup():
 		try:
-			database.create_db()
+			model.create_db()
 			flash("Website initialized successfully", "success")
 		except:
 			flash("Unable to setup database, check config or use the 'Reset Database' function to remove old data", "danger")
 		return redirect(url_for('setup'))
-	return render_page(create_custom_page("Admin", "admin/overview.html", **database.getStats()), create_custom_sidebar("admin/sidebar.html"))
+	return show_admin(AdminPages.admin)
+
+@app.route('/login/')
+def login():
+	return render_page_standard(create_page_fromfile('Login', 'admin/login.html'))
 
 @app.route('/admin/setup/', methods=['GET', 'POST'])
 def setup():
 	if request.method == 'POST':
 		#reset
 		if(request.values.getlist('reset')):
-			database.reset_db()
+			model.reset_db()
 			flash("Database has been reset, all is lost", "danger")
 		#website
 		name = request.form['name']
 		header = request.form['header']
 		lang = request.form['language']
-		database.setup(name, header, lang)
+		model.setup(name, header, lang)
 		flash("Settings updated", "success")
 		#default menu
 		if(request.values.getlist('default')):
-			database.createDefaultMenu()
+			model.createDefaultMenu()
 			flash("Now showing a default menu", "warning")
 		else:
 			#menu
@@ -48,44 +52,53 @@ def setup():
 			while curr < len(titles):
 				menu.append({'title': titles[curr], 'target':targets[curr]})
 				curr += 1
-			database.setMenu(menu)
+			model.setMenu(menu)
 			flash("Menu updated", "success")
 		#testdata
 		if(request.values.getlist('test')):
-			database.createTestData()
+			model.createTestData()
 			flash("Data for testing has been created", "warning")
-	site = database.getSiteInfo()
-	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/sidebar.html"))
+	return show_admin(AdminPages.setup)
 
 @app.route('/admin/pages/', methods=['GET', 'POST'])
 def pages_admin():
-	flash("Not implemented", "danger")
-	return redirect(url_for('admin'), 303)
+	return show_admin(AdminPages.pages)
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
 def projects_admin():
-	flash("Not implemented", "danger")
-	return redirect(url_for('admin'), 303)
+	return show_admin(AdminPages.projects)
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
 def files():
-	flash("Not implemented", "danger")
-	return redirect(url_for('admin'), 303)
+	return show_admin(AdminPages.files)
 
 @app.route('/admin/messages/', methods=['GET', 'POST'])
 def messages():
-	flash("Not implemented", "danger")
-	return redirect(url_for('admin'), 303)
+	return show_admin(AdminPages.messages)
 
-def edit_page(page):
-	flash("Page editing not yet implemented", "warning")
-	return show_page(path)
+@app.route('/admin/pages/create/', methods=['GET', 'POST'])
+def edit_page(path=''):
+	if path == '':
+		flash("Page creation not implemented", "danger")
+		return render_page(create_page_fromfile('Create Page', 'pages/edit.html'))
+	else:
+		flash("Page editing not yet implemented", "warning")
+		return render_page(create_page_fromfile('Edit Page', 'pages/edit.html'))
+
+@app.route('/admin/projects/create/', methods=['GET', 'POST'])
+def edit_project(project=''):
+	if project == '':
+		flash("Project creation not implemented", "danger")
+		return render_page(create_page_fromfile('Create Project', 'projects/edit.html'))
+	else:
+		flash("Project editing not yet implemented", "warning")
+		return render_page(create_page_fromfile('Edit Project', 'projects/edit.html'))
 
 ### pages ###
 @app.route('/pages/')
 def pages():
 	flash("Not implemented", "danger")
-	return create_page("Pages", "Here is a list of all the pages")
+	return render_page(create_page_fromfile("Pages", 'pages/pages.html'))
 
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):
@@ -100,18 +113,17 @@ def page(path):
 @app.route('/projects/')
 def projects():
 	flash("Not implemented", "danger")
-	return create_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
+	return render_page(create_page_fromfile("Projects", 'projects/projects.html'), create_sidebar_fromfile("projects/sidebar.html"))
 
-@app.route('/projects/<path:path>/edit/')
-def project_edit(path):
-	path = "/projects/"+path+"/"
+@app.route('/projects/<path:project>/edit/')
+def project_edit(project):
 	flash("Project editing not yet implemented", "warning")
-	return show_page(path)
+	return edit_project(project)
 
 @app.route('/projects/<path:project>/')
 def project(project):
 	flash("Projects not fully implemented", "warning")
-	return create_page(project, "Custom Project: "+project)
+	return show_project(project)
 
 ### contact ###
 @app.route('/contact/', methods=['GET', 'POST'])
@@ -130,3 +142,8 @@ def main_edit():
 def page_not_found(error):
 	flash("Page not found, returning to main", "danger")
 	return redirect(url_for('main'), 303)
+
+@app.errorhandler(403)
+def not_logged_in(error):
+	flash("You are not logged in!", "danger")
+	return redirect(url_for('login'), 303)
