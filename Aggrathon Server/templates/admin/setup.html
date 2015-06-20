@@ -85,10 +85,23 @@
 				$('label#testlabel').removeClass("btn-warning");
 			}
 		}
+		function switchDefaultButton() {
+			if ($('input#default').is(':checked')) {
+				$('label#defaultlabel').addClass("btn-warning");
+				$('label#defaultlabel').removeClass("btn-default");
+			} else {
+				$('label#defaultlabel').addClass("btn-default");
+				$('label#defaultlabel').removeClass("btn-warning");
+			}
+		}
 	</script>
 	<div class="form-group">
 		<label for="reset" class="col-sm-2 control-label">Reset Database</label>
 		<div class="col-sm-10"><label class="btn btn-default" id="resetlabel" onclick="switchResetButton();"><input type="checkbox" name="reset" id="reset" /> This will remove all content form the site, including all pages</label></div>
+	</div>
+	<div class="form-group">
+		<label for="default" class="col-sm-2 control-label">Default Menu</label>
+		<div class="col-sm-10"><label class="btn btn-default" id="defaultlabel" onclick="switchDefaultButton();"><input type="checkbox" name="default" id="default" /> This will will replace the menu with a default menu</label></div>
 	</div>
 	<div class="form-group">
 		<label for="test" class="col-sm-2 control-label">Create Test Data</label>

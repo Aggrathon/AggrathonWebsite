@@ -147,17 +147,20 @@ def createTestData():
 	db.session.add(Page("/pages/test3/", "Test Page 3", "[insert content here]"))
 	db.session.add(FeaturedPage(page, 10))
 	db.session.add(PageBlurb(page, "Description for test page 1", "/static/background.jpg"))
-
-	db.session.add(Menu("Home","/"))
-	db.session.add(Menu("Stuff","/stuff/"))
-	db.session.add(Menu("Admin","/admin/"))
-	db.session.add(Menu("Projects","/projects/"))
 	
 	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
 	db.session.add(FeaturedProject(proj, 10))
 	db.session.add(ProjectBlurb(proj, "Test Project 1 description here", ""))
 
 	db.session.commit();
+
+def createDefaultMenu():
+	menu = [{'title':"Home", 'target':"/"},
+		 {'title':"Pages", 'target':"/pages/"},
+		 {'title':"Projects", 'target':"/projects/"},
+		 {'title':"Contact", 'target':"/contact/"},
+		 {'title':"Admin", 'target':"/admin/"}]
+	setMenu(menu)
 
 
 ### TABLES ###

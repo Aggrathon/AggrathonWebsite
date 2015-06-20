@@ -29,16 +29,17 @@ def setup():
 		if(request.values.getlist('reset')):
 			database.reset_db()
 			flash("Database has been reset, all is lost", "danger")
-		#testdata
-		if(request.values.getlist('test')):
-			database.createTestData()
-			flash("Data for testing has been created", "warning")
+		#website
+		name = request.form['name']
+		header = request.form['header']
+		lang = request.form['language']
+		database.setup(name, header, lang)
+		flash("Settings updated", "success")
+		#default menu
+		if(request.values.getlist('default')):
+			database.createDefaultMenu()
+			flash("Now showing a default menu", "warning")
 		else:
-			#website
-			name = request.form['name']
-			header = request.form['header']
-			lang = request.form['language']
-			database.setup(name, header, lang)
 			#menu
 			titles = request.values.getlist('menu_title')
 			targets = request.values.getlist('menu_target')
@@ -48,7 +49,11 @@ def setup():
 				menu.append({'title': titles[curr], 'target':targets[curr]})
 				curr += 1
 			database.setMenu(menu)
-			flash("Settings updated", "success")
+			flash("Menu updated", "success")
+		#testdata
+		if(request.values.getlist('test')):
+			database.createTestData()
+			flash("Data for testing has been created", "warning")
 	site = database.getSiteInfo()
 	return render_page(create_custom_page("Setup", "admin/setup.html", **site), create_custom_sidebar("admin/sidebar.html"))
 
@@ -73,6 +78,11 @@ def messages():
 	return redirect(url_for('admin'), 303)
 
 ### pages ###
+@app.route('/pages/')
+def pages():
+	flash("Not implemented", "danger")
+	return create_page("Pages", "Here is a list of all the pages")
+
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):
 	path = "/pages/"+path+"/"
@@ -84,24 +94,19 @@ def page(path):
 	flash("Not implemented", "danger")
 	return show_page("/pages/"+path+"/")
 
-@app.route('/pages/')
-def pages(path):
-	flash("Not implemented", "danger")
-	return create_page("Pages", "Here is a list of all the pages")
-
 ### projects ###
-@app.route('/projects/<path:path>/edit/')
-def page_edit(path):
-	path = "/projects/"+path+"/"
-	flash("Project editing not yet implemented", "warning")
-	return show_page(path)
-
 @app.route('/projects/')
 def projects():
 	flash("Not implemented", "danger")
 	return create_page_sidebar("Projects", "This is the projects page", "Here is a custom sidebar")
 
-@app.route('/projects/<project>/')
+@app.route('/projects/<path:path>/edit/')
+def project_edit(path):
+	path = "/projects/"+path+"/"
+	flash("Project editing not yet implemented", "warning")
+	return show_page(path)
+
+@app.route('/projects/<path:project>/')
 def project(project):
 	flash("Projects not fully implemented", "warning")
 	return create_page(project, "Custom Project: "+project)
