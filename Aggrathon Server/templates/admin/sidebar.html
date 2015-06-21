@@ -5,7 +5,7 @@
 {% set links = [
 	('/admin/', 'Overview', [], ''),
 	('/admin/setup/', 'Setup', [], ''),
-	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')], 'X'),
+	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')], 'NO AJAX'),
 	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')], 'X'),
 	('/admin/files/', 'Files', [], 'X'),
 	('/admin/messages/', 'Messages', [], 'X')
@@ -15,11 +15,7 @@
 {% for url, title, dropdown, badge in links %}
 {% if dropdown %}
 <div class="btn-group btn-group-lg button-list-gap" style="width:100%;">
-	<a href="{{ url }}" class="btn btn-default btn-block {% if request.path == url %}active{% endif %}">		
-		{{ title }}
-		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
-	</a>
-	<a class="floating-dropdown-toggle btn btn-default pull-right dropdown-toggle{% if request.path == url %} active{% endif %}" data-toggle="dropdown" aria-expanded="false">
+	<a class="floating-dropdown-toggle btn btn-default pull-right dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>
 	</a>
@@ -28,6 +24,11 @@
 		<li><a href="{{ url2 }}">{{ title2 }}</a></li>
 		{% endfor %}
 	</ul>
+
+	<a href="{{ url }}" class="btn btn-default btn-block{% if request.path == url %} active{% endif %}">
+		{{ title }}
+		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
+	</a>
 </div>
 {% else %}
 	<a href="{{ url }}" class="btn btn-default btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">

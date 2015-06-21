@@ -174,3 +174,7 @@ label {
 .button-list-gap:not(:first-child) {
 	margin-top: 5px
 }
+
+.button-list-gap.btn-group-lg > .btn {
+	border-radius: 6px !important;
+}
