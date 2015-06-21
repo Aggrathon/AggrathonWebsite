@@ -37,6 +37,9 @@ def getStats():
 	projects = Project.query.count()
 	return {'pages':pages, 'projects':projects}
 
+def getPageList():
+	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured')).outerjoin(FeaturedPage).all()
+
 
 ### SETTERS ###
 

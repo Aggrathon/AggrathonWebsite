@@ -18,7 +18,7 @@
 	</div>
 {% endfor %}
 
-	<div class="panel">
+	<div class="panel" id="content">
 		{% block panel %}
 		{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
 		{% if content.html %} {{ content.html | safe }} {% endif %}

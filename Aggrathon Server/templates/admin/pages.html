@@ -1,1 +1,28 @@
-﻿[pages list here]
+﻿{#
+	This page shows alist of all pages with quick access to some commands
+#}
+{% from 'pages/macros.html' import toolbar, toolbar_list_function %}
+{{ toolbar_list_function('tr', 'content') }}
+<table class="table">
+	<thead>
+		<tr>
+			<th>Page</th>
+			<th>Path</th>
+			<th>Featured</th>
+			<th>Tools</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for page in content.data.pages %}
+		<tr>
+			<td>{% if page.url == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</td>
+			<td id="path">{{ page.url }}</td>
+			<td class="text-center" id="featured">{% if page.featured %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Featured</span>{% endif %}</td>
+			<td>{{ toolbar(page.url) }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<div>
+	<a class="btn btn-primary" href="/admin/pages/create/" target="_blank">Create a new Page</a>
+</div>

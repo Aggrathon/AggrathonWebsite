@@ -34,21 +34,78 @@
 	border: 1px solid rgba(255,255,255,0);
 	color: white;
 }
-.btn-default:hover {
+.btn-default:hover,
+.btn-default:active,
+.btn-default:focus,
+.btn-default.active,
+.btn-default.focus {
 	background-color: rgba(192,192,192,0.6);
 	color: white;
 	border: 1px solid rgba(255,255,255,0);
 }
-.btn-primary {
-	background-color: white;
-	border: 1px solid rgba(255,255,255,0);
-	color: #333;
-}
-.btn-primary:hover {
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary.active,
+.btn-primary.focus {
 	background-color: rgba(255,255,255,0.8);
 	color: #333;
-	border: 1px solid rgba(255,255,255,0);
+	border: 1px solid rgba(255,255,255,0.8);
 }	
+.btn-primary {
+	background-color: white;
+	border: 1px solid white;
+	color: #333;
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success:focus,
+.btn-success.active,
+.btn-success.focus {
+	background-color: rgba(75, 179, 75, 0.8);
+	border-color: #398439;
+}
+.btn-success {
+	border: 1px solid rgba(255,255,255,0);
+}
+
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning:focus,
+.btn-warning.active,
+.btn-warning.focus {
+	background-color: rgba(255, 170, 51, 0.8);
+	border-color: #d58512;
+}
+.btn-warning {
+	border: 1px solid rgba(255,255,255,0);
+}
+
+.btn-danger:hover,
+.btn-danger:active,
+.btn-danger:focus,
+.btn-danger.active,
+.btn-danger.focus {
+	background-color: rgba(201, 47, 43, 0.8);
+	border-color: #ac2925;
+}
+.btn-danger {
+	border: 1px solid rgba(255,255,255,0);
+}
+
+.btn-info:hover,
+.btn-info:active,
+.btn-info:focus,
+.btn-info.active,
+.btn-info.focus {
+	background-color: rgba(52, 195, 237, 0.8);
+	border-color: #269abc;
+}
+.btn-info {
+	border: 1px solid rgba(255,255,255,0);
+}
 
 .panel {
 	background-color: rgba(96,96,96,0.35);

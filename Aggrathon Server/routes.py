@@ -106,7 +106,6 @@ def page_edit(path):
 
 @app.route('/pages/<path:path>/')
 def page(path):
-	flash("Not implemented", "danger")
 	return show_page("/pages/"+path+"/")
 
 ### projects ###
