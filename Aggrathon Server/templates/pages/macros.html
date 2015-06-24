@@ -56,31 +56,52 @@
 		function deletePage(object) {
 			path = getPath(object);
 			if (confirm("Delete page at '" + path + "'?")) {
-				//AJAX
-				$(object).closest('{{ parentTag }}').remove();
-				flash("Page at '" + path + "' deleted", "danger");
+				$.post('/admin/pages/edit/',
+					{ page: path, action: "delete" },
+					function (data, status) {
+						if (status == 'success') {
+							$(object).closest('{{ parentTag }}').remove();
+							flash("Page at '" + path + "' deleted", "success");
+						} else {
+							flash("Page at '" + path + "' could not be deleted\nCause: " + status, "danger");
+						}
+					});
 			}
 		}
 		function movePage(object) {
 			path = getPath(object);
 			var newpath = promptNewPath("New path for the page (must begin with '/pages/')", path);
 			if (newpath != null) {
-				//AJAX
-				$(object).closest('{{ parentTag }}').find('#path').html(newpath);
-				flash("Page at '" + path + "' moved to '" + newpath + "'", "success");
+				$.post('/admin/pages/edit/',
+					{ page: path, action: "move", target: newpath },
+					function (data, status) {
+						if (status == 'success') {
+							$(object).closest('{{ parentTag }}').find('#path').html(newpath);
+							flash("Page at '" + path + "' moved to '" + newpath + "'", "success");
+						} else {
+							flash("Page at '" + path + "' could not be moved to '" + newpath + "'\nCause: "+status, "danger");
+						}
+					});
 			}
 		}
 		function copyPage(object) {
 			path = getPath(object);
 			var newpath = promptNewPath("Path for the copy (must begin with '/pages/')", path);
 			if (newpath != null) {
-				//AJAX
-				var parent = $(object).closest('{{ parentTag }}');
-				var clone = parent.clone()
-				clone.find('#path').html(newpath);
-				clone.find('#featured').html('');
-				parent.after(clone);
-				flash("Page at '" + path + "' moved to '" + newpath + "'", "success");
+				$.post('/admin/pages/edit/',
+					{ page: path, action: "copy", target: newpath },
+					function (data, status) {
+						if (status == 'success') {
+							var parent = $(object).closest('{{ parentTag }}');
+							var clone = parent.clone()
+							clone.find('#path').html(newpath);
+							clone.find('#featured').html('');
+							parent.after(clone);
+							flash("Page at '" + path + "' copied to '" + newpath + "'", "success");
+						} else {
+							flash("Page at '" + path + "' could not be copied to '" + newpath + "'\nCause: " + status, "danger");
+						}
+					});
 			}
 		}
 	</script>

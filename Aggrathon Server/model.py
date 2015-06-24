@@ -59,7 +59,7 @@ def setMenu(menu):
 	db.session.commit()
 	
 def setPage(path, title, content, featured=False, priority=0, description="", thumbnail=""):
-	page = Page.query.filter_by(path="/pages/test/").first()
+	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		page = Page(path, title, content)
 		db.session.add(page)
@@ -98,6 +98,69 @@ def setPage(path, title, content, featured=False, priority=0, description="", th
 				blurb.image = thumbnail
 
 	db.session.commit()
+
+
+### ACTIONS ###
+
+def action_page_edit(path, data):
+	try:
+		title = data['title']
+		content = data['content']
+		featured = data['featured']
+		priority = data['priority']
+		description = data['description']
+		thumbnail = data['thumbnail']
+		setPage(page, title, content, featured, priority, description, thumbnail)
+	except KeyError as e:
+		return e.message
+	return 'success'
+
+def action_page_delete(path):
+	page = Page.query.filter_by(path=path).first()
+	if(page is None):
+		return 'Page not found'
+	else:
+		pb = PageBlurb.query.get(page.id)
+		if pb is not None:
+			db.session.delete(pb)
+		fp = FeaturedPage.query.get(page.id)
+		if fp is not None:
+			db.session.delete(fp)
+		db.session.delete(page)
+		db.session.commit()
+		return 'success'
+
+def action_page_move(path, newpath):
+	page = Page.query.filter_by(path=path).first()
+	if(page is None):
+		return 'Page not found'
+	newpage = Page.query.filter_by(path=newpath).first()
+	if newpage is not None:
+		return 'Target already exists'
+	else:
+		page.path = newpath
+		db.session.commit()
+		return 'success'
+
+def action_page_copy(path, newpath):
+	page = Page.query.filter_by(path=path).first()
+	if(page is None):
+		return 'Page not found'
+	newpage = Page.query.filter_by(path=newpath).first()
+	if newpage is not None:
+		return 'Target already exists'
+	else:
+		description = ''
+		thumbnail = ''
+		pageblurb = PageBlurb.query.get(page.id)
+		if(pageblurb is not None):
+			description = pageblurb.description
+			thumbnail = pageblurb.image
+		setPage(newpath, page.title, page.content, False, 0, description, thumbnail)
+		return 'success'
+
+
+### TESTDATA ###
 
 def createTestData():
 	page = Page("/pages/test/", "Test Page 1", "[insert content here]")

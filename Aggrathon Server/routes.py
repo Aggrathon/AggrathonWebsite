@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for
+from flask import Flask, request, flash, redirect, url_for, jsonify
 from app import app
 from view import *
 import model
@@ -63,6 +63,25 @@ def setup():
 @app.route('/admin/pages/', methods=['GET', 'POST'])
 def pages_admin():
 	return show_admin(AdminPages.pages)
+
+@app.route('/admin/pages/edit/', methods=['POST'])
+def pages_edit_post():
+	if request.method == 'POST':
+		try:
+			page = request.form['page']
+			action = request.form['action'] 
+			if(action == 'edit'):
+				return jsonify(status=model.action_page_edit(page, request.form))
+			if(action == 'delete'):
+				return jsonify(status=model.action_page_delete(page))
+			if(action == 'move'):
+				return jsonify(status=model.action_page_move(page, request.form['target']))
+			if(action == 'copy'):
+				return jsonify(status=model.action_page_copy(page, request.form['target']))
+			raise KeyError('action not found')
+		except KeyError as e:
+			return jsonify(status=e.message)
+	abort(404);
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
 def projects_admin():
