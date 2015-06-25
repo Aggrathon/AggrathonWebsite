@@ -55,6 +55,7 @@
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />
+    <Content Include="templates\pages\contact.html" />
     <Content Include="templates\pages\macros.html" />
     <Content Include="templates\pages\edit.html" />
     <Content Include="templates\pages\sidebar_featured.html" />

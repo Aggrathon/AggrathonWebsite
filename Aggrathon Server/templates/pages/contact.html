@@ -1,0 +1,36 @@
+﻿<form>
+	<div class="form-group">
+		<label for="email">Email address *</label>
+		<input type="email" class="form-control" id="email" placeholder="Email" name="email" />
+	</div>
+	<div class="form-group hidden">
+		<label for="website">Website</label>
+		<input type="url" class="form-control" id="website" placeholder="Leave this empty (This field finds bots)" name="website" />
+	</div>
+	<div class="form-group">
+		<label for="subject">Subject *</label>
+		<input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" />
+	</div>
+	<div class="form-group">
+		<label for="message">Message *</label>
+		<textarea class="form-control" id="message" placeholder="Message" name="message"></textarea>
+	</div>
+	<div class="panel">Insert Captcha here</div>
+	<button class="btn btn-primary btn-lg disabled" type="submit" id="submit" disabled="disabled" onclick="function () { if(this.disabled) return false; };">Send Message</button>
+	<script language="JavaScript" type="text/javascript">
+		function submitTimer(left) {
+			button = $('button#submit');
+			if (left < 0) {
+				button.removeClass('disabled')
+				button.attr("disabled", false);
+				button.html("Send Message");
+			} else {
+				button.html("Wait: " + left)
+				left = left -1
+				setTimeout(function () { submitTimer(left); }, 1000);
+			}
+		}
+		submitTimer(5);
+	</script>
+	<span class="pull-right">* Required</span>
+</form>
