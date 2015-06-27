@@ -1,4 +1,6 @@
-﻿{% macro toolbar(path, newTab=true, showEdit=true) %}
+﻿{% from 'macros.html' import flash %}
+
+{% macro toolbar(path, newTab=true, showEdit=true) %}
 	<div class="btn-group">
 		<a target="_blank" href="{{ path }}" class="btn btn-success" title="View Page">
 			<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
@@ -28,7 +30,7 @@
 {% endmacro %}
 
 {% macro toolbar_list_function(parentTag='tr', contentId='content') %}
-	{{ create_flash(contentId) }}
+	{{ flash(contentId) }}
 	<script>
 		//Gets the path from an object in the parent
 		function getPath(object) {
@@ -103,17 +105,6 @@
 						}
 					});
 			}
-		}
-	</script>
-{% endmacro %}
-
-{% macro create_flash(id='content') %}
-	<script>
-		function flash(message, type) {
-			if (type == undefined) {
-				type = 'info';
-			}
-			$('#content').eq(0).before('<div class="alert alert-'+type+'">'+message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
 		}
 	</script>
 {% endmacro %}

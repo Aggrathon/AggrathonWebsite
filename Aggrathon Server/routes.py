@@ -146,7 +146,10 @@ def project(project):
 ### contact ###
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
-	flash("Contact missing bot-security and backend", "danger")
+	if request.method == 'POST':
+		flash('Message recieved, but not processed (unimplemented)', 'danger')
+	else:
+		flash("Contact missing bot-security and backend", "danger")
 	return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
 
 

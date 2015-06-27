@@ -1,0 +1,13 @@
+﻿{% macro flash(id='content') %}
+	{% if not macro_flash %}
+		{% set macro_flash = true %}
+		<script>
+			function flash(message, type) {
+				if (type == undefined) {
+					type = 'info';
+				}
+				$('#content').eq(0).before('<div class="alert alert-'+type+'">'+message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+			}
+		</script>
+	{% endif %}
+{% endmacro %}

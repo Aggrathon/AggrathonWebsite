@@ -1,4 +1,6 @@
-﻿<form>
+﻿{% from 'macros.html' import flash %}
+{{ flash() }}
+<form method="post" id="contact">
 	<div class="form-group">
 		<label for="email">Email address *</label>
 		<input type="email" class="form-control" id="email" placeholder="Email" name="email" />
@@ -16,21 +18,60 @@
 		<textarea class="form-control" id="message" placeholder="Message" name="message"></textarea>
 	</div>
 	<div class="panel">Insert Captcha here</div>
-	<button class="btn btn-primary btn-lg disabled" type="submit" id="submit" disabled="disabled" onclick="function () { if(this.disabled) return false; };">Send Message</button>
+	<button class="btn btn-primary btn-lg" type="submit" id="submit" disabled="disabled" onclick="submitButton(this);">Send Message</button>
 	<script language="JavaScript" type="text/javascript">
 		function submitTimer(left) {
 			button = $('button#submit');
 			if (left < 0) {
-				button.removeClass('disabled')
 				button.attr("disabled", false);
 				button.html("Send Message");
 			} else {
 				button.html("Wait: " + left)
+				button.attr("disabled", true);
 				left = left -1
 				setTimeout(function () { submitTimer(left); }, 1000);
 			}
 		}
 		submitTimer(5);
+		function submitButton(button) {
+			if (!button.disabled) {
+				var complete = true;
+				var subject = $('#subject');
+				if (subject.val() == '') {
+					complete = false;
+					subject.parent().addClass('has-error');
+					subject.parent().removeClass('has-success');
+				} else {
+					subject.parent().addClass('has-success');
+					subject.parent().removeClass('has-error');
+				}
+				var message = $('#message');
+				if (message.val() == '') {
+					complete = false;
+					message.parent().addClass('has-error');
+					message.parent().removeClass('has-success');
+				} else {
+					message.parent().addClass('has-success');
+					message.parent().removeClass('has-error');
+				}
+				var email = $('#email');
+				var emailval = ""+email.val();
+				if (emailval == '' && emailval.split('@').length == 2 && emailval.split('@')[1].split('.') > 1) {
+					complete = false;
+					email.parent().addClass('has-error');
+					email.parent().removeClass('has-success');
+				} else {
+					email.parent().addClass('has-success');
+					email.parent().removeClass('has-error');
+				}
+				if (complete) {
+					return true;
+				} else {
+					flash('All required fields not filled correctly', 'danger');
+					return false;
+				}
+			}
+		}
 	</script>
 	<span class="pull-right">* Required</span>
 </form>
