@@ -41,7 +41,7 @@ def setup():
 		flash("Settings updated", "success")
 		#default menu
 		if(request.values.getlist('default')):
-			model.createDefaultMenu()
+			model.create_default_menu()
 			flash("Now showing a default menu", "warning")
 		else:
 			#menu
@@ -52,11 +52,11 @@ def setup():
 			while curr < len(titles):
 				menu.append({'title': titles[curr], 'target':targets[curr]})
 				curr += 1
-			model.setMenu(menu)
+			model.set_menu(menu)
 			flash("Menu updated", "success")
 		#testdata
 		if(request.values.getlist('test')):
-			model.createTestData()
+			model.create_test_data()
 			flash("Data for testing has been created", "warning")
 	return show_admin(AdminPages.setup)
 
@@ -71,13 +71,13 @@ def pages_edit_post():
 			page = request.form['page']
 			action = request.form['action'] 
 			if(action == 'edit'):
-				return jsonify(status=model.action_page_edit(page, request.form))
+				return jsonify(status=model.page_action_edit(page, request.form))
 			if(action == 'delete'):
-				return jsonify(status=model.action_page_delete(page))
+				return jsonify(status=model.page_action_delete(page))
 			if(action == 'move'):
-				return jsonify(status=model.action_page_move(page, request.form['target']))
+				return jsonify(status=model.page_action_move(page, request.form['target']))
 			if(action == 'copy'):
-				return jsonify(status=model.action_page_copy(page, request.form['target']))
+				return jsonify(status=model.page_action_copy(page, request.form['target']))
 			raise KeyError('action not found')
 		except KeyError as e:
 			return jsonify(status=e.message)
@@ -154,7 +154,8 @@ def contact():
 			if email != '' and subject != '' and message != '':
 				if len(email.split('@')) == 2:
 					if len(email.split('@')[1].split('.')) > 1:
-						flash('Message recieved, but not processed (unimplemented)', 'danger')
+						flash('Message recieved, but not processed (unimplemented)', 'warning')
+						model.message_add(email, subject, message)
 						return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
 			return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))

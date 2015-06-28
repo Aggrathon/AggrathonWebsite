@@ -1,49 +1,23 @@
 from flask import abort
 from database import *
 
-### GETTERS ###
+### SITE ###
 
-def getMenu():
+def get_menu():
 	return Menu.query.all()
 
-def getSiteInfo():
+def get_site_info():
 	site = Site.query.first()
 	if(site is None):
 		abort(500)
-	return {'name':site.name, 'header':site.header, 'language':site.language, 'menu':getMenu()}
+	return {'name':site.name, 'header':site.header, 'language':site.language, 'menu':get_menu()}
 
-def getPage(path):
-	page = Page.query.filter_by(path=path).first()
-	if(page is None):
-		abort(404)
-	return page
-
-def getFeaturedPages():
-	pages = db.session.query(
-		Page.path.label('url'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
-		.join(FeaturedPage).filter(FeaturedPage.page_id==Page.id).join(PageBlurb).filter(PageBlurb.page_id==Page.id)\
-		.order_by(FeaturedPage.priority).all()
-	return pages
-
-def getFeaturedProjects():
-	projects = db.session.query(
-		Project.path.label('url'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
-		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.project_id==Project.id)\
-		.order_by(FeaturedProject.priority).all()
-	return projects
-
-def getStats():
+def get_stats():
 	pages = Page.query.count()
 	projects = Project.query.count()
 	return {'pages':pages, 'projects':projects}
 
-def getPageList():
-	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured')).outerjoin(FeaturedPage).all()
-
-
-### SETTERS ###
-
-def setMenu(menu):
+def set_menu(menu):
 	oldmenu = Menu.query.all()
 	curr = 0
 	while( curr < len(oldmenu) and curr < len(menu) ):
@@ -57,8 +31,21 @@ def setMenu(menu):
 		db.session.delete(oldmenu[curr])
 		curr += 1
 	db.session.commit()
+
+
+### PAGES ###
+
+def page_get(path):
+	page = Page.query.filter_by(path=path).first()
+	if(page is None):
+		abort(404)
+	return page
+
+
+def page_list():
+	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured')).outerjoin(FeaturedPage).all()
 	
-def setPage(path, title, content, featured=False, priority=0, description="", thumbnail=""):
+def page_set(path, title, content, featured=False, priority=0, description="", thumbnail=""):
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		page = Page(path, title, content)
@@ -100,9 +87,9 @@ def setPage(path, title, content, featured=False, priority=0, description="", th
 	db.session.commit()
 
 
-### ACTIONS ###
+### PAGE EDIT ACTIONS ###
 
-def action_page_edit(path, data):
+def page_action_edit(path, data):
 	try:
 		title = data['title']
 		content = data['content']
@@ -110,12 +97,12 @@ def action_page_edit(path, data):
 		priority = data['priority']
 		description = data['description']
 		thumbnail = data['thumbnail']
-		setPage(page, title, content, featured, priority, description, thumbnail)
+		page_set(page, title, content, featured, priority, description, thumbnail)
 	except KeyError as e:
 		return e.message
 	return 'success'
 
-def action_page_delete(path):
+def page_action_delete(path):
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -130,7 +117,7 @@ def action_page_delete(path):
 		db.session.commit()
 		return 'success'
 
-def action_page_move(path, newpath):
+def page_action_move(path, newpath):
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -142,7 +129,7 @@ def action_page_move(path, newpath):
 		db.session.commit()
 		return 'success'
 
-def action_page_copy(path, newpath):
+def page_action_copy(path, newpath):
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -156,30 +143,74 @@ def action_page_copy(path, newpath):
 		if(pageblurb is not None):
 			description = pageblurb.description
 			thumbnail = pageblurb.image
-		setPage(newpath, page.title, page.content, False, 0, description, thumbnail)
+		page_set(newpath, page.title, page.content, False, 0, description, thumbnail)
 		return 'success'
+
+### FEATURED ###
+
+def featured_pages():
+	pages = db.session.query(
+		Page.path.label('url'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
+		.join(FeaturedPage).filter(FeaturedPage.page_id==Page.id).join(PageBlurb).filter(PageBlurb.page_id==Page.id)\
+		.order_by(FeaturedPage.priority).all()
+	return pages
+
+def featured_projects():
+	projects = db.session.query(
+		Project.path.label('url'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
+		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.project_id==Project.id)\
+		.order_by(FeaturedProject.priority).all()
+	return projects
+
+
+### PROJECT EDIT ACTIONS ###
+
+
+### MESSAGES ###
+
+def message_add(email, subject, message):
+	l_email = email.lower()
+	l_subject = subject.lower()
+	l_message = message.lower()
+	for black in MessageBlacklist.query.all():
+		if l_email.find(black.text) != -1:
+			return
+		if l_subject.find(black.text) != -1:
+			return
+		if l_message.find(black.text) != -1:
+			return
+	mess = Message(email, subject, message)
+	unr = MessageUnread(mess)
+	db.session.add(mess)
+	db.session.add(unr)
+	db.session.commit()
+	#Check for numbers of messages and send optional email
+
+def message_unread(id):
+	mess = Message.query.filter_by(message_id = id)
+	if mess is not None:
+		db.session.add(MessageUnread(mess))
+		db.session.commit()
 
 
 ### TESTDATA ###
 
-def createTestData():
-	page = Page("/pages/test/", "Test Page 1", "[insert content here]")
-	db.session.add(page)
-	db.session.add(Page("/pages/test2/", "Test Page 2", "[insert content here]"))
-	db.session.add(Page("/pages/test3/", "Test Page 3", "[insert content here]"))
-	db.session.add(FeaturedPage(page, 10))
-	db.session.add(PageBlurb(page, "Description for test page 1", "/static/background.jpg"))
+def create_test_data():
+	page_set("/pages/test/", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg")
+	page_set("/pages/test2/", "Test Page 2", "[insert content here]")
+	page_set("/pages/test3/", "Test Page 3", "[insert content here]")
 	
 	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
 	db.session.add(FeaturedProject(proj, 10))
 	db.session.add(ProjectBlurb(proj, "Test Project 1 description here", ""))
-
 	db.session.commit();
 
-def createDefaultMenu():
+	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
+
+def create_default_menu():
 	menu = [{'title':"Home", 'target':"/"},
 		 {'title':"Pages", 'target':"/pages/"},
 		 {'title':"Projects", 'target':"/projects/"},
 		 {'title':"Contact", 'target':"/contact/"},
 		 {'title':"Admin", 'target':"/admin/"}]
-	setMenu(menu)
+	set_menu(menu)

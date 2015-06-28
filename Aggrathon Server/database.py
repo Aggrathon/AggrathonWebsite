@@ -131,6 +131,38 @@ class FeaturedProject(db.Model):
 	def __repr__(self):
 		return '<Featured: Project %r>' %self.project.title
 
+class MessageBlacklist(db.Model):
+	text = db.Column(db.Text, primary_key=True)
+	def __init__(self, text):
+		self.text = text
+
+	def __repr__(self):
+		return '<Blacklist: %r>' %self.text
+
+class Message(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	email = db.Column(db.Text)
+	subject = db.Column(db.Text)
+	message = db.Column(db.Text)
+	
+	def __init__(self, email, subject, message):
+		self.email = email
+		self.subject = subject
+		self.message = message
+		
+	def __repr__(self):
+		return '<Message: %r from %r>' %(self.subject, self.email)
+
+class MessageUnread(db.Model):
+	message_id = db.Column(db.Integer, db.ForeignKey('message.id'), primary_key=True)
+	message = db.relationship('Message')
+
+	def __init__(self, message):
+		self.message = message
+
+	def __repr__(self):
+		return '<Unread Message: %r from %r>' %(self.message.subject, self.message.email)
+
 
 ### SETUP ####
 
@@ -155,6 +187,10 @@ def check_if_setup():
 		Project.query.first()
 		ProjectBlurb.query.first()
 		FeaturedProject.query.first()
+
+		MessageBlacklist.query.first()
+		MessageUnread.query.first()
+		Message.query.first()
 	except:
 		return False
 	return True
