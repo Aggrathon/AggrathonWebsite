@@ -147,9 +147,16 @@ def project(project):
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
 	if request.method == 'POST':
-		flash('Message recieved, but not processed (unimplemented)', 'danger')
-	else:
-		flash("Contact missing bot-security and backend", "danger")
+		if request.form['website'] == '':
+			email = request.form['email']
+			subject = request.form['subject']
+			message = request.form['message']
+			if email != '' and subject != '' and message != '':
+				if len(email.split('@')) == 2:
+					if len(email.split('@')[1].split('.')) > 1:
+						flash('Message recieved, but not processed (unimplemented)', 'danger')
+						return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
+			return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
 
 
