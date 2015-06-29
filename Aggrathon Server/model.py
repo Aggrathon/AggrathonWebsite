@@ -191,6 +191,14 @@ def message_unread(id):
 	if mess is not None:
 		db.session.add(MessageUnread(mess))
 		db.session.commit()
+		return 'success'
+	return 'Message not found'
+
+def message_unread_count():
+	return MessageUnread.query.count()
+
+def message_list(start, size):
+	return Message.query.offset(start).limit(size).all()
 
 
 ### TESTDATA ###
