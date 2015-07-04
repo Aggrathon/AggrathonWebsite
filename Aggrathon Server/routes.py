@@ -156,9 +156,9 @@ def contact():
 					if len(email.split('@')[1].split('.')) > 1:
 						flash('Message recieved, but not processed (unimplemented)', 'warning')
 						model.message_add(email, subject, message)
-						return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
-			return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html', email=email, subject=subject, message=message, check=True))
-	return render_page_standard(create_page_fromfile('Contact', 'pages/contact.html'))
+						return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))
+			return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html', email=email, subject=subject, message=message, check=True))
+	return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))
 
 
 ### misc ###

@@ -55,8 +55,9 @@
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />
+    <Content Include="templates\contact\macros.html" />
     <Content Include="templates\macros.html" />
-    <Content Include="templates\pages\contact.html" />
+    <Content Include="templates\contact\contact.html" />
     <Content Include="templates\pages\macros.html" />
     <Content Include="templates\pages\edit.html" />
     <Content Include="templates\pages\sidebar_featured.html" />
@@ -88,6 +89,7 @@
     <Folder Include="static\" />
     <Folder Include="templates\" />
     <Folder Include="templates\admin\" />
+    <Folder Include="templates\contact\" />
     <Folder Include="templates\projects\" />
     <Folder Include="templates\pages\" />
   </ItemGroup>

@@ -1,1 +1,43 @@
-﻿[message list here]
+﻿<script language="JavaScript" type="text/javascript">
+	function addToBlacklist(phrase) {
+		$.post("/admin/messages/blacklist/",
+			{ action: "ban", phrase: phrase },
+			function (data, status) {
+				if (status == "success") {
+					flash("'" + phrase + "' Banned", "success");
+				}
+			});
+	}
+</script>
+<form class="form-inline panel">
+	<span class="lead" style="vertical-align:middle">Blacklist: &nbsp;</span>
+	<label class="sr-only" for="blacklistadd">Add to Blacklist</label>
+	<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
+	<button class="btn btn-default" type="button" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</button>
+	<a class="btn btn-primary pull-right" href="/admin/messages/blacklist/">Edit Blacklist</a>
+</form>
+<form>
+	<div class="row">
+		<div class="col-xs-2">
+			<button type="button" class="btn btn-default pull-left">
+				<span class="sr-only">Previous</span>
+				<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+			</button>
+		</div>
+		<div class="col-xs-2">
+			<input type="text" class="form-control" value="0" />
+		</div>
+		<div class="col-xs-4">
+			  / 30, showing
+		</div>
+		<div class="col-xs-2">
+			<input type="text" class="form-control" value="20" />
+		</div>
+		<div class="col-xs-2">
+			<button type="button" class="btn btn-default pull-right">
+				<span class="sr-only">Next</span>
+				<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+			</button>
+		</div>
+	</div>
+</form>

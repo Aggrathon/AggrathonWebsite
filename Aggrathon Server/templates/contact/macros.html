@@ -1,0 +1,49 @@
+﻿{% from 'macros.html' import flash %}
+
+{% macro toolbar(id='id') %}
+<div class="btn-group">
+	<button type="button" class="btn btn-default" title="Mark Unread" onclick="unreadMessage({{ id }});">
+		<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+		<span class="sr-only">Mark Unread</span>
+	</button>
+	<button type="button" class="btn btn-danger" title="Delete Message" onclick="deleteMessage({{ id }});">
+		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+		<span class="sr-only">Delete Message</span>
+	</button>
+	<button type="button" class="btn btn-danger" title="Ban Sender" onclick="banSender({{ id }});">
+		<span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+		<span class="sr-only">Ban Sender</span>
+	</button>
+</div>
+{% endmacro %}
+{% macro message_functions(id_tag_start = 'message_') %}
+<script>
+	function unreadMessage(id) {
+		$.post("/admin/messages/",
+			{ id: id, action: "unread" },
+			function (data, status) {
+				if (status == "success") {
+
+				}
+			});
+	}
+	function deleteMessage(id) {
+		$.post("/admin/messages/",
+			{ id: id, action: "delete" },
+			function (data, status) {
+				if (status == "success") {
+
+				}
+			});
+	}
+	function banSender(id) {
+		$.post("/admin/messages/blacklist/",
+			{ id: id, action: "ban-email" },
+			function (data, status) {
+				if (status == "success") {
+					flash("Email Banned", "success");
+				}
+			});
+	}
+</script>
+{% endmacro %}
