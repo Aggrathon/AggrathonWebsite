@@ -9,29 +9,41 @@
 			});
 	}
 </script>
-<form class="form-inline panel">
-	<span class="lead" style="vertical-align:middle">Blacklist: &nbsp;</span>
-	<label class="sr-only" for="blacklistadd">Add to Blacklist</label>
-	<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
-	<button class="btn btn-default" type="button" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</button>
-	<a class="btn btn-primary pull-right" href="/admin/messages/blacklist/">Edit Blacklist</a>
+<form class="panel">
+	<div class="row">
+		<div class="col-xs-2">
+			<a class="btn btn-primary" href="/admin/messages/blacklist/">Edit Blacklist</a>
+		</div>
+		<div class="col-xs-10">
+			<div class="input-group">
+				<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
+				<a class="input-group-addon btn btn-default" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
+			</div>
+		</div>
+	</div>
 </form>
 <form>
-	<div class="row">
+	<div class="row" style="vertical-align:middle">
 		<div class="col-xs-2">
 			<button type="button" class="btn btn-default pull-left">
 				<span class="sr-only">Previous</span>
 				<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
 			</button>
 		</div>
-		<div class="col-xs-2">
-			<input type="text" class="form-control" value="0" />
+		<div class="col-xs-3">
+			<div class="input-group">
+				<input type="number" class="form-control" value="0" />
+				<a class="input-group-addon btn btn-default">Goto</a>
+			</div>
 		</div>
-		<div class="col-xs-4">
-			  / 30, showing
+		<div class="col-xs-2 form-control-static text-center">
+			0 - 20 / 35
 		</div>
-		<div class="col-xs-2">
-			<input type="text" class="form-control" value="20" />
+		<div class="col-xs-3">
+			<div class="input-group">
+				<input type="number" class="form-control" value="20" />
+				<a class="input-group-addon btn btn-default">Show</a>
+			</div>
 		</div>
 		<div class="col-xs-2">
 			<button type="button" class="btn btn-default pull-right">
@@ -41,3 +53,36 @@
 		</div>
 	</div>
 </form>
+<table class="table">
+	<thead>
+		<tr>
+			<td>Unread</td>
+			<td style="width:99%">Message</td>
+			<td>Sender</td>
+			<td style="min-width:140px;">Toolbar</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+			<td><strong>Subject</strong></td>
+			<td><a href="mailto:asd@asdads.sd">asd@adasdsa.sd</a></td>
+			<td>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default" title="Mark Unread" onclick="unreadMessage({{ id }});">
+						<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+						<span class="sr-only">Mark Unread</span>
+					</button>
+					<button type="button" class="btn btn-danger" title="Delete Message" onclick="deleteMessage({{ id }});">
+						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						<span class="sr-only">Delete Message</span>
+					</button>
+					<button type="button" class="btn btn-danger" title="Ban Sender" onclick="banSender({{ id }});">
+						<span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+						<span class="sr-only">Ban Sender</span>
+					</button>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
