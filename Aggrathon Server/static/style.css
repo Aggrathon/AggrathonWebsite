@@ -206,3 +206,7 @@ label {
 a:focus, a:hover {
 	color: #4090D0;
 }
+
+table.table.table-hover tbody tr:hover {
+	color: #333;
+}

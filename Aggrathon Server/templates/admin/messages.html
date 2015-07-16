@@ -1,15 +1,137 @@
 ﻿<script language="JavaScript" type="text/javascript">
+	var messages = {
+		'213':{email:'asdasd@asdasd.as', subject:'Message 1', message:'Message 1 Content', read:true},
+		'215':{email:'asdasd@asdasd.as', subject:'Message 2', message:'Message 2 Content', read:true},
+		'243':{email:'asdasd@asdasd.as', subject:'Message 3', message:'Message 3 Content', read:true},
+		'277':{email:'asdasd@asdasd.as', subject:'Message 4', message:'Message 4 Content', read:false}
+	}
+	var start = 1;
+	var amount = 20;
+	var total = 4;
+
 	function addToBlacklist(phrase) {
-		$.post("/admin/messages/blacklist/",
-			{ action: "ban", phrase: phrase },
+		$.post("/admin/messages/",
+			{ action: "ban", phrase: phrase, start: start, amount: amount },
 			function (data, status) {
 				if (status == "success") {
 					flash("'" + phrase + "' Banned", "success");
 				}
 			});
 	}
+	function banSender(messageId) {
+		addToBlacklist(messages[messageId].email);
+		deleteMessage(messageId);
+	}
+
+	function deleteMessage(messageId) {
+		$.post("/admin/messages/",
+			{ action: "delete", message: messageId, start: start, amount: amount },
+			function (data, status) {
+				if (status == "success") {
+					flash("'" + messages[messageId].subject + "' Deleted", "success");
+					updateListData(data);
+				}
+			});
+	}
+	function readMessage(messageId) {
+		if (messages[messageId].read)
+			return;
+		$.post("/admin/messages/",
+			{ action: "read", message: messageId },
+			function (data, status) {
+				if (status == "success") {
+					messages[messageId].read = true;
+					$('#messagelist').find('#message'+messageId).find('#read').html('\n\t\t<button class="btn btn-default" type="button" title="Mark Unread"'
+							+ ' onclick="unreadMessage(' + messageId + ');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="sr-only">Read</span></button>');
+				}
+			});
+	}
+	function unreadMessage(messageId) {
+		if (messages[messageId].read == false)
+			return;
+		$.post("/admin/messages/", { action: "unread", message: messageId },
+			function (data, status) {
+				if (status == "success") {
+					messages[messageId].read = false;
+					$('#messagelist').children('#message' + messageId).children('#read').html('\n\t\t<button class="btn btn-default" type="button" title="Mark Read"'
+							+ ' onclick="readMessage(' + messageId + ');"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Unread</span></button>');
+				}
+			});
+	}
+
+	function getMessages(start, amount) {
+		$.post("/admin/messages/",
+			{ action: "get", start: start, amount: amount },
+			function (data, status) {
+				if (status == "success") {
+					updateListData(data);
+				}
+			});
+	}
+	function setMessageStart() {
+		getMessages($('#liststart').val(), amount);
+	}
+	function setMessageAmount() {
+		getMessages(start, $('#listamount').val());
+	}
+	function previousMessages() {
+		if (start == 1)
+			return;
+		getMessages(Math.min(1, start - amount), amount);
+	}
+	function nextMessages() {
+		getMessages(start + amount, amount);
+	}
+
+	function toggleMessage(messageId) {
+		$('#messagelist').children('#message' + messageId).children('#message').children('div').slideToggle();
+		readMessage(messageId);
+	}
+
+	function renderList() {
+		$('#messagelist').html('');
+		for (var key in messages) {
+			if (messages.hasOwnProperty(key)) {
+				var message = messages[key];
+				//Here the row is constructed
+				var lo = '<tr id="message'+key+'">\n\t<td id="read">';
+				if (message.read) {
+					lo += '\n\t\t<button class="btn btn-default" type="button" title="Mark Unread" onclick="unreadMessage('+key+');">'
+						+ '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="sr-only">Read</span></button>';
+				} else {
+					lo += '\n\t\t<button class="btn btn-default" type="button" title="Mark Read" onclick="readMessage(' + key + ');">'
+						+ '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Unread</span></button>';
+				}
+				lo += '\n\t</td>\n\t<td id="message" onclick="toggleMessage('+key+');">\n\t\t<strong>'+message.subject+'</strong><div hidden>'+message.message+'</div\n\t</td>';
+				lo += '\n\t<td><a href="mailto:'+message.email+'">'+message.email+'</a></td>';
+				lo += '\n\t<td colspan="2"><div class=" btn-group">'
+					+ '\n\t\t<button class="btn btn-danger" type="button" title="Ban Sender" onclick="banSender(' + key + ');">'
+					+ '<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span><span class="sr-only">Ban Sender</span>'
+					+ '</button>';
+				lo += '\n\t\t<button type="button" class="btn btn-danger" title="Delete Message" onclick="deleteMessage('+key+');">'
+					+ '<span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="sr-only">Delete Message</span>'
+					+ '</button>';
+				lo += '\n\t</div></td>\n</tr>\n';
+				$('#messagelist').append(lo);
+				$('#messageliststats').html(start + ' - ' + Math.min(amount + start, total) + ' / ' + total);
+				$('#liststart').val(start);
+				$('#listamount').val(amount);
+			}
+		}
+	}
+	function updateList(newlist, newstart, newamount, newtotal) {
+		start = newstart;
+		amount = newamount;
+		total = newtotal;
+		messages = newlist;
+		renderList();
+	}
+	function updateListData(data) {
+		updateList(data.list, data.start, data.amount, data.total);
+	}
 </script>
-<form class="panel">
+
+<form class="panel" id="blacklist">
 	<div class="row">
 		<div class="col-xs-2">
 			<a class="btn btn-primary" href="/admin/messages/blacklist/">Edit Blacklist</a>
@@ -22,39 +144,39 @@
 		</div>
 	</div>
 </form>
-<form>
+<form id="controls">
 	<div class="row" style="vertical-align:middle">
 		<div class="col-sm-2 col-xs-1">
-			<button type="button" class="btn btn-default pull-left">
+			<button type="button" class="btn btn-default pull-left" onclick="previousMessages();">
 				<span class="sr-only">Previous</span>
 				<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
 			</button>
 		</div>
 		<div class="col-sm-3 col-xs-4">
 			<div class="input-group">
-				<input type="number" class="form-control" value="0" />
-				<a class="input-group-addon btn btn-default">Goto</a>
+				<input type="number" class="form-control" value="0" id="liststart" />
+				<button type="button" class="input-group-addon btn btn-default" onclick="setMessageStart();">Goto</button>
 			</div>
 		</div>
-		<div class="col-sm-2 col-xs-2 form-control-static text-center" style="white-space:nowrap;">
+		<div class="col-sm-2 col-xs-2 form-control-static text-center" id="messageliststats" style="white-space:nowrap;">
 			0 - 20 / 35
 		</div>
 		<div class="col-sm-3 col-xs-4">
 			<div class="input-group">
-				<input type="number" class="form-control" value="20" />
-				<a class="input-group-addon btn btn-default">Show</a>
+				<input type="number" class="form-control" value="20" id="listamount" />
+				<button type="button" class="input-group-addon btn btn-default" onclick="setMessageAmount();">Show</button>
 			</div>
 		</div>
 		<div class="col-sm-2 col-xs-1">
-			<button type="button" class="btn btn-default pull-right">
+			<button type="button" class="btn btn-default pull-right" onclick="nextMessages();">
 				<span class="sr-only">Next</span>
 				<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
 			</button>
 		</div>
 	</div>
 </form>
-<div class="table-responsive">
-	<table class="table">
+<div class="table-responsive" id="messagetable">
+	<table class="table table-hover">
 		<thead>
 			<tr>
 				<td>Unread</td>
@@ -64,57 +186,13 @@
 				<td>Delete</td>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="messagelist">
 			<tr>
-				<td>
-					<button class="btn btn-default" type="button" title="Mark Read">
-						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-						<span class="sr-only">Unread</span>
-					</button>
-				</td>
-				<td onclick="$(this).find('div').slideToggle();">
-					<strong>Subject</strong>
-					<div hidden>
-						This is the real message
-						Blas dlas dklas kdask llösadk öakasd klaskas asdl köasd kl skl
-					</div>
-				</td>
-				<td><a href="mailto:asdas@asdasd.as">asd@adasdsa.sd</a></td>
-				<td colspan="2">
-					<div class=" btn-group">
-						<button class="btn btn-danger" type="button" title="Ban Sender">
-							<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-							<span class="sr-only">Ban Sender</span>
-						</button>
-						<button type="button" class="btn btn-danger" title="Delete Message" onclick="deleteMessage({{ id }});">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-							<span class="sr-only">Delete Message</span>
-						</button>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<button class="btn btn-default" type="button" title="Mark Unread">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<span class="sr-only">Read</span>
-					</button>
-				</td>
-				<td><strong>Subject</strong></td>
-				<td><a href="mailto:asd@asdads.sd">asd@adasdsa.sd</a></td>
-				<td colspan="2">
-					<div class=" btn-group">
-						<button class="btn btn-danger" type="button" title="Ban Sender">
-							<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-							<span class="sr-only">Ban Sender</span>
-						</button>
-						<button type="button" class="btn btn-danger" title="Delete Message" onclick="deleteMessage({{ id }});">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-							<span class="sr-only">Delete Message</span>
-						</button>
-					</div>
-				</td>
+				<td colspan="5">Loading Messages</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
+<script>
+	renderList();
+</script>

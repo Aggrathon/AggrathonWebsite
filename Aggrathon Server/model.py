@@ -186,20 +186,53 @@ def message_add(email, subject, message):
 	db.session.commit()
 	#Check for numbers of messages and send optional email
 
-def message_unread(id):
-	mess = Message.query.filter_by(message_id = id)
+def message_unread_count():
+	return MessageUnread.query.count()
+
+def message_list(start, size):
+	messages = Message.query.offset(start).limit(size).all()
+	list
+	for mess in messages:
+		list[mess.id] = {'email':mess.email, 'subject':mess.subject, 'message':mess.message}
+	return list
+
+### MESSAGES ACTIONS ###
+
+def message_action_unread(id):
+	mess = Message.query.get(id)
 	if mess is not None:
 		db.session.add(MessageUnread(mess))
 		db.session.commit()
 		return 'success'
 	return 'Message not found'
 
-def message_unread_count():
-	return MessageUnread.query.count()
+def message_action_read(id):
+	unr = MessageUnread.query.get(id)
+	if unr is not None:
+		db.session.delete(unr)
+		db.session.commit()
+	return 'success'
 
-def message_list(start, size):
-	return Message.query.offset(start).limit(size).all()
+def message_action_delete(id):
+	mess = Message.query.get(id)
+	if mess is not None:
+		unr = MessageUnread.query.get(id)
+		if unr is not None:
+			db.session.delete(unr)
+		db.session.delete(mess)
+		db.session.commit()
+		return 'success'
+	return 'Message not found'
 
+def message_action_ban(phrase):
+	mb = MessageBlacklist(phrase)
+	db.session.add(mb)
+	db.session.commit()
+	return 'success'
+
+def message_json_response(start=0, amount=20, **kwargs):
+	list = message_list(start, amount)
+	return jsonify(list=list, start=start, amount=amount, total=len(list), unread=message_unread_count(), **kwargs);
 
 ### TESTDATA ###
 

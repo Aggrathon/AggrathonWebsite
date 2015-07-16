@@ -93,7 +93,15 @@ def files():
 
 @app.route('/admin/messages/', methods=['GET', 'POST'])
 def messages():
-	return show_admin(AdminPages.messages)
+	if request.method == 'POST':
+		try:
+			action = request.form['action']
+			if action == 'ban':
+				return model.message_json_response(request.form['start'], request.form['amount'], result=model.message_action_ban(request.form['phrase']))
+		except KeyError as e:
+			return jsonify(status=e.message)
+	else:
+		return show_admin(AdminPages.messages)
 
 @app.route('/admin/pages/create/', methods=['GET', 'POST'])
 def edit_page(path=''):
