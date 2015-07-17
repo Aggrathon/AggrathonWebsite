@@ -189,20 +189,28 @@ def message_add(email, subject, message):
 def message_unread_count():
 	return MessageUnread.query.count()
 
-def message_list(start, size):
-	messages = Message.query.offset(start).limit(size).all()
-	list
-	for mess in messages:
-		list[mess.id] = {'email':mess.email, 'subject':mess.subject, 'message':mess.message}
-	return list
+def message_total_count():
+	return Message.query.count()
+
+def message_list(start, amount):
+	total = message_total_count()
+	if start >= total:
+		start = total - amount
+	if start < 0:
+		start = 0
+	list = db.session.query(
+		Message.id.label('id'), Message.email.label('email'), Message.subject.label('subject'), Message.message.label('message'),
+		MessageUnread.message_id.label('unread')).outerjoin(MessageUnread).offset(start).limit(amount).all()
+	return {'messages':list, 'start':start, 'amount':amount, 'total':total}
 
 ### MESSAGES ACTIONS ###
 
 def message_action_unread(id):
 	mess = Message.query.get(id)
 	if mess is not None:
-		db.session.add(MessageUnread(mess))
-		db.session.commit()
+		if MessageUnread.query.get(id) is None:
+			db.session.add(MessageUnread(mess))
+			db.session.commit()
 		return 'success'
 	return 'Message not found'
 
@@ -229,10 +237,6 @@ def message_action_ban(phrase):
 	db.session.add(mb)
 	db.session.commit()
 	return 'success'
-
-def message_json_response(start=0, amount=20, **kwargs):
-	list = message_list(start, amount)
-	return jsonify(list=list, start=start, amount=amount, total=len(list), unread=message_unread_count(), **kwargs);
 
 ### TESTDATA ###
 

@@ -96,12 +96,19 @@ def messages():
 	if request.method == 'POST':
 		try:
 			action = request.form['action']
-			if action == 'ban':
-				return model.message_json_response(request.form['start'], request.form['amount'], result=model.message_action_ban(request.form['phrase']))
+			if action == 'read':
+				return jsonify(result=model.message_action_read(request.form['message']))
+			if action == 'unread':
+				return jsonify(result=model.message_action_unread(request.form['message']))
+			elif action == 'delete':
+				return jsonify(result=model.message_action_delete(request.form['message']))
+			elif action == 'ban':
+				return jsonify(result=model.message_action_ban(request.form['phrase']))
 		except KeyError as e:
 			return jsonify(status=e.message)
 	else:
 		return show_admin(AdminPages.messages)
+
 
 @app.route('/admin/pages/create/', methods=['GET', 'POST'])
 def edit_page(path=''):
