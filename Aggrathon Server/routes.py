@@ -102,12 +102,27 @@ def messages():
 				return jsonify(result=model.message_action_unread(request.form['message']))
 			elif action == 'delete':
 				return jsonify(result=model.message_action_delete(request.form['message']))
-			elif action == 'ban':
-				return jsonify(result=model.message_action_ban(request.form['phrase']))
 		except KeyError as e:
 			return jsonify(status=e.message)
 	else:
 		return show_admin(AdminPages.messages)
+
+@app.route('/admin/messages/blacklist/', methods=['GET', 'POST'])
+def blacklist():
+	if request.method == 'POST':
+		try:
+			action = request.form['action']
+			if action == 'ban':
+				return jsonify(result=model.message_action_ban(request.form['phrase']))
+			elif action == 'unban':
+				return jsonify(result=model.message_action_unban(request.form['phrase']))
+			elif action == 'checkall':
+				return jsonify(result=model.message_action_recheck_all())
+		except KeyError as e:
+			return jsonify(status=e.message)
+		return jsonify(result='Not Implemented')
+	else:
+		return show_admin(AdminPages.blacklist)
 
 
 @app.route('/admin/pages/create/', methods=['GET', 'POST'])

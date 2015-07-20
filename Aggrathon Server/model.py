@@ -197,6 +197,9 @@ def message_list(start=0, amount=20):
 		MessageUnread.message_id.label('unread'), Message.time.label('time')).outerjoin(MessageUnread).order_by(Message.id.desc()).offset(start).limit(amount).all()
 	return {'messages':list, 'start':start+1, 'amount':amount, 'total':total}
 
+def message_blacklist():
+	return MessageBlacklist.query.all();
+
 ### MESSAGES ACTIONS ###
 
 def message_action_unread(id):

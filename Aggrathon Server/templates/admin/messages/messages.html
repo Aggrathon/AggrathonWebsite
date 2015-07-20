@@ -1,7 +1,7 @@
 ﻿<script language="JavaScript" type="text/javascript">
 	function addToBlacklist(phrase) {
-		$.post("/admin/messages/",
-			{ action: "ban", phrase: phrase, start: start, amount: amount },
+		$.post("/admin/messages/blacklist/",
+			{ action: "ban", phrase: phrase },
 			function (data, status) {
 				if (status == "success") {
 					flash("'" + phrase + "' Banned", "success");
