@@ -16,4 +16,4 @@ SECRET_KEY = 'development key'
 # Examples: 
 #    mysql://user:pass@localhost/mydatabase
 #    sqlite:////absolute/path/to/foo.db
-SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"		#
+SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"

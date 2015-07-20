@@ -1,6 +1,7 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from app import app
 from database import *
+import datetime
 
 db = SQLAlchemy(app)
 
@@ -20,6 +21,10 @@ db = SQLAlchemy(app)
 	FeaturedProject(project_id, priority)
 
 	MORE PROJECT STUFF COMING
+
+	Message(id, email, subject, message, time)
+	MessageUnread(message_id)
+	MessageBlacklist(text)
 """
 
 class Site(db.Model):
@@ -131,14 +136,6 @@ class FeaturedProject(db.Model):
 	def __repr__(self):
 		return '<Featured: Project %r>' %self.project.title
 
-class MessageBlacklist(db.Model):
-	text = db.Column(db.Text, primary_key=True)
-	def __init__(self, text):
-		self.text = text
-
-	def __repr__(self):
-		return '<Blacklist: %r>' %self.text
-
 class Message(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.Text)
@@ -156,12 +153,30 @@ class Message(db.Model):
 class MessageUnread(db.Model):
 	message_id = db.Column(db.Integer, db.ForeignKey('message.id'), primary_key=True)
 	message = db.relationship('Message')
+	time = db.Column(db.DateTime)
 
 	def __init__(self, message):
 		self.message = message
-
+		time = datetime.datetime.today()
+	
 	def __repr__(self):
 		return '<Unread Message: %r from %r>' %(self.message.subject, self.message.email)
+
+class MessageBlacklist(db.Model):
+	text = db.Column(db.Text, primary_key=True)
+
+	def __init__(self, text):
+		self.text = text.casefold()
+
+	def check_message(message):
+		message = message.casefold()
+		for phrase in MessageBlacklist.query.all():
+			if message.find(phrase.text) != 0:
+				return False
+		return True
+
+	def __repr__(self):
+		return '<Blacklisted Phrase: %r>' %self.text
 
 
 ### SETUP ####
@@ -191,6 +206,8 @@ def check_if_setup():
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()
 		Message.query.first()
+
+		Blacklist.query.first()
 	except:
 		return False
 	return True

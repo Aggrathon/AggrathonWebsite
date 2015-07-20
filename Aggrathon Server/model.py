@@ -169,22 +169,14 @@ def featured_projects():
 ### MESSAGES ###
 
 def message_add(email, subject, message):
-	l_email = email.lower()
-	l_subject = subject.lower()
-	l_message = message.lower()
-	for black in MessageBlacklist.query.all():
-		if l_email.find(black.text) != -1:
-			return
-		if l_subject.find(black.text) != -1:
-			return
-		if l_message.find(black.text) != -1:
-			return
-	mess = Message(email, subject, message)
-	unr = MessageUnread(mess)
-	db.session.add(mess)
-	db.session.add(unr)
-	db.session.commit()
-	#Check for numbers of messages and send optional email
+	if MessageBlacklist.check_message(email):
+		if MessageBlacklist.check_message(subject):
+			if MessageBlacklist.check_message(message):
+				mess = Message(email, subject, message)
+				unr = MessageUnread(mess)
+				db.session.add(mess)
+				db.session.add(unr)
+				db.session.commit()
 
 def message_unread_count():
 	return MessageUnread.query.count()
@@ -192,7 +184,7 @@ def message_unread_count():
 def message_total_count():
 	return Message.query.count()
 
-def message_list(start, amount):
+def message_list(start=0, amount=20, sort_by='id'):
 	total = message_total_count()
 	if start >= total:
 		start = total - amount
@@ -233,10 +225,45 @@ def message_action_delete(id):
 	return 'Message not found'
 
 def message_action_ban(phrase):
+	if not MessageBlacklist.check_message(phrase):
+		return "Phrase already banned"
 	mb = MessageBlacklist(phrase)
 	db.session.add(mb)
 	db.session.commit()
 	return 'success'
+
+def message_action_unban(phrase):
+	mb = MessageBlacklist.query.get(phrase.casefold())
+	if mb is not None:
+		db.session.delete(mb)
+		db.session.commit()
+		return 'success'
+	return 'Phrase not found'
+
+def message_action_recheck_all():
+	removed = 0
+	messages = Message.query.all()
+	bl = MessageBlacklist.query.all()
+	for mess in messages:
+		email = mess.email.casefold()
+		subject = mess.subject.casefold()
+		message = mess.message.casefold()
+		for b in bl:
+			if email.find(b.text) != -1:
+				message_action_delete(mess.id)
+				removed += 1
+				break
+			if subject.find(b.text) != -1:
+				message_action_delete(mess.id)
+				removed += 1
+				break
+			if message.find(b.text) != -1:
+				message_action_delete(mess.id)
+				removed += 1
+				break
+	if removed is 1:
+		return '1 Message deleted'
+	return removed+' Messages deleted'
 
 ### TESTDATA ###
 
@@ -259,3 +286,8 @@ def create_default_menu():
 		 {'title':"Contact", 'target':"/contact/"},
 		 {'title':"Admin", 'target':"/admin/"}]
 	set_menu(menu)
+
+def create_debug_content():
+	reset_db()
+	create_default_menu()
+	create_test_data()
