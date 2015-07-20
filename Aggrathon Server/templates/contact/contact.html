@@ -1,21 +1,24 @@
 ﻿{% from 'macros.html' import flash %}
 {{ flash() }}
 <form method="post" id="contact" name="contact">
-	<div class="form-group">
+	<div class="form-group has-feedback">
 		<label for="email" class="control-label">Email address *</label>
-		<input type="email" class="form-control" id="email" placeholder="Email" name="email" {% if content.data.email %}value="{{ content.data.email }}"{% endif %} />
+		<input type="email" class="form-control" id="email" placeholder="Email" name="email" onchange="checkEmail();" {% if content.data.email %}value="{{ content.data.email }}"{% endif %} />
+		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="form-group hidden">
 		<label for="website" class="control-label">Website</label>
 		<input type="url" class="form-control" id="website" placeholder="Leave this empty (This field finds bots)" name="website" />
 	</div>
-	<div class="form-group">
+	<div class="form-group has-feedback">
 		<label for="subject" class="control-label">Subject *</label>
-		<input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" {% if content.data.subject %}value="{{ content.data.subject }}" {% endif %} />
+		<input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" onchange="checkSubject();" {% if content.data.subject %}value="{{ content.data.subject }}" {% endif %} />
+		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
-	<div class="form-group">
+	<div class="form-group has-feedback">
 		<label for="message" class="control-label">Message *</label>
-		<textarea class="form-control" id="message" placeholder="Message" name="message"> {% if content.data.message %}{{ content.data.message }}{% endif %}</textarea>
+		<textarea class="form-control" id="message" placeholder="Message" name="message" rows="5" onchange="checkMessage();"> {% if content.data.message %}{{ content.data.message }}{% endif %}</textarea>
+		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="panel">Insert Captcha here</div>
 	<button class="btn btn-primary btn-lg" type="submit" id="submitButton" disabled="disabled" onclick="submitButton(this);">Send Message</button>
@@ -34,45 +37,72 @@
 			}
 		}
 		submitTimer(5);
+
+		function setFieldComplete(field) {
+			field.parent().addClass('has-success');
+			field.parent().removeClass('has-error');
+			field.parent().find('.glyphicon').addClass('glyphicon-ok');
+		}
+		function setFieldError(field) {
+			field.parent().addClass('has-error');
+			field.parent().removeClass('has-success');
+			field.parent().find('.glyphicon').addClass('glyphicon-remove');
+		}
+
+		function checkEmail() {
+			var email = $('#email');
+			var val = email.val();
+			var split = val.split('@');
+			if (val != '' && split.length == 2 && split[1].split('.').length > 1) {
+				setFieldComplete(email);
+				return true;
+			} else {
+				setFieldError(email);
+				return false;
+			}
+		}
+		function checkSubject() {
+			var subject = $('#subject');
+			var val = subject.val();
+			if (val == '' || val == ' ') {
+				setFieldError(subject);
+				return false;
+			} else {
+				setFieldComplete(subject);
+				return true;
+			}
+		}
+		function checkMessage() {
+			var message = $('#message');
+			var val = message.html();
+			if (val == '' || val == ' ') {
+				setFieldError(message);
+				return false;
+			} else {
+				setFieldComplete(message);
+				return true;
+			}
+		}
+
 		function submitButton(button) {
 			if (!button.disabled) {
 				var complete = true;
-				var subject = $('#subject');
-				if (subject.val() == '') {
+
+				if(!checkEmail())
 					complete = false;
-					subject.parent().addClass('has-error');
-					subject.parent().removeClass('has-success');
-				} else {
-					subject.parent().addClass('has-success');
-					subject.parent().removeClass('has-error');
-				}
-				var message = $('#message');
-				if (message.val() == '') {
+				if(!checkSubject())
 					complete = false;
-					message.parent().addClass('has-error');
-					message.parent().removeClass('has-success');
-				} else {
-					message.parent().addClass('has-success');
-					message.parent().removeClass('has-error');
-				}
-				var email = $('#email');
-				var emailval = ""+email.val();
-				if (emailval != '' && emailval.split('@').length == 2 && emailval.split('@')[1].split('.') > 1) {
-					email.parent().addClass('has-success');
-					email.parent().removeClass('has-error');
-				} else {
+				if(!checkMessage())
 					complete = false;
-					email.parent().addClass('has-error');
-					email.parent().removeClass('has-success');
-				}
+
 				if (complete) {
 					return true;
 				} else {
 					flash('All required fields not filled correctly', 'danger');
 					submitTimer(3);
-					return false;
 				}
 			}
+			return false;
 		}
 		{% if content.data.check %}submitButton({disabled:false});{% endif %}
 	</script>

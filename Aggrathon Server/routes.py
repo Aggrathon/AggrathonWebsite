@@ -170,7 +170,7 @@ def contact():
 				if len(email.split('@')) == 2:
 					if len(email.split('@')[1].split('.')) > 1:
 						model.message_add(email, subject, message)
-						flash('Message recieved', 'success')
+						flash('Message sent', 'success')
 						return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))
 			return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))

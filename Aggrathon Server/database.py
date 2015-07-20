@@ -141,11 +141,13 @@ class Message(db.Model):
 	email = db.Column(db.Text)
 	subject = db.Column(db.Text)
 	message = db.Column(db.Text)
+	time = db.Column(db.DateTime)
 	
 	def __init__(self, email, subject, message):
 		self.email = email
 		self.subject = subject
 		self.message = message
+		self.time = datetime.datetime.today()
 		
 	def __repr__(self):
 		return '<Message: %r from %r>' %(self.subject, self.email)
@@ -153,11 +155,9 @@ class Message(db.Model):
 class MessageUnread(db.Model):
 	message_id = db.Column(db.Integer, db.ForeignKey('message.id'), primary_key=True)
 	message = db.relationship('Message')
-	time = db.Column(db.DateTime)
 
 	def __init__(self, message):
 		self.message = message
-		time = datetime.datetime.today()
 	
 	def __repr__(self):
 		return '<Unread Message: %r from %r>' %(self.message.subject, self.message.email)
@@ -206,8 +206,6 @@ def check_if_setup():
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()
 		Message.query.first()
-
-		Blacklist.query.first()
 	except:
 		return False
 	return True

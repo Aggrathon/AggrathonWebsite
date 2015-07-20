@@ -63,7 +63,12 @@
 	}
 
 	function toggleMessage(messageId) {
-		$('#messagelist').children('#message' + messageId).children('#message').children('div').slideToggle();
+		var message = $('#messagelist').children('#message' + messageId);
+		message.children('#message').children('div').slideToggle();
+		message.children('#email').children('#time').slideToggle();
+		if ( message.children('#read').find('.glyphicon-ok').length > 0 ) {
+			readMessage(messageId);
+		}
 	}
 </script>
 
@@ -140,8 +145,9 @@
 						<strong>{{ mess.subject }}</strong>
 						<div hidden>{{ mess.message }}</div>
 					</td>
-					<td>
+					<td id="email">
 						<a href="mailto:{{ mess.email }}">{{ mess.email }}</a>
+						<div hidden id="time">{{ mess.time.year }}.{{ mess.time.month }}.{{ mess.time.day }} {{ mess.time.hour }}:{{ mess.time.minute }}</div>
 					</td>
 					<td colspan="2">
 						<div class=" btn-group">

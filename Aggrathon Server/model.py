@@ -177,6 +177,8 @@ def message_add(email, subject, message):
 				db.session.add(mess)
 				db.session.add(unr)
 				db.session.commit()
+				return 'success'
+	return 'blocked'
 
 def message_unread_count():
 	return MessageUnread.query.count()
@@ -184,7 +186,7 @@ def message_unread_count():
 def message_total_count():
 	return Message.query.count()
 
-def message_list(start=0, amount=20, sort_by='id'):
+def message_list(start=0, amount=20):
 	total = message_total_count()
 	if start >= total:
 		start = total - amount
@@ -192,8 +194,8 @@ def message_list(start=0, amount=20, sort_by='id'):
 		start = 0
 	list = db.session.query(
 		Message.id.label('id'), Message.email.label('email'), Message.subject.label('subject'), Message.message.label('message'),
-		MessageUnread.message_id.label('unread')).outerjoin(MessageUnread).offset(start).limit(amount).all()
-	return {'messages':list, 'start':start, 'amount':amount, 'total':total}
+		MessageUnread.message_id.label('unread'), Message.time.label('time')).outerjoin(MessageUnread).order_by(Message.id.desc()).offset(start).limit(amount).all()
+	return {'messages':list, 'start':start+1, 'amount':amount, 'total':total}
 
 ### MESSAGES ACTIONS ###
 
@@ -225,12 +227,12 @@ def message_action_delete(id):
 	return 'Message not found'
 
 def message_action_ban(phrase):
-	if not MessageBlacklist.check_message(phrase):
-		return "Phrase already banned"
-	mb = MessageBlacklist(phrase)
-	db.session.add(mb)
-	db.session.commit()
-	return 'success'
+	mb = MessageBlacklist.query.get(phrase.casefold())
+	if mb is None:
+		db.session.add(MessageBlacklist(phrase))
+		db.session.commit()
+		return 'success'
+	return "Phrase already banned"
 
 def message_action_unban(phrase):
 	mb = MessageBlacklist.query.get(phrase.casefold())
