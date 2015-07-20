@@ -48,29 +48,28 @@
     <Content Include="static\background.jpg" />
     <Content Include="static\style.css" />
     <Content Include="templates\admin\files.html" />
-    <Content Include="templates\admin\pages.html" />
-    <Content Include="templates\admin\messages.html" />
-    <Content Include="templates\admin\projects.html" />
+    <Content Include="templates\admin\pages\pages.html" />
+    <Content Include="templates\admin\messages\messages.html" />
+    <Content Include="templates\admin\projects\projects.html" />
     <Content Include="templates\admin\overview.html" />
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />
-    <Content Include="templates\contact\macros.html" />
     <Content Include="templates\macros.html" />
-    <Content Include="templates\contact\contact.html" />
-    <Content Include="templates\pages\macros.html" />
-    <Content Include="templates\pages\edit.html" />
-    <Content Include="templates\pages\sidebar_featured.html" />
-    <Content Include="templates\layout.html" />
-    <Content Include="templates\pages\pages.html" />
-    <Content Include="templates\projects\edit.html" />
-    <Content Include="templates\projects\edit_toolbar.html" />
-    <Content Include="templates\projects\project.html" />
-    <Content Include="templates\projects\projects.html" />
-    <Content Include="templates\projects\sidebar.html" />
-    <Content Include="templates\sidebar.html" />
-    <Content Include="templates\header.html" />
-    <Content Include="templates\content.html" />
+    <Content Include="templates\frontend\contact.html" />
+    <Content Include="templates\admin\pages\macros.html" />
+    <Content Include="templates\admin\pages\edit.html" />
+    <Content Include="templates\frontend\sidebar_featured.html" />
+    <Content Include="templates\layout\layout.html" />
+    <Content Include="templates\frontend\pages.html" />
+    <Content Include="templates\admin\projects\edit.html" />
+    <Content Include="templates\admin\projects\toolbar.html" />
+    <Content Include="templates\frontend\projects\project.html" />
+    <Content Include="templates\frontend\projects\projects.html" />
+    <Content Include="templates\frontend\projects\sidebar.html" />
+    <Content Include="templates\layout\sidebar.html" />
+    <Content Include="templates\layout\header.html" />
+    <Content Include="templates\layout\content.html" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -89,9 +88,12 @@
     <Folder Include="static\" />
     <Folder Include="templates\" />
     <Folder Include="templates\admin\" />
-    <Folder Include="templates\contact\" />
-    <Folder Include="templates\projects\" />
-    <Folder Include="templates\pages\" />
+    <Folder Include="templates\admin\messages\" />
+    <Folder Include="templates\admin\projects\" />
+    <Folder Include="templates\admin\pages\" />
+    <Folder Include="templates\layout\" />
+    <Folder Include="templates\frontend\" />
+    <Folder Include="templates\frontend\projects\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 

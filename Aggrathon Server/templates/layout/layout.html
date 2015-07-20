@@ -51,16 +51,16 @@
 
         <div class="page-header">
 			{% block header %}
-				{% include 'header.html' %}
+				{% include 'layout/header.html' %}
 			{% endblock %}
         </div>
 
 		<div class="content">
             {% block content %}
 				{% if sidebar %}
-					{% include "sidebar.html" %}
+					{% include "layout/sidebar.html" %}
 				{% else %}
-					{% include "content.html" %}
+					{% include "layout/content.html" %}
 				{% endif %}
             {% endblock %}
         </div>

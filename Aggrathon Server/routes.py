@@ -114,25 +114,25 @@ def messages():
 def edit_page(path=''):
 	if path == '':
 		flash("Page creation not implemented", "danger")
-		return render_page(create_page_fromfile('Create Page', 'pages/edit.html'))
+		return render_page(create_page_fromfile('Create Page', 'admin/pages/edit.html'))
 	else:
 		flash("Page editing not yet implemented", "warning")
-		return render_page(create_page_fromfile('Edit Page', 'pages/edit.html'))
+		return render_page(create_page_fromfile('Edit Page', 'admin/pages/edit.html'))
 
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
 def edit_project(project=''):
 	if project == '':
 		flash("Project creation not implemented", "danger")
-		return render_page(create_page_fromfile('Create Project', 'projects/edit.html'))
+		return render_page(create_page_fromfile('Create Project', 'admin/projects/edit.html'))
 	else:
 		flash("Project editing not yet implemented", "warning")
-		return render_page(create_page_fromfile('Edit Project', 'projects/edit.html'))
+		return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html'))
 
 ### pages ###
 @app.route('/pages/')
 def pages():
 	flash("Not implemented", "danger")
-	return render_page(create_page_fromfile("Pages", 'pages/pages.html'))
+	return render_page(create_page_fromfile("Pages", 'frontend/pages.html'))
 
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):
@@ -146,7 +146,7 @@ def page(path):
 @app.route('/projects/')
 def projects():
 	flash("Not implemented", "danger")
-	return render_page(create_page_fromfile("Projects", 'projects/projects.html'), create_sidebar_fromfile("projects/sidebar.html"))
+	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html'), create_sidebar_fromfile("frontend/projects/sidebar.html"))
 
 @app.route('/projects/<path:project>/edit/')
 def project_edit(project):
@@ -171,9 +171,9 @@ def contact():
 					if len(email.split('@')[1].split('.')) > 1:
 						model.message_add(email, subject, message)
 						flash('Message sent', 'success')
-						return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))
-			return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html', email=email, subject=subject, message=message, check=True))
-	return render_page_standard(create_page_fromfile('Contact', 'contact/contact.html'))
+						return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True))
+	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
 
 
 ### misc ###
