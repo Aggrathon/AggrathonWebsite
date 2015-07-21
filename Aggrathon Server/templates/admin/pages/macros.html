@@ -60,8 +60,8 @@
 			if (confirm("Delete page at '" + path + "'?")) {
 				$.post('/admin/pages/edit/',
 					{ page: path, action: "delete" },
-					function (data, status) {
-						if (status == 'success') {
+					function (data) {
+						if (data.result == 'success') {
 							$(object).closest('{{ parentTag }}').remove();
 							flash("Page at '" + path + "' deleted", "success");
 						} else {
@@ -76,8 +76,8 @@
 			if (newpath != null) {
 				$.post('/admin/pages/edit/',
 					{ page: path, action: "move", target: newpath },
-					function (data, status) {
-						if (status == 'success') {
+					function (data) {
+						if (data.result == 'success') {
 							$(object).closest('{{ parentTag }}').find('#path').html(newpath);
 							flash("Page at '" + path + "' moved to '" + newpath + "'", "success");
 						} else {
@@ -92,8 +92,8 @@
 			if (newpath != null) {
 				$.post('/admin/pages/edit/',
 					{ page: path, action: "copy", target: newpath },
-					function (data, status) {
-						if (status == 'success') {
+					function (data) {
+						if (data.result == 'success') {
 							var parent = $(object).closest('{{ parentTag }}');
 							var clone = parent.clone()
 							clone.find('#path').html(newpath);

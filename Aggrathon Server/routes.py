@@ -71,16 +71,16 @@ def pages_edit_post():
 			page = request.form['page']
 			action = request.form['action'] 
 			if(action == 'edit'):
-				return jsonify(status=model.page_action_edit(page, request.form))
+				return jsonify(result=model.page_action_edit(page, request.form))
 			if(action == 'delete'):
-				return jsonify(status=model.page_action_delete(page))
+				return jsonify(result=model.page_action_delete(page))
 			if(action == 'move'):
-				return jsonify(status=model.page_action_move(page, request.form['target']))
+				return jsonify(result=model.page_action_move(page, request.form['target']))
 			if(action == 'copy'):
-				return jsonify(status=model.page_action_copy(page, request.form['target']))
+				return jsonify(result=model.page_action_copy(page, request.form['target']))
 			raise KeyError('action not found')
 		except KeyError as e:
-			return jsonify(status=e.message)
+			return jsonify(result=e.message)
 	abort(404);
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
@@ -97,13 +97,13 @@ def messages():
 		try:
 			action = request.form['action']
 			if action == 'read':
-				return jsonify(status=model.message_action_read(request.form['message']))
+				return jsonify(result=model.message_action_read(request.form['message']))
 			if action == 'unread':
-				return jsonify(status=model.message_action_unread(request.form['message']))
+				return jsonify(result=model.message_action_unread(request.form['message']))
 			elif action == 'delete':
-				return jsonify(status=model.message_action_delete(request.form['message']))
+				return jsonify(result=model.message_action_delete(request.form['message']))
 		except KeyError as e:
-			return jsonify(status=e.message)
+			return jsonify(result=e.message)
 	else:
 		return show_admin(AdminPages.messages)
 
@@ -119,7 +119,7 @@ def blacklist():
 			elif action == 'checkall':
 				return jsonify(result=model.message_action_recheck_all())
 		except KeyError as e:
-			return jsonify(status=e.message)
+			return jsonify(result=e.message)
 		return jsonify(result='Action not recognized')
 	else:
 		return show_admin(AdminPages.blacklist)
