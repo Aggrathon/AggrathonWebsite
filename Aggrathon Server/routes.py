@@ -97,11 +97,11 @@ def messages():
 		try:
 			action = request.form['action']
 			if action == 'read':
-				return jsonify(result=model.message_action_read(request.form['message']))
+				return jsonify(status=model.message_action_read(request.form['message']))
 			if action == 'unread':
-				return jsonify(result=model.message_action_unread(request.form['message']))
+				return jsonify(status=model.message_action_unread(request.form['message']))
 			elif action == 'delete':
-				return jsonify(result=model.message_action_delete(request.form['message']))
+				return jsonify(status=model.message_action_delete(request.form['message']))
 		except KeyError as e:
 			return jsonify(status=e.message)
 	else:
@@ -120,7 +120,7 @@ def blacklist():
 				return jsonify(result=model.message_action_recheck_all())
 		except KeyError as e:
 			return jsonify(status=e.message)
-		return jsonify(result='Not Implemented')
+		return jsonify(result='Action not recognized')
 	else:
 		return show_admin(AdminPages.blacklist)
 

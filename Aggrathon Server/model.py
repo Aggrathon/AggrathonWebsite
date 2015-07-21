@@ -15,7 +15,8 @@ def get_site_info():
 def get_stats():
 	pages = Page.query.count()
 	projects = Project.query.count()
-	return {'pages':pages, 'projects':projects}
+	messages = Message.query.count()
+	return {'pages':pages, 'projects':projects, 'messages':messages}
 
 def set_menu(menu):
 	oldmenu = Menu.query.all()
@@ -268,7 +269,7 @@ def message_action_recheck_all():
 				break
 	if removed is 1:
 		return '1 Message deleted'
-	return removed+' Messages deleted'
+	return '%s Messages deleted' %removed
 
 ### TESTDATA ###
 
