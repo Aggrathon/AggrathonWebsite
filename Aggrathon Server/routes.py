@@ -64,8 +64,8 @@ def setup():
 def pages_admin():
 	return show_admin(AdminPages.pages)
 
-@app.route('/admin/pages/edit/', methods=['POST'])
-def pages_edit_post():
+@app.route('/admin/pages/edit/', methods=['GET', 'POST'])
+def pages_edit():
 	if request.method == 'POST':
 		try:
 			page = request.form['page']
@@ -81,7 +81,15 @@ def pages_edit_post():
 			raise KeyError('action not found')
 		except KeyError as e:
 			return jsonify(result=e.message)
-	abort(404);
+	else:
+		flash("Page editing not yet implemented", "warning")
+		return render_page(create_page_fromfile('Edit Page \''+request.args.get('page')+'\'', 'admin/pages/edit.html'))
+
+@app.route('/admin/pages/create/', methods=['GET', 'POST'])
+def pages_create():
+	flash("Page creation not implemented", "danger")
+	return render_page(create_page_fromfile('Create Page', 'admin/pages/edit.html'))
+
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
 def projects_admin():
@@ -123,16 +131,6 @@ def blacklist():
 		return jsonify(result='Action not recognized')
 	else:
 		return show_admin(AdminPages.blacklist)
-
-
-@app.route('/admin/pages/create/', methods=['GET', 'POST'])
-def edit_page(path=''):
-	if path == '':
-		flash("Page creation not implemented", "danger")
-		return render_page(create_page_fromfile('Create Page', 'admin/pages/edit.html'))
-	else:
-		flash("Page editing not yet implemented", "warning")
-		return render_page(create_page_fromfile('Edit Page', 'admin/pages/edit.html'))
 
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
 def edit_project(project=''):
