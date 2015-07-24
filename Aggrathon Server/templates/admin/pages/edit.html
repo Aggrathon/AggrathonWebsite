@@ -1,1 +1,14 @@
-﻿[editpage here]
+﻿{#
+	This file handles the editing of pages
+#}
+<form method="post">
+	<div class="form-group">
+		<input type="text" class="form-control" name="title" placeholder="Page Title" {% if content.data.title %}value=" {{ content.data.title }} "{% endif %}   />
+	</div>
+	<div class="form-group">
+		<textarea class="form-control" name="content">
+			{% if content.data.html %}{{content.data.html}}{% endif %}
+		</textarea>
+	</div>
+	<button type="submit" class="btn btn-primary">Save</button>
+</form>
