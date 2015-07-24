@@ -3,7 +3,7 @@
 <form method="post" id="contact" name="contact">
 	<div class="form-group has-feedback">
 		<label for="email" class="control-label">Email address *</label>
-		<input type="email" class="form-control" id="email" placeholder="Email" name="email" onchange="checkEmail();" {% if content.data.email %}value="{{ content.data.email }}"{% endif %} />
+		<input type="email" class="form-control" id="email" placeholder="Email" name="email" onchange="checkEmail();" {% if content.data.email %}value="{{ content.data.email }}"{% endif %} required />
 		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="form-group hidden">
@@ -12,12 +12,12 @@
 	</div>
 	<div class="form-group has-feedback">
 		<label for="subject" class="control-label">Subject *</label>
-		<input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" onchange="checkSubject();" {% if content.data.subject %}value="{{ content.data.subject }}" {% endif %} />
+		<input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" onchange="checkSubject();" {% if content.data.subject %}value="{{ content.data.subject }}" {% endif %} required />
 		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="form-group has-feedback">
 		<label for="message" class="control-label">Message *</label>
-		<textarea class="form-control" id="message" placeholder="Message" name="message" rows="5" onchange="checkMessage();"> {% if content.data.message %}{{ content.data.message }}{% endif %}</textarea>
+		<textarea class="form-control" id="message" placeholder="Message" name="message" rows="5" onchange="checkMessage();" required> {% if content.data.message %}{{ content.data.message }}{% endif %}</textarea>
 		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="panel">Insert Captcha here</div>
