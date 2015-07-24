@@ -3,9 +3,19 @@
 # DEBUG should not be True on any kind of live server
 DEBUG = True
 
+
 # Used for sessions
 SECRET_KEY = 'development key'
 
+
+### External Libraries ###
+#Bootstrap: parent directory, JQuery: actual script
+#Online
+#BOOTSTRAP = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/'
+#JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'
+#Offline
+BOOTSTRAP = '/static/offline/bootstrap-3.3.5/'
+JQUERY = '/static/offline/jquery-1.11.3.min.js'
 
 ### Database Config ###
 

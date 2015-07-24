@@ -46,6 +46,21 @@
   <ItemGroup>
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap-theme.css" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap-theme.min.css" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap.css" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap.css.map" />
+    <Content Include="static\offline\bootstrap-3.3.5\css\bootstrap.min.css" />
+    <Content Include="static\offline\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="static\offline\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="static\offline\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="static\offline\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="static\offline\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="static\offline\bootstrap-3.3.5\js\bootstrap.js" />
+    <Content Include="static\offline\bootstrap-3.3.5\js\bootstrap.min.js" />
+    <Content Include="static\offline\bootstrap-3.3.5\js\npm.js" />
+    <Content Include="static\offline\jquery-1.11.3.min.js" />
     <Content Include="static\style.css" />
     <Content Include="templates\admin\files.html" />
     <Content Include="templates\admin\messages\blacklist.html" />
@@ -87,6 +102,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="static\" />
+    <Folder Include="static\offline\" />
+    <Folder Include="static\offline\bootstrap-3.3.5\" />
+    <Folder Include="static\offline\bootstrap-3.3.5\css\" />
+    <Folder Include="static\offline\bootstrap-3.3.5\fonts\" />
+    <Folder Include="static\offline\bootstrap-3.3.5\js\" />
     <Folder Include="templates\" />
     <Folder Include="templates\admin\" />
     <Folder Include="templates\admin\messages\" />
