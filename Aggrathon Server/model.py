@@ -1,4 +1,4 @@
-from flask import abort
+from flask import abort, flash
 from database import *
 
 ### SITE ###
@@ -42,11 +42,32 @@ def page_get(path):
 		abort(404)
 	return page
 
+def page_get_extended(path):
+	page = db.session.query(
+		Page.title.label('title'), Page.content.label('content'), 
+		FeaturedPage.page_id.label('featured'), FeaturedPage.priority.label('priority'),
+		PageBlurb.image.label('thumbnail'), PageBlurb.description.label('description')
+		).filter_by(path=path).outerjoin(FeaturedPage).outerjoin(PageBlurb).first()
+	if(page is None):
+		return {}
+	return {'header':page.title, 'content':page.content, 'featured':page.featured, 'priority':page.priority, 'thumbnail':page.thumbnail, 'description': page.description}
+
 
 def page_list():
 	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured')).outerjoin(FeaturedPage).all()
-	
-def page_set(path, title, content, featured=False, priority=0, description="", thumbnail=""):
+
+def page_check_path(path):
+	if path == '/':
+		return true
+	elif path.find('/pages/') == 0:
+		return True
+	return False
+
+def page_set(path, title, content, featured=False, priority=0, description="", thumbnail="", flash_result=True):
+	if not page_check_path(path):
+		if flash_result:
+			flash('Page not Saved: Invalid Path', 'danger')
+		return
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		page = Page(path, title, content)
@@ -56,6 +77,9 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 			db.session.add( PageBlurb(page, description, thumbnail) )
 		elif(description != "" or thumbnail != ""):
 			db.session.add( PageBlurb(page, description, thumbnail) )
+		db.session.commit()
+		if flash_result:
+			flash('New Page Created', 'success')
 	else:
 		page.path = path
 		page.title = title
@@ -79,29 +103,26 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 			if(desc or thumb or featured):
 				db.session.add( PageBlurb(page, description, thumbnail) )
 		else:
-			if(not desc and not thumb):
+			if(not desc and not thumb and not featured):
 				db.session.delete(blurb)
 			else:
 				blurb.description = description
 				blurb.image = thumbnail
-
-	db.session.commit()
+		db.session.commit()
+		if flash_result:
+			flash('Page Saved' 'success')
 
 
 ### PAGE EDIT ACTIONS ###
 
 def page_action_edit(path, data):
-	try:
-		title = data['title']
-		content = data['content']
-		featured = data['featured']
-		priority = data['priority']
-		description = data['description']
-		thumbnail = data['thumbnail']
-		page_set(page, title, content, featured, priority, description, thumbnail)
-	except KeyError as e:
-		return e.message
-	return 'success'
+	title = data.get('title')
+	content = data.get('content')
+	featured = data.get('featured')
+	priority = data.get('priority')
+	description = data.get('description')
+	thumbnail = data.get('thumbnail')
+	page_set(path, title, content, featured, priority, description, thumbnail)
 
 def page_action_delete(path):
 	page = Page.query.filter_by(path=path).first()
@@ -119,6 +140,8 @@ def page_action_delete(path):
 		return 'success'
 
 def page_action_move(path, newpath):
+	if not page_check_path(newpath):
+		return 'Invalid Path'
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -131,6 +154,8 @@ def page_action_move(path, newpath):
 		return 'success'
 
 def page_action_copy(path, newpath):
+	if not page_check_path(newpath):
+		return 'Invalid Path'
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -144,8 +169,16 @@ def page_action_copy(path, newpath):
 		if(pageblurb is not None):
 			description = pageblurb.description
 			thumbnail = pageblurb.image
-		page_set(newpath, page.title, page.content, False, 0, description, thumbnail)
+		page_set(newpath, page.title, page.content, False, 0, description, thumbnail, flash_result=False)
 		return 'success'
+
+def page_action_create(path):
+	if not page_check_path(path):
+		return 'Invalid Path'
+	newpage = Page.query.filter_by(path=path).first()
+	if newpage is not None:
+		return 'Page already exists'
+	return 'success'
 
 ### FEATURED ###
 

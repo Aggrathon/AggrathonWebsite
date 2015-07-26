@@ -1,1 +1,39 @@
-﻿{{ request.args.get('page') }}
+﻿{% from 'admin/pages/macros.html' import toolbar, ajax_functions %}
+{{ ajax_functions(true) }}
+<script>
+	function deleteSuccess(path) {
+		window.location.href = '/admin/pages/';
+	}
+	function moveSuccess(oldpath, newpath) {
+		window.history.replaceState(null, 'Edit Page: \'' + newpath + '\'', '/admin/pages/edit/?page=' + newpath);
+		$('#content h2')[0].html('Edit Page: \''+newpath+'\'')
+	}
+	function copySuccess(oldpath, newpath) {
+		window.location.href = '/admin/pages/edit/?page=' + newpath;
+	}
+</script>
+
+{% from 'macros.html' import image_selector %}
+{{ image_selector() }}
+
+<div class="text-center panel">
+	<h3>Toolbar</h3>
+	{{ toolbar(request.args.get('page'), false) }}
+	<div class="text-danger">
+		Save the page before using the toolbar
+	</div>
+</div>
+<div class="text-center panel">
+	<h3>Featured</h3>
+	<div class="input-group">
+		<span class="input-group-addon">
+			<input type="checkbox" aria-label="Featured" id="featured" name="featured"{% if content.data.featured %} checked{% endif %}>
+		</span>
+		<input type="number" class="form-control" aria-label="Priority" placeholder="Priority" autocomplete="off" id="priority" name="priority"{% if content.data.priority %} value="{{ content.data.priority }}"{% endif %}>
+	</div>
+</div>
+<div class="text-center panel">
+	<h3>Blurb</h3>
+	<img onclick="image_selector($(this));" class="btn btn-default img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="page_thumbnail" />
+	<textarea class="form-control" id="description" placeholder="Page Description">{% if content.data.description %}{{ content.data.description }}{% endif %}</textarea>
+</div>

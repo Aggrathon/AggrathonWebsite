@@ -67,28 +67,22 @@ def pages_admin():
 @app.route('/admin/pages/edit/', methods=['GET', 'POST'])
 def pages_edit():
 	if request.method == 'POST':
-		try:
-			page = request.form['page']
-			action = request.form['action'] 
-			if(action == 'edit'):
-				return jsonify(result=model.page_action_edit(page, request.form))
+		action = request.form.get('action')
+		if action is None:
+			model.page_action_edit(request.args.get('page'), request.form)
+		else:
+			page = request.form.get('page')
+			if(action == 'create'):
+				return jsonify(result=model.page_action_create(page))
 			if(action == 'delete'):
 				return jsonify(result=model.page_action_delete(page))
 			if(action == 'move'):
-				return jsonify(result=model.page_action_move(page, request.form['target']))
+				return jsonify(result=model.page_action_move(page, request.form.get('target')))
 			if(action == 'copy'):
-				return jsonify(result=model.page_action_copy(page, request.form['target']))
-			raise KeyError('action not found')
-		except KeyError as e:
-			return jsonify(result=e.message)
-	else:
-		flash("Page editing not yet implemented", "warning")
-		return render_page(create_page_fromfile('Edit Page \''+request.args.get('page')+'\'', 'admin/pages/edit.html'))
-
-@app.route('/admin/pages/create/', methods=['GET', 'POST'])
-def pages_create():
-	flash("Page creation not implemented", "danger")
-	return render_page(create_page_fromfile('Create Page', 'admin/pages/edit.html'))
+				return jsonify(result=model.page_action_copy(page, request.form.get('target')))
+			return jsonify(result='action not found')
+	page = request.args.get('page')
+	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_extended(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])

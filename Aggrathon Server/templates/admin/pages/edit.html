@@ -1,12 +1,24 @@
 ﻿{#
 	This file handles the editing of pages
 #}
-<form method="post">
+<script>
+	function addFormData() {
+		var hidden = $('#additional_form_data');
+		hidden.html('');
+		hidden.append($('#featured').clone());
+		hidden.append($('#priority').clone());
+		hidden.append('<input type="text" value="' + $('#page_thumbnail').attr('src') + '" name="thumbnail" />');
+		hidden.append('<textarea name=description>' + $('#description').val() + '</textarea>');
+		return true;
+	}
+</script>
+<form method="post" onsubmit="addFormData();">
 	<div class="form-group">
-		<input type="text" class="form-control" name="title" placeholder="Page Title" {% if content.data.title %}value="{{ content.data.title }}"{% endif %}   />
+		<input type="text" class="form-control" name="title" placeholder="Page Title" required {% if content.data.header %}value="{{ content.data.header }}"{% endif %}   />
 	</div>
 	<div class="form-group">
-		<textarea class="form-control" name="content">{% if content.data.html %}{{content.data.html}}{% endif %}</textarea>
+		<textarea class="form-control" name="content" required placeholder="Page Content">{% if content.data.content %}{{ content.data.content }}{% endif %}</textarea>
 	</div>
+	<div hidden id="additional_form_data"></div>
 	<button type="submit" class="btn btn-info btn-lg">Save</button>
 </form>

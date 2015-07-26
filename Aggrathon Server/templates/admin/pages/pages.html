@@ -15,10 +15,25 @@
 	}
 	function copySuccess(oldpath, newpath) {
 		var parent = getRow(oldpath);
-		var clone = parent.clone();
-		clone.find('#path').html(newpath);
-		clone.find('#featured').html('');
+		var clone = parent[0].outerHTML;
+		clone = clone.replace("'" + oldpath + "'", "'" + newpath + "'");
+		clone = clone.replace(">" + oldpath + "<", ">" + newpath + "<");
+		clone = clone.replace("=" + oldpath + '"', "=" + newpath + '"');
 		parent.after(clone);
+		getRow(newpath).find('#featured').html('');
+	}
+	function createPage() {
+		var path = promptNewPath("New path for the page (must begin with '/pages/')", '/pages/')
+		$.post('/admin/pages/edit/',
+			{ page: path, action: "create" },
+			function (data) {
+				if (data.result == 'success') {
+					flash("Page at '" + path + "' created", "success");
+					window.location.href = '/admin/pages/edit/?page=' + path;
+				} else {
+					flash("Page at '" + path + "' could not be created:\n" + status, "danger");
+				}
+			});
 	}
 </script>
 <table class="table table-hover">
@@ -35,7 +50,7 @@
 		<tr id="page_{{ page.url }}">
 			<td>{% if page.url == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</td>
 			<td id="path">{{ page.url }}</td>
-			<td class="text-center" id="featured">{% if page.featured %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Featured</span>{% endif %}</td>
+			<td id="featured">{% if page.featured %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Featured</span>{% endif %}</td>
 			<td>{{ toolbar(page.url) }}</td>
 		</tr>
 		{% endfor %}
@@ -43,5 +58,5 @@
 </table>
 <br />
 <div>
-	<a class="btn btn-primary" href="/admin/pages/create/" target="_blank">Create a new Page</a>
+	<button class="btn btn-primary" onclick="createPage();">Create a new Page</button>
 </div>

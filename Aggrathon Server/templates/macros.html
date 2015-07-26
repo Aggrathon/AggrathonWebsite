@@ -4,10 +4,75 @@
 		<script>
 			function flash(message, type) {
 				if (type == undefined) {
-					type = 'info';
+					type = 'default';
 				}
-				$('#content').eq(0).before('<div class="alert alert-'+type+'">'+message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+				$('#content').eq(0).before('<div class="alert alert-' + type + '"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>');
 			}
 		</script>
+	{% endif %}
+{% endmacro %}
+{% macro image_selector() %}
+	{% if not macro_image_selector %}
+		{% set macro_image_selector = true %}
+			{{ flash() }}
+			<div hidden id="image_selector">
+				<div class="row" id="image_selector_instance">
+					<div class="col-xs-3 col-sm-2">
+						<div class="btn-group-vertical" role="group" id="image_selector_nav">
+							<button class="btn btn-primary" onclick="image_selector_show_page(this);">url</button>
+							<button class="btn btn-default" onclick="image_selector_show_page(this);">upload</button>
+							<button class="btn btn-default" onclick="image_selector_show_page(this);">media</button>
+							<button class="btn btn-info" onclick="image_selector_save();">save</button>
+						</div>
+					</div>
+					<div class="col-xs-6 col-sm-7">
+						<div id="image_selector_url">
+							<h3>Image url:</h3>
+							<input type="text" class="form-control" placeholder="image" onchange="image_selector_set_image($(this).val());" />
+						</div>
+						<div id="image_selector_upload" hidden>
+							<h3>Upload Image:</h3>
+						</div>
+						<div id="image_selector_media" hidden>
+							<h3>Select Image:</h3>
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<br />
+						<img id="image_selector_preview" class="img-responsive img-thumbnail" alt="Image Preview" />
+					</div>
+				</div>
+			</div>
+			<script>
+				var image_selector_instance;
+				var image_selector_jquery_target;
+				function image_selector(jquery_img) {
+					image_selector_close();
+					flash($('#image_selector').html());
+					image_selector_instance = $('.alert #image_selector_instance').parent();
+					image_selector_jquery_target = jquery_img;
+				}
+				function image_selector_save() {
+					image_selector_jquery_target.attr('src', image_selector_instance.find('#image_selector_preview').attr('src'))
+					image_selector_close();
+				}
+				function image_selector_close() {
+					if (image_selector_instance != null) {
+						image_selector_instance.remove();
+						image_selector_instance = null;
+					}
+				}
+				function image_selector_set_image(src) {
+					image_selector_instance.find('#image_selector_preview').attr('src', src);
+				}
+				function image_selector_show_page(button) {
+					image_selector_instance.find('#image_selector_url').hide();
+					image_selector_instance.find('#image_selector_upload').hide();
+					image_selector_instance.find('#image_selector_media').hide();
+					image_selector_instance.find('#image_selector_' + $(button).html()).show();
+					image_selector_instance.find('#image_selector_nav').children('.btn-primary').removeClass('btn-primary').addClass('btn-default');
+					$(button).removeClass('btn-default').addClass('btn-primary');
+				}
+			</script>
 	{% endif %}
 {% endmacro %}

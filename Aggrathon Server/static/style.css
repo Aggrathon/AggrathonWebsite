@@ -160,23 +160,15 @@ fieldset[disabled] .btn-primary:hover {
   max-width: 1400px;
 }
 
+.alert-default {
+	background-color: rgba(96, 96, 96, 0.5);
+	border: white;
+	color: white;
+}
+
 .alert-info {
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #e6e6e6;
-}
-
-.blurb-list .media-body {
-	text-align: left;
-	white-space: normal;
-}
-
-.blurb-list .media-object {
-	width: 64px;
-}
-
-.blurb-list .btn {
-	padding: 6px;
+    background-color: rgba(170, 223, 249, 0.8);
+	border-color: #08719B
 }
 
 .alert-danger {
@@ -190,6 +182,19 @@ fieldset[disabled] .btn-primary:hover {
 .alert-success {
 	background-color: rgba(220, 255, 205, 0.8);
 	border-color: #3C763D;
+}
+
+.blurb-list .media-body {
+	text-align: left;
+	white-space: normal;
+}
+
+.blurb-list .media-object {
+	width: 64px;
+}
+
+.blurb-list .btn {
+	padding: 6px;
 }
 
 label {
@@ -216,5 +221,9 @@ a:focus, a:hover {
 }
 
 table.table.table-hover tbody tr:hover {
+	color: #333;
+}
+
+.img-thumbnail {
 	color: #333;
 }
