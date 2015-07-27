@@ -41,7 +41,7 @@
 		<tr>
 			<th>Page</th>
 			<th>Path</th>
-			<th>Featured</th>
+			<th>Status</th>
 			<th>Tools</th>
 		</tr>
 	</thead>
@@ -50,13 +50,22 @@
 		<tr id="page_{{ page.url }}">
 			<td>{% if page.url == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</td>
 			<td id="path">{{ page.url }}</td>
-			<td id="featured">{% if page.featured %}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Featured</span>{% endif %}</td>
+			<td id="featured">
+				{% if page.featured %}
+				<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span><span class="sr-only">Featured</span>
+				{% endif %}
+				{% if page.private %}
+				<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span><span class="sr-only">Private</span>
+				{% endif %}
+			</td>
 			<td>{{ toolbar(page.url) }}</td>
 		</tr>
 		{% endfor %}
 	</tbody>
 </table>
-<br />
+<div class="text-right" aria-hidden="true">
+	Status: &emsp; <span class="glyphicon glyphicon-bullhorn"></span> Featured, <span class="glyphicon glyphicon-eye-close"></span> Private
+</div>
 <div>
 	<button class="btn btn-primary" onclick="createPage();">Create a new Page</button>
 </div>

@@ -102,7 +102,7 @@ def show_admin(page):
 	if page is AdminPages.setup:
 		return create_page_admin('Setup', 'admin/setup.html', **model.get_site_info())
 	if page is AdminPages.pages:
-		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list())
+		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list_admin())
 	if page is AdminPages.projects:
 		return create_page_admin('Projects', 'admin/projects/projects.html')
 	if page is AdminPages.files:

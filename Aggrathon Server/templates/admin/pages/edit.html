@@ -5,8 +5,7 @@
 	function addFormData() {
 		var hidden = $('#additional_form_data');
 		hidden.html('');
-		hidden.append($('#featured').clone());
-		hidden.append($('#priority').clone());
+		hidden.append($('#status').clone());
 		hidden.append('<input type="text" value="' + $('#page_thumbnail').attr('src') + '" name="thumbnail" />');
 		hidden.append('<textarea name=description>' + $('#description').val() + '</textarea>');
 		return true;

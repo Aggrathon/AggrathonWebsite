@@ -40,21 +40,24 @@ def page_get(path):
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		abort(404)
+	if PagePrivate.query.get(page.id) is not None:
+		flash('This Page is Private', 'warning')
 	return page
 
-def page_get_extended(path):
+def page_get_admin(path):
 	page = db.session.query(
 		Page.title.label('title'), Page.content.label('content'), 
 		FeaturedPage.page_id.label('featured'), FeaturedPage.priority.label('priority'),
-		PageBlurb.image.label('thumbnail'), PageBlurb.description.label('description')
-		).filter_by(path=path).outerjoin(FeaturedPage).outerjoin(PageBlurb).first()
+		PageBlurb.image.label('thumbnail'), PageBlurb.description.label('description'),
+		PagePrivate.page_id.label('private')
+		).filter_by(path=path).outerjoin(FeaturedPage).outerjoin(PageBlurb).outerjoin(PagePrivate).first()
 	if(page is None):
 		return {}
-	return {'header':page.title, 'content':page.content, 'featured':page.featured, 'priority':page.priority, 'thumbnail':page.thumbnail, 'description': page.description}
+	return {'header':page.title, 'content':page.content, 'featured':page.featured, 'priority':page.priority, 'thumbnail':page.thumbnail, 'description': page.description, 'private': page.private}
 
 
-def page_list():
-	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured')).outerjoin(FeaturedPage).all()
+def page_list_admin():
+	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured'), PagePrivate.page_id.label('private')).outerjoin(FeaturedPage).outerjoin(PagePrivate).all()
 
 def page_check_path(path):
 	if path == '/':
@@ -63,7 +66,7 @@ def page_check_path(path):
 		return True
 	return False
 
-def page_set(path, title, content, featured=False, priority=0, description="", thumbnail="", flash_result=True):
+def page_set(path, title, content, featured=False, priority=0, description="", thumbnail="", private=False, flash_result=True):
 	if not page_check_path(path):
 		if flash_result:
 			flash('Page not Saved: Invalid Path', 'danger')
@@ -72,11 +75,13 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 	if(page is None):
 		page = Page(path, title, content)
 		db.session.add(page)
-		if(featured):
+		if(featured and not private):
 			db.session.add( FeaturedPage(page, priority) )
 			db.session.add( PageBlurb(page, description, thumbnail) )
 		elif(description != "" or thumbnail != ""):
 			db.session.add( PageBlurb(page, description, thumbnail) )
+		if private:
+			db.session.add( PagePrivate(page) )
 		db.session.commit()
 		if flash_result:
 			flash('New Page Created', 'success')
@@ -85,7 +90,7 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 		page.title = title
 		page.content = content
 
-		if(featured):
+		if(featured and not private):
 			feature = FeaturedPage.query.get(page.id)
 			if(feature is None):
 				db.session.add( FeaturedPage(page, priority) )
@@ -108,9 +113,12 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 			else:
 				blurb.description = description
 				blurb.image = thumbnail
+		if private:
+			if PagePrivate.query.get(page.id) is None:
+				db.session.add( PagePrivate(page) )
 		db.session.commit()
 		if flash_result:
-			flash('Page Saved' 'success')
+			flash('Page Saved', 'success')
 
 
 ### PAGE EDIT ACTIONS ###
@@ -118,11 +126,12 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 def page_action_edit(path, data):
 	title = data.get('title')
 	content = data.get('content')
-	featured = data.get('featured')
+	featured = data.get('status') == 'featured'
 	priority = data.get('priority')
 	description = data.get('description')
 	thumbnail = data.get('thumbnail')
-	page_set(path, title, content, featured, priority, description, thumbnail)
+	private = data.get('status') == 'private'
+	page_set(path, title, content, featured, priority, description, thumbnail, private)
 
 def page_action_delete(path):
 	page = Page.query.filter_by(path=path).first()
@@ -307,9 +316,9 @@ def message_action_recheck_all():
 ### TESTDATA ###
 
 def create_test_data():
-	page_set("/pages/test/", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg")
-	page_set("/pages/test2/", "Test Page 2", "[insert content here]")
-	page_set("/pages/test3/", "Test Page 3", "[insert content here]")
+	page_set("/pages/test/", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg", flash_result=False)
+	page_set("/pages/test2/", "Test Page 2", "[insert content here]", flash_result=False)
+	page_set("/pages/test3/", "Test Page 3", "[insert content here]", flash_result=False)
 	
 	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
 	db.session.add(FeaturedProject(proj, 10))

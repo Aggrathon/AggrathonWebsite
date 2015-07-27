@@ -82,7 +82,7 @@ def pages_edit():
 				return jsonify(result=model.page_action_copy(page, request.form.get('target')))
 			return jsonify(result='action not found')
 	page = request.args.get('page')
-	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_extended(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
+	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_admin(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
@@ -196,5 +196,5 @@ def page_not_found(error):
 
 @app.errorhandler(403)
 def not_logged_in(error):
-	flash("You are not logged in!", "danger")
+	flash("Access Denied", "danger")
 	return redirect(url_for('login'), 303)

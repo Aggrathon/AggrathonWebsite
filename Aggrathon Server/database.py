@@ -15,6 +15,7 @@ db = SQLAlchemy(app)
 	Page(id, path, title, content)
 	PageBlurb(page_id, description, image)
 	FeaturedPage(page_id, priority)
+	PagePrivate(page_id)
 
 	Project(id, title, content, ...)
 	ProjectBlurb(project_id, description, image)
@@ -93,6 +94,16 @@ class FeaturedPage(db.Model):
 
 	def __repr__(self):
 		return '<Featured: Page %r>' %self.page.title
+
+class PagePrivate(db.Model):
+	page_id = db.Column(db.Integer, db.ForeignKey('page.id'), primary_key=True)
+	page = db.relationship('Page')
+
+	def __init__(self, page):
+		self.page = page
+
+	def __repr__(self):
+		return '<Private: Page %r>' %self.page.title
 
 
 
@@ -198,6 +209,7 @@ def check_if_setup():
 		Page.query.first()
 		PageBlurb.query.first()
 		FeaturedPage.query.first()
+		PagePrivate.query.first()
 
 		Project.query.first()
 		ProjectBlurb.query.first()
