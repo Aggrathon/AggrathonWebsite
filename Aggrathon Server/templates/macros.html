@@ -76,3 +76,10 @@
 			</script>
 	{% endif %}
 {% endmacro %}
+{% macro rich_text(id='rich-text') %}
+	{% if not rich_text_js %}
+		{% set rich_text_js = true %}
+		<script src="{{ config.EDITOR }}"></script>
+	{% endif %}
+	<script>{{ config.EDITORCONFIG | replace("TEXTAREA_ID", id) | safe }}</script>
+{% endmacro %}

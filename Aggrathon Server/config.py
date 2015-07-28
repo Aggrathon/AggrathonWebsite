@@ -9,21 +9,23 @@ SECRET_KEY = 'development key'
 
 
 ### External Libraries ###
-#Bootstrap: parent directory, JQuery: actual script
-#Online
+## Bootstrap: parent directory, JQuery: actual script, Editor: actual js, Editor Config: config and init (TEXTAREA_ID is the selector for the replaced textarea)
+## Online
 #BOOTSTRAP = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/'
 #JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'
-#Offline
-BOOTSTRAP = '/static/offline/bootstrap-3.3.5/'
-JQUERY = '/static/offline/jquery-1.11.3.min.js'
+#EDITOR = '//cdn.ckeditor.com/4.5.1/standard/ckeditor.js'
+## Local
+BOOTSTRAP = '/static/external/bootstrap-3.3.5/'
+JQUERY = '/static/external/jquery-1.11.3.min.js'
+EDITOR = '/static/external/CKEditor/custom-4.5.1/ckeditor.js'
+EDITORCONFIG = """CKEDITOR.replace('TEXTAREA_ID', { customConfig: '/static/external/CKEditor/config/config.js' }); CKEDITOR.dtd.$removeEmpty['span'] = false;"""
 
 ### Database Config ###
-
-# SQLALCHEMY_DATABASE_URI Pattern:
+## SQLALCHEMY_DATABASE_URI Pattern:
 #    servertype://username:password@server:port/database
-# Documentation:
+## Documentation:
 #    http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html
-# Examples: 
+## Examples: 
 #    mysql://user:pass@localhost/mydatabase
 #    sqlite:////absolute/path/to/foo.db
 SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
