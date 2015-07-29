@@ -7,7 +7,10 @@
 		var hidden = $('#additional_form_data');
 		hidden.html('');
 		hidden.append($('#status').clone());
-		hidden.append('<input type="text" value="' + $('#page_thumbnail').attr('src') + '" name="thumbnail" />');
+		var img = $('#page_thumbnail').attr('src');
+		if (img == undefined || img == 'undefined')
+			img = '';
+		hidden.append('<input type="text" value="' + img + '" name="thumbnail" />');
 		hidden.append('<textarea name=description>' + $('#description').val() + '</textarea>');
 		return true;
 	}

@@ -55,6 +55,11 @@ def page_get_admin(path):
 		return {}
 	return {'header':page.title, 'content':page.content, 'featured':page.featured, 'priority':page.priority, 'thumbnail':page.thumbnail, 'description': page.description, 'private': page.private}
 
+def page_list():
+	pages = db.session.query(
+		Page.path.label('path'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
+		.outerjoin(PagePrivate).filter(PagePrivate.page_id==None).outerjoin(PageBlurb).all()
+	return pages
 
 def page_list_admin():
 	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured'), PagePrivate.page_id.label('private')).outerjoin(FeaturedPage).outerjoin(PagePrivate).all()

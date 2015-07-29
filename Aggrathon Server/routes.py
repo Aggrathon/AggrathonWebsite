@@ -138,8 +138,7 @@ def edit_project(project=''):
 ### pages ###
 @app.route('/pages/')
 def pages():
-	flash("Not implemented", "danger")
-	return render_page(create_page_fromfile("Pages", 'frontend/pages.html'))
+	return render_page_standard(create_page_fromfile("Pages", 'frontend/pages.html', pages=model.page_list()))
 
 @app.route('/pages/<path:path>/edit/')
 def page_edit(path):

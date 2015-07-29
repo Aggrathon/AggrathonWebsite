@@ -188,9 +188,16 @@ fieldset[disabled] .btn-primary:hover {
 	text-align: left;
 	white-space: normal;
 }
+.blurb-list .media-heading {
+	text-align: left;
+}
 
 .blurb-list .media-object {
-	width: 64px;
+	width: 5em;
+}
+
+.blurb-list.blurb-list-big .media-object {
+	width: 8em;
 }
 
 .blurb-list .btn {
