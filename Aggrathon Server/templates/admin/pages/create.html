@@ -1,0 +1,39 @@
+﻿{% from 'macros.html' import flash %}
+{{ flash() }}
+<script>
+	function CreatePage() {
+		var path = $('#create #path').val()
+		var edited = false;
+		var len = path.length;
+		if (path.charAt(0) == '/') {
+			path = path.slice(1, len);
+			edited = true;
+		}
+		if (path.charAt(len - 1) == '/') {
+			path = path.slice(0, len - 1);
+			edited = true;
+		}
+		if (edited) {
+			$('#create #path').val(path)
+		}
+
+		$.post('/admin/pages/create/',
+			{ page: path, action: "check", path: path },
+			function (data) {
+				if (data.result == 'exists') {
+					flash('Page already exists', 'danger');
+				} else {
+					flash("Page at '" + path + "' created", "success");
+					window.location.href = '/admin/pages/edit/?page=' + path;
+				}
+			});
+		return false;
+	}
+</script>
+<form name="create" id="create" class="panel" onsubmit="return CreatePage();">
+	<table><tbody><tr>
+		<td><big class="control-label">Create&nbsp;New&nbsp;Page</big>&emsp;</td>
+		<td width="99%"><input type="text" name="path" id="path" required class="form-control" placeholder="New Page Path" /></td>
+		<td><button type="submit" class="btn btn-primary">Create</button></td>
+	</tr></tbody></table>
+</form>

@@ -173,6 +173,12 @@ def page_action_copy(path, newpath):
 		page_set(newpath, page.title, page.content, False, 0, description, thumbnail, flash_result=False)
 		return 'success'
 
+def page_action_check(path):
+	page = Page.query.filter_by(path=path).first()
+	if page is None:
+		return 'No Page Found'
+	return 'exists'
+
 ### FEATURED ###
 
 def featured_pages():

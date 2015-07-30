@@ -143,6 +143,7 @@
     <Content Include="static\style.css" />
     <Content Include="templates\admin\files.html" />
     <Content Include="templates\admin\messages\blacklist.html" />
+    <Content Include="templates\admin\pages\create.html" />
     <Content Include="templates\admin\pages\editbar.html" />
     <Content Include="templates\admin\pages\pages.html" />
     <Content Include="templates\admin\messages\messages.html" />

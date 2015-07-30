@@ -89,6 +89,7 @@ class AdminPages(Enum):
 	admin = 1
 	setup = 2
 	pages = 3
+	createpage = 8
 	projects = 4
 	files = 5
 	messages = 6
@@ -103,6 +104,8 @@ def show_admin(page):
 		return create_page_admin('Setup', 'admin/setup.html', **model.get_site_info())
 	if page is AdminPages.pages:
 		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list_admin())
+	if page is AdminPages.createpage:
+		return create_page_admin('Create Page', 'admin/pages/create.html')
 	if page is AdminPages.projects:
 		return create_page_admin('Projects', 'admin/projects/projects.html')
 	if page is AdminPages.files:

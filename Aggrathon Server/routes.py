@@ -82,6 +82,13 @@ def pages_edit():
 	page = request.args.get('page')
 	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_admin(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
+@app.route('/admin/pages/create/', methods=['GET', 'POST'])
+def pages_create():
+	if request.method == 'POST':
+		action = request.form.get('action')
+		if action == 'check':
+			return jsonify(result=model.page_action_check(request.form.get('path')))
+	return show_admin(AdminPages.createpage)
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
 def projects_admin():
