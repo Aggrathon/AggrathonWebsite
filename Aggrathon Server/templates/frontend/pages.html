@@ -1,24 +1,8 @@
-﻿<!--{% for page in content.data.pages %}
-<div class="row">
-	<a class="btn btn-default" href="{{ page.path }}">
-		<div class="col-xs-3">
-			{% if page.img %}<img class="media-object img-rounded img-responsive" src="{{ page.img }}" />{% endif %}
-		</div>
-		<div class="col-xs-9">
-			<div class="text-left">
-				<h3>{% if page.path == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</h3>
-				{% if page.description %}{{ page.description }}{% endif %}
-			</div>
-		</div>
-	</a>
-</div>
-{% endfor %}-->
-
-<div class="blurb-list blurb-list-big">
+﻿<div class="blurb-list blurb-list-big">
 	<ul class="media-list">
 		{% for page in content.data.pages %}
 		<li class="media">
-			<a class="btn btn-default" href="{{ page.path }}">
+			<a class="btn btn-default" href="{% if page.path == '/' %}/{% else %}/pages/{{ page.path }}/{% endif %}">
 				{% if page.img %}<div class="media-left"><img class="media-object img-rounded" src="{{ page.img }}" /></div>{% endif %}
 				<div class="media-body">
 					<h3 class="media-heading">{% if page.path == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</h3>

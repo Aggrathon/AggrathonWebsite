@@ -72,8 +72,6 @@ def pages_edit():
 			model.page_action_edit(request.args.get('page'), request.form)
 		else:
 			page = request.form.get('page')
-			if(action == 'create'):
-				return jsonify(result=model.page_action_create(page))
 			if(action == 'delete'):
 				return jsonify(result=model.page_action_delete(page))
 			if(action == 'move'):
@@ -140,24 +138,15 @@ def edit_project(project=''):
 def pages():
 	return render_page_standard(create_page_fromfile("Pages", 'frontend/pages.html', pages=model.page_list()))
 
-@app.route('/pages/<path:path>/edit/')
-def page_edit(path):
-	return edit_page("/pages/"+path+"/")
-
 @app.route('/pages/<path:path>/')
 def page(path):
-	return show_page("/pages/"+path+"/")
+	return show_page(path)
 
 ### projects ###
 @app.route('/projects/')
 def projects():
 	flash("Not implemented", "danger")
 	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html'), create_sidebar_fromfile("frontend/projects/sidebar.html"))
-
-@app.route('/projects/<path:project>/edit/')
-def project_edit(project):
-	flash("Project editing not yet implemented", "warning")
-	return edit_project(project)
 
 @app.route('/projects/<path:project>/')
 def project(project):
@@ -181,11 +170,6 @@ def contact():
 			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
 
-
-### misc ###
-@app.route('/edit/', methods=['GET', 'POST'])
-def main_edit():
-	return edit_page('/')
 
 ### errors ###
 @app.errorhandler(404)

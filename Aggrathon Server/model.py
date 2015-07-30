@@ -62,20 +62,9 @@ def page_list():
 	return pages
 
 def page_list_admin():
-	return db.session.query(Page.title.label('title'), Page.path.label('url'), FeaturedPage.page_id.label('featured'), PagePrivate.page_id.label('private')).outerjoin(FeaturedPage).outerjoin(PagePrivate).all()
-
-def page_check_path(path):
-	if path == '/':
-		return true
-	elif path.find('/pages/') == 0:
-		return True
-	return False
+	return db.session.query(Page.title.label('title'), Page.path.label('path'), FeaturedPage.page_id.label('featured'), PagePrivate.page_id.label('private')).outerjoin(FeaturedPage).outerjoin(PagePrivate).all()
 
 def page_set(path, title, content, featured=False, priority=0, description="", thumbnail="", private=False, flash_result=True):
-	if not page_check_path(path):
-		if flash_result:
-			flash('Page not Saved: Invalid Path', 'danger')
-		return
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		page = Page(path, title, content)
@@ -154,8 +143,8 @@ def page_action_delete(path):
 		return 'success'
 
 def page_action_move(path, newpath):
-	if not page_check_path(newpath):
-		return 'Invalid Path'
+	if path == '/':
+		return 'Can not move the main page'
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -168,8 +157,6 @@ def page_action_move(path, newpath):
 		return 'success'
 
 def page_action_copy(path, newpath):
-	if not page_check_path(newpath):
-		return 'Invalid Path'
 	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return 'Page not found'
@@ -186,26 +173,18 @@ def page_action_copy(path, newpath):
 		page_set(newpath, page.title, page.content, False, 0, description, thumbnail, flash_result=False)
 		return 'success'
 
-def page_action_create(path):
-	if not page_check_path(path):
-		return 'Invalid Path'
-	newpage = Page.query.filter_by(path=path).first()
-	if newpage is not None:
-		return 'Page already exists'
-	return 'success'
-
 ### FEATURED ###
 
 def featured_pages():
 	pages = db.session.query(
-		Page.path.label('url'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
+		Page.path.label('path'), PageBlurb.description.label('description'), Page.title.label('title'), PageBlurb.image.label('img'))\
 		.join(FeaturedPage).filter(FeaturedPage.page_id==Page.id).join(PageBlurb).filter(PageBlurb.page_id==Page.id)\
 		.order_by(FeaturedPage.priority).all()
 	return pages
 
 def featured_projects():
 	projects = db.session.query(
-		Project.path.label('url'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
+		Project.path.label('path'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
 		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.project_id==Project.id)\
 		.order_by(FeaturedProject.priority).all()
 	return projects
@@ -321,9 +300,9 @@ def message_action_recheck_all():
 ### TESTDATA ###
 
 def create_test_data():
-	page_set("/pages/test/", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg", flash_result=False)
-	page_set("/pages/test2/", "Test Page 2", "[insert content here]", flash_result=False)
-	page_set("/pages/test3/", "Test Page 3", "[insert content here]", flash_result=False)
+	page_set("test", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg", flash_result=False)
+	page_set("test2", "Test Page 2", "[insert content here]", flash_result=False)
+	page_set("test3", "Test Page 3", "[insert content here]", flash_result=False)
 	
 	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
 	db.session.add(FeaturedProject(proj, 10))

@@ -23,7 +23,7 @@
 		getRow(newpath).find('#featured').html('');
 	}
 	function createPage() {
-		var path = promptNewPath("New path for the page (must begin with '/pages/')", '/pages/')
+		var path = promptNewPath("New path for the page", 'newpage')
 		$.post('/admin/pages/edit/',
 			{ page: path, action: "create" },
 			function (data) {
@@ -47,9 +47,9 @@
 	</thead>
 	<tbody>
 		{% for page in content.data.pages %}
-		<tr id="page_{{ page.url }}">
-			<td>{% if page.url == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</td>
-			<td id="path">{{ page.url }}</td>
+		<tr id="page_{{ page.path }}">
+			<td>{% if page.path == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</td>
+			<td id="path">{{ page.path }}</td>
 			<td id="featured">
 				{% if page.featured %}
 				<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span><span class="sr-only">Featured</span>
@@ -58,7 +58,7 @@
 				<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span><span class="sr-only">Private</span>
 				{% endif %}
 			</td>
-			<td>{{ toolbar(page.url) }}</td>
+			<td>{{ toolbar(page.path) }}</td>
 		</tr>
 		{% endfor %}
 	</tbody>

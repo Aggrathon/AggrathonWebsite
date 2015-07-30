@@ -16,7 +16,8 @@
 	<ul class="media-list">
 		{% for item in sidebar.data.featuredPages %}
 		<li class="media">
-			<a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
+			{% if item.path == '/' %}{% set url = '/' %}{% else %}{% set url = '/pages/'+item.path+'/' %}{% endif %}
+			<a class="btn btn-default{% if request.path == url %} active{% endif %}" href="{{ url }}">
 				{% if item.img %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
 				<div class="media-body">
 					<h4 class="media-heading">{{ item.title }}</h4>

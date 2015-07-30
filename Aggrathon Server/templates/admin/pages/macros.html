@@ -2,7 +2,7 @@
 
 {% macro toolbar(path, showEdit=true) %}
 	<div class="btn-group">
-		<a target="_blank" href="{{ path }}" class="btn btn-success" title="View Page">
+		<a target="_blank" href="{% if path == '/' %}/{% else %}/pages/{{ path }}/{% endif %}" class="btn btn-success" title="View Page">
 			<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
 			<span class="sr-only">View</span>
 		</a>
@@ -46,10 +46,6 @@
 				flash("Same path, nothing has changed", "warning");
 				return null;
 			}
-			if (newpath.indexOf('/pages/') != 0) {
-				flash("A page must have a path beginning with '/pages/'", "warning");
-				return null;
-			}
 			return newpath;
 		}
 
@@ -68,7 +64,7 @@
 			}
 		}
 		function movePage(path) {
-			var newpath = promptNewPath("New path for the page (must begin with '/pages/')", path);
+			var newpath = promptNewPath("New path for the page", path);
 			if (newpath != null) {
 				$.post('/admin/pages/edit/',
 					{ page: path, action: "move", target: newpath },
@@ -83,7 +79,7 @@
 			}
 		}
 		function copyPage(path) {
-			var newpath = promptNewPath("Path for the copy (must begin with '/pages/')", path);
+			var newpath = promptNewPath("Path for the copy", path);
 			if (newpath != null) {
 				$.post('/admin/pages/edit/',
 					{ page: path, action: "copy", target: newpath },
