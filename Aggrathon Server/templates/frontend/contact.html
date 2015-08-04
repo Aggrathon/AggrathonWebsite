@@ -1,6 +1,6 @@
 ﻿{% from 'macros.html' import flash %}
 {{ flash() }}
-<form method="post" id="contact" name="contact">
+<form method="post" id="contact" name="contact" onsubmit="return submitButton();">
 	<div class="form-group has-feedback">
 		<label for="email" class="control-label">Email address *</label>
 		<input type="email" class="form-control" id="email" placeholder="Email" name="email" onchange="checkEmail();" {% if content.data.email %}value="{{ content.data.email }}"{% endif %} required />
@@ -21,89 +21,95 @@
 		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<div class="panel">Insert Captcha here</div>
-	<button class="btn btn-primary btn-lg" type="submit" id="submitButton" disabled="disabled" onclick="submitButton(this);">Send Message</button>
+	<button class="btn btn-primary btn-lg" type="submit" id="submitButton" disabled="disabled">Send Message</button>
 	<span class="pull-right">* Required</span>
-	<script language="JavaScript" type="text/javascript">
-		function submitTimer(left) {
-			button = $('button#submitButton');
-			if (left < 0) {
-				button.attr("disabled", false);
-				button.html("Send Message");
-			} else {
-				button.html("Wait: " + left)
-				button.attr("disabled", true);
-				left = left -1
-				setTimeout(function () { submitTimer(left); }, 1000);
-			}
+</form>
+<script language="JavaScript" type="text/javascript">
+	var timer = 5;
+	function submitTimer() {
+		button = $('button#submitButton');
+		if (timer < 0) {
+			button.prop("disabled", false);
+			button.html("Send Message");
+		} else {
+			button.html("Wait: " + timer)
+			button.prop("disabled", true);
+			timer = timer -1
+			setTimeout(submitTimer, 1000);
 		}
-		submitTimer(5);
+	}
 
-		function setFieldComplete(field) {
-			field.parent().addClass('has-success');
-			field.parent().removeClass('has-error');
-			field.parent().find('.glyphicon').addClass('glyphicon-ok');
-		}
-		function setFieldError(field) {
-			field.parent().addClass('has-error');
-			field.parent().removeClass('has-success');
-			field.parent().find('.glyphicon').addClass('glyphicon-remove');
-		}
+	function setFieldComplete(field) {
+		field.parent().addClass('has-success');
+		field.parent().removeClass('has-error');
+		field.parent().find('.glyphicon').addClass('glyphicon-ok');
+	}
+	function setFieldError(field) {
+		field.parent().addClass('has-error');
+		field.parent().removeClass('has-success');
+		field.parent().find('.glyphicon').addClass('glyphicon-remove');
+	}
 
-		function checkEmail() {
-			var email = $('#email');
-			var val = email.val();
-			var split = val.split('@');
-			if (val != '' && split.length == 2 && split[1].split('.').length > 1) {
-				setFieldComplete(email);
-				return true;
-			} else {
-				setFieldError(email);
-				return false;
-			}
-		}
-		function checkSubject() {
-			var subject = $('#subject');
-			var val = subject.val();
-			if (val == '' || val == ' ') {
-				setFieldError(subject);
-				return false;
-			} else {
-				setFieldComplete(subject);
-				return true;
-			}
-		}
-		function checkMessage() {
-			var message = $('#message');
-			var val = message.html();
-			if (val == '' || val == ' ') {
-				setFieldError(message);
-				return false;
-			} else {
-				setFieldComplete(message);
-				return true;
-			}
-		}
-
-		function submitButton(button) {
-			if (!button.disabled) {
-				var complete = true;
-
-				if(!checkEmail())
-					complete = false;
-				if(!checkSubject())
-					complete = false;
-				if(!checkMessage())
-					complete = false;
-
-				if (complete) {
-					return true;
-				} else {
-					flash('Not all fields are correctly filled in', 'danger');
-					submitTimer(3);
-				}
-			}
+	function checkEmail() {
+		var email = $('#email');
+		var val = email.val();
+		var split = val.split('@');
+		if (val != '' && split.length == 2 && split[1].split('.').length > 1) {
+			setFieldComplete(email);
+			return true;
+		} else {
+			setFieldError(email);
 			return false;
 		}
-		{% if content.data.check %}submitButton({disabled:false});{% endif %}
-	</script>
-</form>
+	}
+	function checkSubject() {
+		var subject = $('#subject');
+		var val = subject.val();
+		if (val == '' || val == ' ') {
+			setFieldError(subject);
+			return false;
+		} else {
+			setFieldComplete(subject);
+			return true;
+		}
+	}
+	function checkMessage() {
+		var message = $('#message');
+		var val = message.val();
+		if (val == '' || val == ' ') {
+			setFieldError(message);
+			return false;
+		} else {
+			setFieldComplete(message);
+			return true;
+		}
+	}
+
+	function submitButton() {
+		if (timer < 0) {
+			var complete = true;
+
+			if(!checkEmail())
+				complete = false;
+			if(!checkSubject())
+				complete = false;
+			if(!checkMessage())
+				complete = false;
+
+			if (complete) {
+				return true;
+			} else {
+				flash('Not all fields are correctly filled in', 'danger');
+				timer = 3;
+				submitTimer();
+			}
+		}
+		return false;
+	}
+	{% if content.data.check %}
+	timer = -1;
+	submitButton();
+	{% else %}
+	submitTimer();
+	{% endif %}
+</script>
