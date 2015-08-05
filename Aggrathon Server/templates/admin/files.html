@@ -1,1 +1,45 @@
-﻿[file list here]
+﻿<div class="row">
+	<div class="col-xs-12 col-md-8 col-lg-9">
+		<div class="panel" id="files_browser">
+			<div class="panel">
+				Path:&emsp;
+				<a>Files</a> / 
+				<a class="">Folder</a> / 
+				<a class=""><strong>Subfolder</strong></a>
+			</div>
+			<div id="files_list">
+				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 1</button>
+				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 2</button>
+				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 3</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />Archive</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />Picture</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />Sound</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />Video</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />Document</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />App</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />Program</button>
+				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />File</button>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-4 col-lg-3">
+		<div class="panel" id="files_viewer">
+			[Details here]
+		</div>
+	</div>
+	<div class="col-xs-12 col-md-8 col-lg-9">
+		<div class="panel" id="files_create">
+			<form method=post enctype="multipart/form-data">
+				<div class="input-group">
+					<span class="form-control"><input type="file" name="file" placeholder="Select file to upload" style="width:100%;"></span>
+					<a class="input-group-addon btn btn-info">Upload File</a>
+				</div>
+			</form>
+			<br />
+			<div class="input-group">
+				<input type="text" class="form-control" id="newfolder" placeholder="Folder Name" />
+				<a class="input-group-addon btn btn-info" onclick="">Create Folder</a>
+			</div>
+		</div>
+	</div>
+</div>

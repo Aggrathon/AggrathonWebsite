@@ -31,9 +31,9 @@
 	}
 </script>
 <form name="create" id="create" class="panel" onsubmit="return CreatePage();">
-	<table><tbody><tr>
-		<td><big class="control-label">Create&nbsp;New&nbsp;Page</big>&emsp;</td>
-		<td width="99%"><input type="text" name="path" id="path" required class="form-control" placeholder="New Page Path" /></td>
-		<td><button type="submit" class="btn btn-primary">Create</button></td>
-	</tr></tbody></table>
+	<div class="input-group">
+		<span class="input-group-addon">Create a New Page:</span>
+		<input type="text" name="path" id="path" required class="form-control" placeholder="New Page Path" />
+		<span class="input-group-btn"><button type="submit" class="btn btn-info">Create</button></span>
+	</div>
 </form>

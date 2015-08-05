@@ -104,6 +104,7 @@ body {
 
 .btn-info {
 	background-color: rgba(52, 195, 237, 0.8);
+	color:white;
 	border: 1px solid #269abc;
 }
 .btn-info:hover,
