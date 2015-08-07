@@ -15,32 +15,49 @@
 			<div id="files_list">
 				{% set files_current_folder_path = content.data.path | join('/') %}
 				{% for folder in content.data.folders %}
-				<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="/admin/files/?path={{ files_current_folder_path }}/{{ folder }}">
+				<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="?path={{ files_current_folder_path }}/{{ folder }}">
 					<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
 					<br />{{ folder }}
 				</a>
 				{% endfor %}
 				{% for file in content.data.files %}
-				{% set extension = last(file.split('.')) %}
-					{{ extension }}
+				{% set extension = file.split('.')[-1:][0] %}
+				{% if extension in ['zip', 'rar', '7z', 'gz', 'tar'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />{{ file }}</button>			
+				{% elif extension in ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'raw', 'tiff'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'img');"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />{{ file }}</button>
+				{% elif extension in ['mp3', 'ogg', 'wav', 'aiff', 'aac', 'flac', 'oga', 'wma', 'midi'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'audio');"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />{{ file }}</button>
+				{% elif extension in ['3gp', 'avi', 'mkv', 'mka', 'mks', 'mp4', 'mpeg', 'mpg', 'mov', 'qt', 'webm'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'video');"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />{{ file }}</button>
+				{% elif extension in ['doc', 'html', 'docx', 'txt', 'odt', 'css', 'js', 'rtf', 'json', 'xml', 'htm', 'pdf', 'tex', 'ppt', 'pptx', 'odp', 'ods', 'xls', 'xlsx'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />{{ file }}</button>
+				{% elif extension in ['apk'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />{{ file }}</button>
+				{% elif extension in ['exe', 'dll', 'jar', 'bat', 'sh', 'cmd', 'app', 'class'] %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />{{ file }}</button>
+				{% else %}
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />{{ file }}</button>
+				{% endif %}			
 				{% endfor %}
-				<br />
-				ONLY TEST VISUAL:
-				<br />
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />Archive</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />Picture</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />Sound</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />Video</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />Document</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />App</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />Program</button>
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />File</button>
 			</div>
 		</div>
 	</div>
 	<div class="col-xs-12 col-md-4 col-lg-3">
 		<div class="panel" id="files_viewer">
-			[Details here]
+			<h3>{{ content.data.path[-1:][0] }}</h3>
+			<table>
+				<tbody>
+					<tr>
+						<td width="99%">Subfolders:</td>
+						<td>{{ content.data.folders | length }}</td>
+					</tr>
+					<tr>
+						<td>Files:</td>
+						<td>{{ content.data.files | length }}</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 	<div class="col-xs-12 col-md-8 col-lg-9">
@@ -59,3 +76,22 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	var path = "{{ content.data.path | join('/') }}";
+
+	function selectFile(file, preview) {
+		var html = '<h3>' + file + '</h3>';
+		if (preview) {
+			if (preview == 'img') {
+				html += '<img src="/' + path + '/' + file + '" class="img-responsive img-rounded" />';
+			} else {
+				html += '<' + preview + ' class="img-responsive img-rounded" controls><source src="/' + path + '/' + file + '"></' + preview + '>';
+			}
+		}
+		html += '<div class="input-group"><span class="input-group-addon">Path:</span>'
+			+ '<input id="files_selected_path" class="form-control" type="text" value="/' + path + '/' + file + '" readonly autofocus onclick="this.select();" />'
+			+ '<a onclick="$(this).parent().find(\'input\').select();document.execCommand(\'copy\');" class="input-group-addon btn btn-info">Copy</a></div>'
+		html += '<br /><a href="/'+path+'/'+file+'" download class="btn btn-success">Download</a>'
+		$('#files_viewer').html(html)
+	}
+</script>

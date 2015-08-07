@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for, jsonify
+from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
 from app import app
 from view import *
 import model
@@ -180,6 +180,12 @@ def contact():
 						return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
 			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+
+
+### files ###
+@app.route('/files/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory('files/', filename)
 
 
 ### errors ###
