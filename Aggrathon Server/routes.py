@@ -96,7 +96,11 @@ def projects_admin():
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
 def files():
-	return show_admin(AdminPages.files)
+	path = request.args.get('path')
+	if path:
+		return create_page_admin('Files: %r' %path, 'admin/files.html', **model.files_list(path))
+	else: 
+		return create_page_admin('Files', 'admin/files.html', **model.files_list())
 
 @app.route('/admin/messages/', methods=['GET', 'POST'])
 def messages():

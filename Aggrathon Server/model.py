@@ -1,5 +1,6 @@
 from flask import abort, flash
 from database import *
+import os
 
 ### SITE ###
 
@@ -197,6 +198,39 @@ def featured_projects():
 
 
 ### PROJECT EDIT ACTIONS ###
+
+
+### FILES ###
+
+def files_list(path='files/', flash_errors=True):
+	if path.startswith('/'):
+		path = path[1:]
+	resetpath = False
+	if not os.path.isdir(path):
+		if flash_errors:
+			flash('Path not found', 'danger')
+		resetpath = True
+	if path.find('files') != 0:
+		if flash_errors:
+			flash('Invalid path', 'danger')
+		resetpath = True
+	if len(path) > 5 and path[5] != '/':
+		if flash_errors:
+			flash('Invalid path', 'danger')
+		resetpath = True
+	if resetpath:
+		path='files/'
+		if flash_errors:
+			flash('Showing default location', 'warning')
+	folders = []
+	files = []
+	pathsplit = [x for x in path.split('/') if x]
+	for name in os.listdir(path):
+		if os.path.isdir(os.path.join(path, name)):
+			folders.append(name)
+		else:
+			files.append(name)
+	return {'path':pathsplit, 'folders':folders, 'files':files}
 
 
 ### MESSAGES ###

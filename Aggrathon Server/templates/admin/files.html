@@ -1,24 +1,40 @@
 ﻿<div class="row">
 	<div class="col-xs-12 col-md-8 col-lg-9">
 		<div class="panel" id="files_browser">
-			<div class="panel">
+			<div class="panel" id="files_path">
 				Path:&emsp;
-				<a>Files</a> / 
-				<a class="">Folder</a> / 
-				<a class=""><strong>Subfolder</strong></a>
+				<div class="btn-group btn-group-sm">					{% for folder in content.data.path %}
+					{% if not loop.last %}
+					<a href="/admin/files/?path={{ content.data.path[:loop.index] | join('/') }}" class="btn btn-default">{{ folder }}</a>
+					{% else %}
+					<a href="/admin/files/?path={{ content.data.path[:loop.index] | join('/') }}" class="btn btn-primary">{{ folder }}</a>
+					{% endif %}
+					{% endfor %}
+				</div>
 			</div>
 			<div id="files_list">
-				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 1</button>
-				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 2</button>
-				<button class="btn btn-primary" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><br />Folder 3</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />Archive</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />Picture</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />Sound</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />Video</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />Document</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />App</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />Program</button>
-				<button class="btn btn-default" style="width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />File</button>
+				{% set files_current_folder_path = content.data.path | join('/') %}
+				{% for folder in content.data.folders %}
+				<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="/admin/files/?path={{ files_current_folder_path }}/{{ folder }}">
+					<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+					<br />{{ folder }}
+				</a>
+				{% endfor %}
+				{% for file in content.data.files %}
+				{% set extension = last(file.split('.')) %}
+					{{ extension }}
+				{% endfor %}
+				<br />
+				ONLY TEST VISUAL:
+				<br />
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />Archive</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />Picture</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />Sound</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />Video</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />Document</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />App</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />Program</button>
+				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />File</button>
 			</div>
 		</div>
 	</div>
