@@ -1,4 +1,6 @@
-﻿<div class="row">
+﻿{% from 'macros.html' import flash %}
+{{ flash() }}
+<div class="row">
 	<div class="col-xs-12 col-md-8 col-lg-9">
 		<div class="panel" id="files_browser">
 			<div class="panel" id="files_path">
@@ -40,6 +42,9 @@
 				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />{{ file }}</button>
 				{% endif %}			
 				{% endfor %}
+				{% if not content.data.folders and not content.data.files %}
+				[ Folder is Empty ]
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -62,22 +67,26 @@
 	</div>
 	<div class="col-xs-12 col-md-8 col-lg-9">
 		<div class="panel" id="files_create">
-			<form method=post enctype="multipart/form-data">
+			<form method=post enctype="multipart/form-data" onsubmit="return uploadFiles();">
 				<div class="input-group">
-					<span class="form-control"><input type="file" name="file" placeholder="Select file to upload" style="width:100%;"></span>
-					<a class="input-group-addon btn btn-info">Upload File</a>
+					<span class="form-control"><input type="file" name="files" id="files_upload" required placeholder="Select file to upload" style="width:100%;" multiple></span>
+					<span class="input-group-btn"><button type="submit" class="btn btn-info">Upload Files</button></span>
 				</div>
 			</form>
 			<br />
-			<div class="input-group">
-				<input type="text" class="form-control" id="newfolder" placeholder="Folder Name" />
-				<a class="input-group-addon btn btn-info" onclick="">Create Folder</a>
-			</div>
+			<form method="post" onsubmit="return createFolder();">
+				<div class="input-group">
+					<input type="text" class="form-control" id="files_newfolder" placeholder="Folder Name" name="folder" />
+					<span class="input-group-btn"><button type="submit" class="btn btn-info">Create Folder</button></span>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
 	var path = "{{ content.data.path | join('/') }}";
+	var folders = ["{{ content.data.folders | join('", "') | safe }}"];
+	var files = ["{{ content.data.files | join('", "') | safe }}"];
 
 	function selectFile(file, preview) {
 		var html = '<h3>' + file + '</h3>';
@@ -93,5 +102,34 @@
 			+ '<a onclick="$(this).parent().find(\'input\').select();document.execCommand(\'copy\');" class="input-group-addon btn btn-info">Copy</a></div>'
 		html += '<br /><a href="/'+path+'/'+file+'" download class="btn btn-success">Download</a>'
 		$('#files_viewer').html(html)
+	}
+	function uploadFiles() {
+		var overwrite = false;
+		var q = "Overwrite already existing files?"
+		var uploadfiles = $('#files_upload')[0].files;
+		for (var i = 0; i < uploadfiles.length; i++) {
+			for (var j = 0; j < files.length; j++) {
+				if (uploadfiles[i].name == files[j]) {
+					overwrite = true;
+					q += '\n'+files[j];
+					break;
+				}
+			}
+		}
+		if (overwrite) {
+			return window.confirm(q);
+		}
+		return true;
+	}
+	function createFolder() {
+		var newfolder = $('#files_newfolder');
+		name = newfolder.val();
+		for (var j = 0; j < files.length; j++) {
+			if (name == files[j]) {
+				flash("Folder already exists", "danger");
+				return false;
+			}
+		}
+		return true;
 	}
 </script>

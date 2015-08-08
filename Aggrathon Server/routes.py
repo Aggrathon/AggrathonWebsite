@@ -97,6 +97,27 @@ def projects_admin():
 @app.route('/admin/files/', methods=['GET', 'POST'])
 def files():
 	path = request.args.get('path')
+	if request.method == 'POST':
+		if path:
+			files = request.files.getlist("files")
+			if files:
+				for file in files:
+					if not model.files_save_file(path, file):
+						flash('Could not save %r' %file.name, 'danger')
+				flash('Files saved', 'success')
+			else:
+				folder = request.form.get('folder')
+				if folder:
+					newpath = model.files_create_folder(path, folder)
+					if newpath:
+						flash('Folder created', 'success')
+						return redirect(url_for('files')+'?path='+newpath)
+					else:
+						flash('Invalid folder name', 'danger')
+				else:
+					flash('Faulty Request', 'danger')
+		else:
+			flash('Invalid Path', 'warning')
 	if path:
 		return create_page_admin('Files: %r' %path, 'admin/files.html', **model.files_list(path))
 	else: 

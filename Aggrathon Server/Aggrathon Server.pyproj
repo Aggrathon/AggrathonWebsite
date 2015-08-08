@@ -44,8 +44,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="files\test\test_img.bmp" />
+    <Content Include="files\test\test_aud.ogg" />
+    <Content Include="files\test\test_img.png" />
     <Content Include="files\test\test_text.txt" />
+    <Content Include="files\test\test_vid.mp4" />
     <Content Include="files\test\test_zip.zip" />
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />

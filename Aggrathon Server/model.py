@@ -1,4 +1,5 @@
 from flask import abort, flash
+from werkzeug import secure_filename
 from database import *
 import os
 
@@ -202,23 +203,27 @@ def featured_projects():
 
 ### FILES ###
 
-def files_list(path='files/', flash_errors=True):
+def files_check_path(path, flash_errors=True):
 	if path.startswith('/'):
 		path = path[1:]
-	resetpath = False
 	if not os.path.isdir(path):
 		if flash_errors:
 			flash('Path not found', 'danger')
-		resetpath = True
+		return ''
 	if path.find('files') != 0:
 		if flash_errors:
 			flash('Invalid path', 'danger')
-		resetpath = True
+		return ''
 	if len(path) > 5 and path[5] != '/':
 		if flash_errors:
 			flash('Invalid path', 'danger')
-		resetpath = True
-	if resetpath:
+		return ''
+	return path
+
+
+def files_list(path='files/', flash_errors=True):
+	path = files_check_path(path)
+	if not path:
 		path='files/'
 		if flash_errors:
 			flash('Showing default location', 'warning')
@@ -231,6 +236,28 @@ def files_list(path='files/', flash_errors=True):
 		else:
 			files.append(name)
 	return {'path':pathsplit, 'folders':folders, 'files':files}
+
+def files_create_folder(path, name):
+	path = files_check_path(path)
+	if path:
+		name = secure_filename(name)
+		fullpath = path+'/'+name
+		if not os.path.isdir(fullpath):
+			os.makedirs(fullpath)
+		return fullpath
+	else:
+		return ''
+
+def files_save_file(path, file):
+	path = files_check_path(path)
+	if path:
+		try:
+			filename = secure_filename(file.filename)
+			file.save(os.path.join(path, filename))
+		except:
+			return False
+		return True
+	return False
 
 
 ### MESSAGES ###
