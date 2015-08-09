@@ -1,5 +1,10 @@
 ﻿{% from 'macros.html' import flash %}
 {{ flash() }}
+{% if request.args.get('filter') %}
+	{% set files_filter = '&filter='+request.args.get('filter') %}
+{% else %}
+	{% set files_filter = '' %}
+{% endif %}
 <div class="row">
 	<div class="col-xs-12 col-sm-8 col-lg-9">
 		<div class="panel" id="files_path">
@@ -8,9 +13,9 @@
 				{% for folder in content.data.path %}
 				{% if loop.first %}{% set files_path = folder %}{% else %}{% set files_path = files_path+'/'+folder %}{% endif %}
 				{% if not loop.last %}
-				<a href="?path={{ files_path }}" class="btn btn-default">{{ folder }}</a>
+				<a href="?path={{ files_path }}{{ files_filter }}" class="btn btn-default">{{ folder }}</a>
 				{% else %}
-				<a href="?path={{ files_path }}" class="btn btn-primary">{{ folder }}</a>
+				<a href="?path={{ files_path }}{{ files_filter }}" class="btn btn-primary">{{ folder }}</a>
 				{% endif %}
 				{% endfor %}
 			</div>
@@ -18,7 +23,7 @@
 		<div id="files_list" class="panel">
 			{% set files_current_folder_path = content.data.path | join('/') %}
 			{% for folder in content.data.folders %}
-			<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="?path={{ files_current_folder_path }}/{{ folder }}">
+			<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="?path={{ files_current_folder_path }}/{{ folder }}{% if request.args.get('filter') %}&filter={{ request.args.get('filter') }}{% endif %}">
 				<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
 				<br />{{ folder }}
 			</a>

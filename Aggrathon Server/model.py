@@ -224,8 +224,10 @@ def files_check_path(path, flash_errors=True):
 	return path
 
 
-def files_list(path='files/', flash_errors=True):
+def files_list(path='files/', filter=None, flash_errors=True):
 	path = files_check_path(path)
+	if filter:
+		filters = filter.split(',')
 	if not path:
 		path='files/'
 		if flash_errors:
@@ -237,7 +239,11 @@ def files_list(path='files/', flash_errors=True):
 		if os.path.isdir(os.path.join(path, name)):
 			folders.append(name)
 		else:
-			files.append(name)
+			if filter:
+				if name.split('.')[-1:][0] in filters:
+					files.append(name)
+			else:
+				files.append(name)
 	return {'path':pathsplit, 'folders':folders, 'files':files}
 
 def files_create_folder(path, name):
