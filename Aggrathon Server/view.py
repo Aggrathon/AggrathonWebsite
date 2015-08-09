@@ -37,6 +37,20 @@ def render_page(pageInfo, sidebarInfo=None):
 def render_page_standard(pageInfo):
 	return render_page(pageInfo, create_sidebar_featured())
 
+"""
+	Methods for rendering embedded pages (without header)
+"""
+def __render_page_embed(siteInfo, pageInfo, sidebarInfo=None):
+	return render_template("layout/embed.html", site=siteInfo, content=pageInfo)
+
+def render_page_embed(pageInfo):
+	return __render_page_embed(model.get_site_info_embed(), pageInfo)
+
+def render_page_embed_sidebar(pageInfo, sidebarInfo=None):
+	return __render_page_embed(model.get_site_info_embed(), pageInfo, sidebarInfo)
+
+def render_page_embed_fromfile(title, file, **data):
+	return render_page_embed( {'title':title, 'file':file, 'data':data} )
 
 """
 	Methods for creating custom pages and sidebars inline

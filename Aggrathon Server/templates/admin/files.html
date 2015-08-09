@@ -1,54 +1,54 @@
 ﻿{% from 'macros.html' import flash %}
 {{ flash() }}
 <div class="row">
-	<div class="col-xs-12 col-md-8 col-lg-9">
-		<div class="panel" id="files_browser">
-			<div class="panel" id="files_path">
-				Path:&emsp;
-				<div class="btn-group btn-group-sm">					{% for folder in content.data.path %}
-					{% if not loop.last %}
-					<a href="/admin/files/?path={{ content.data.path[:loop.index] | join('/') }}" class="btn btn-default">{{ folder }}</a>
-					{% else %}
-					<a href="/admin/files/?path={{ content.data.path[:loop.index] | join('/') }}" class="btn btn-primary">{{ folder }}</a>
-					{% endif %}
-					{% endfor %}
-				</div>
-			</div>
-			<div id="files_list">
-				{% set files_current_folder_path = content.data.path | join('/') %}
-				{% for folder in content.data.folders %}
-				<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="?path={{ files_current_folder_path }}/{{ folder }}">
-					<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-					<br />{{ folder }}
-				</a>
-				{% endfor %}
-				{% for file in content.data.files %}
-				{% set extension = file.split('.')[-1:][0] %}
-				{% if extension in ['zip', 'rar', '7z', 'gz', 'tar'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />{{ file }}</button>			
-				{% elif extension in ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'raw', 'tiff'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'img');"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />{{ file }}</button>
-				{% elif extension in ['mp3', 'ogg', 'wav', 'aiff', 'aac', 'flac', 'oga', 'wma', 'midi'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'audio');"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />{{ file }}</button>
-				{% elif extension in ['3gp', 'avi', 'mkv', 'mka', 'mks', 'mp4', 'mpeg', 'mpg', 'mov', 'qt', 'webm'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'video');"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />{{ file }}</button>
-				{% elif extension in ['doc', 'html', 'docx', 'txt', 'odt', 'css', 'js', 'rtf', 'json', 'xml', 'htm', 'pdf', 'tex', 'ppt', 'pptx', 'odp', 'ods', 'xls', 'xlsx'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />{{ file }}</button>
-				{% elif extension in ['apk'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />{{ file }}</button>
-				{% elif extension in ['exe', 'dll', 'jar', 'bat', 'sh', 'cmd', 'app', 'class'] %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />{{ file }}</button>
+	<div class="col-xs-12 col-sm-8 col-lg-9">
+		<div class="panel" id="files_path">
+			Path:&emsp;
+			<div class="btn-group btn-group-sm">					
+				{% for folder in content.data.path %}
+				{% if loop.first %}{% set files_path = folder %}{% else %}{% set files_path = files_path+'/'+folder %}{% endif %}
+				{% if not loop.last %}
+				<a href="?path={{ files_path }}" class="btn btn-default">{{ folder }}</a>
 				{% else %}
-				<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />{{ file }}</button>
-				{% endif %}			
-				{% endfor %}
-				{% if not content.data.folders and not content.data.files %}
-				[ Folder is Empty ]
+				<a href="?path={{ files_path }}" class="btn btn-primary">{{ folder }}</a>
 				{% endif %}
+				{% endfor %}
 			</div>
 		</div>
+		<div id="files_list" class="panel">
+			{% set files_current_folder_path = content.data.path | join('/') %}
+			{% for folder in content.data.folders %}
+			<a class="btn btn-primary" style="max-width: 7em; overflow:hidden;" href="?path={{ files_current_folder_path }}/{{ folder }}">
+				<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+				<br />{{ folder }}
+			</a>
+			{% endfor %}
+			{% for file in content.data.files %}
+			{% set extension = file.split('.')[-1:][0] %}
+			{% if extension in ['zip', 'rar', '7z', 'gz', 'tar'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-compressed" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'raw', 'tiff'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'img');"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['mp3', 'ogg', 'wav', 'aiff', 'aac', 'flac', 'oga', 'wma', 'midi'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'audio');"><span class="glyphicon glyphicon-music" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['3gp', 'avi', 'mkv', 'mka', 'mks', 'mp4', 'mpeg', 'mpg', 'mov', 'qt', 'webm', 'ogv'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}', 'video');"><span class="glyphicon glyphicon-film" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['doc', 'html', 'docx', 'txt', 'odt', 'css', 'js', 'rtf', 'json', 'xml', 'htm', 'pdf', 'tex', 'ppt', 'pptx', 'odp', 'ods', 'xls', 'xlsx'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-font" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['apk'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-phone" aria-hidden="true"></span><br />{{ file }}</button>
+			{% elif extension in ['exe', 'dll', 'jar', 'bat', 'sh', 'cmd', 'app', 'class'] %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-console" aria-hidden="true"></span><br />{{ file }}</button>
+			{% else %}
+			<button class="btn btn-default" style="max-width: 7em; overflow:hidden;" onclick="selectFile('{{ file }}');"><span class="glyphicon glyphicon-file" aria-hidden="true"></span><br />{{ file }}</button>
+			{% endif %}
+			{% endfor %}
+			{% if not content.data.folders and not content.data.files %}
+			[ Folder is Empty ]
+			{% endif %}
+		</div>
 	</div>
-	<div class="col-xs-12 col-md-4 col-lg-3">
+	<div class="col-xs-12 col-sm-4 col-lg-3">
 		<div class="panel" id="files_viewer">
 			<h3>{{ content.data.path[-1:][0] }}</h3>
 			<table>

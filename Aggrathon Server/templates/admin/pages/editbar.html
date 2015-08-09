@@ -19,8 +19,8 @@
 	}
 </script>
 
-{% from 'macros.html' import image_selector %}
-{{ image_selector() }}
+{% from 'macros.html' import file_selector %}
+{{ file_selector() }}
 
 <div class="text-center panel">
 	<h3>Toolbar</h3>
@@ -55,6 +55,6 @@
 </div>
 <div class="text-center panel">
 	<h3>Blurb</h3>
-	<img onclick="image_selector($(this));" class="btn btn-default img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="page_thumbnail" />
+	<img onclick="file_selector(function (src) { $('#page_thumbnail').attr('src', src); }, true);" class="btn btn-default img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="page_thumbnail" />
 	<textarea class="form-control" id="description" placeholder="Page Description">{% if content.data.description %}{{ content.data.description }}{% endif %}</textarea>
 </div>

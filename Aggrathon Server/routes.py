@@ -95,7 +95,7 @@ def projects_admin():
 	return show_admin(AdminPages.projects)
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
-def files():
+def files(embedded=False):
 	path = request.args.get('path')
 	if request.method == 'POST':
 		if path:
@@ -111,7 +111,10 @@ def files():
 					newpath = model.files_create_folder(path, folder)
 					if newpath:
 						flash('Folder created', 'success')
-						return redirect(url_for('files')+'?path='+newpath)
+						if embedded:
+							return redirect(url_for('files_embed')+'?path='+newpath)
+						else:
+							return redirect(url_for('files')+'?path='+newpath)
 					else:
 						flash('Invalid folder name', 'danger')
 				else:
@@ -119,9 +122,20 @@ def files():
 		else:
 			flash('Invalid Path', 'warning')
 	if path:
-		return create_page_admin('Files: %r' %path, 'admin/files.html', **model.files_list(path))
-	else: 
-		return create_page_admin('Files', 'admin/files.html', **model.files_list())
+		if embedded:
+			return render_page_embed_fromfile('', 'admin/files.html', **model.files_list(path))
+		else:
+			return create_page_admin('File: %r' %path, 'admin/files.html', **model.files_list(path))
+	else:
+		if embedded:
+			return render_page_embed_fromfile('', 'admin/files.html', **model.files_list())
+		else:
+			return create_page_admin('Files', 'admin/files.html', **model.files_list())
+
+@app.route('/admin/files/embed/', methods=['GET', 'POST'])
+def files_embed():
+	return files(True)
+
 
 @app.route('/admin/messages/', methods=['GET', 'POST'])
 def messages():

@@ -18,7 +18,8 @@ SECRET_KEY = 'development key'
 BOOTSTRAP = '/static/external/bootstrap-3.3.5/'
 JQUERY = '/static/external/jquery-1.11.3.min.js'
 EDITOR = '/static/external/CKEditor/custom-4.5.1/ckeditor.js'
-EDITORCONFIG = """CKEDITOR.replace('TEXTAREA_ID', { customConfig: '/static/external/CKEditor/config/config.js' }); CKEDITOR.dtd.$removeEmpty['span'] = false;"""
+EDITOR_CONFIG = """CKEDITOR.replace('TEXTAREA_ID', { customConfig: '/static/external/CKEditor/config/config.js' }); CKEDITOR.dtd.$removeEmpty['span'] = false;"""
+EDITOR_JS_INSERT = "CKEDITOR.instances['TEXTAREA_ID'].insertHtml(INSERT_HTML);"
 
 ### Database Config ###
 ## SQLALCHEMY_DATABASE_URI Pattern:

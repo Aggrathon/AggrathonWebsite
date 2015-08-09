@@ -14,6 +14,9 @@ def get_site_info():
 		abort(500)
 	return {'name':site.name, 'header':site.header, 'language':site.language, 'menu':get_menu()}
 
+def get_site_info_embed():
+	return Site.query.first()
+
 def get_stats():
 	pages = Page.query.count()
 	projects = Project.query.count()
