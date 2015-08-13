@@ -1,9 +1,12 @@
 from flask import Flask
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 app.config.from_pyfile("config.py")
+
+login_manager = LoginManager(app)
 
 
 # Make the WSGI interface available at the top level so wfastcgi can get it.

@@ -1,6 +1,7 @@
 from flask import abort, flash
 from werkzeug import secure_filename
 from database import *
+from app import login_manager
 import os
 
 ### SITE ###
@@ -372,6 +373,17 @@ def message_action_recheck_all():
 	if removed is 1:
 		return '1 Message deleted'
 	return '%s Messages deleted' %removed
+
+
+### LOGIN ###
+@login_manager.user_loader
+def load_user(email):
+	return User.query.filter_by(email=email).first()
+
+@login_manager.token_loader
+def load_user(token):
+	return User.query.get(token)
+
 
 ### TESTDATA ###
 

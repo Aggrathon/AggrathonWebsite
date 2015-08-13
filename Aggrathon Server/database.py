@@ -1,6 +1,8 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from app import app
 from database import *
+from flask_login import make_secure_token
+from os import urandom
 import datetime
 
 db = SQLAlchemy(app)
@@ -189,6 +191,47 @@ class MessageBlacklist(db.Model):
 	def __repr__(self):
 		return '<Blacklisted Phrase: %r>' %self.text
 
+
+### USER ###
+class User(db.Model):
+	token = db.Column(db.Text, primary_key=True)
+	email = db.Column(db.Text, unique=True)
+
+	@property
+	def is_active(self):
+		return True
+	@property
+	def is_authenticated(self):
+		return True
+	@property
+	def is_anonymous(self):
+		return False
+	@property
+	def get_id(self):
+		return unicode(self.email)
+	@property
+	def get_auth_token(self):
+		return unicode(self.token)
+
+	def __init__(self, email):
+		rand = urandom(16)
+		token = make_secure_token(email, rand)
+		while User.query.get(token) is not None:
+			rand = urandom(16)
+			token = make_secure_token(email, rand)
+		self.email = email
+		self.token = token
+
+	def __repr__(self):
+		return '<User: %r>' %self.email
+
+	def __eq__(self, other):
+		if isinstance(other, User):
+			return self.email == other.email
+		return False
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 ### SETUP ####
 

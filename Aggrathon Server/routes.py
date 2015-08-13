@@ -1,5 +1,6 @@
 from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
-from app import app
+from app import app, login_manager
+from flask_login import login_user, logout_user, login_required, current_user
 from view import *
 import model
 
@@ -12,6 +13,7 @@ def main():
 
 ### admin ###
 @app.route('/admin/')
+@login_required
 def admin():
 	if not model.check_if_setup():
 		try:
@@ -22,11 +24,22 @@ def admin():
 		return redirect(url_for('setup'))
 	return show_admin(AdminPages.admin)
 
-@app.route('/login/')
+@app.route('/admin/login/', methods=['GET', 'POST'])
 def login():
+	if current_user.is_authenticated():
+		return redirect(url_for('admin'))
+	elif request.method == 'POST':
+		flash('Check login here')
 	return render_page_standard(create_page_fromfile('Login', 'admin/login.html'))
 
+@app.route('/admin/logout/')
+@login_required
+def logout():
+	logout_user()
+	return redirect('main')
+
 @app.route('/admin/setup/', methods=['GET', 'POST'])
+@login_required
 def setup():
 	if request.method == 'POST':
 		#reset
@@ -61,10 +74,12 @@ def setup():
 	return show_admin(AdminPages.setup)
 
 @app.route('/admin/pages/', methods=['GET', 'POST'])
+@login_required
 def pages_admin():
 	return show_admin(AdminPages.pages)
 
 @app.route('/admin/pages/edit/', methods=['GET', 'POST'])
+@login_required
 def pages_edit():
 	if request.method == 'POST':
 		action = request.form.get('action')
@@ -83,6 +98,7 @@ def pages_edit():
 	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_admin(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
 @app.route('/admin/pages/create/', methods=['GET', 'POST'])
+@login_required
 def pages_create():
 	if request.method == 'POST':
 		action = request.form.get('action')
@@ -91,10 +107,12 @@ def pages_create():
 	return show_admin(AdminPages.createpage)
 
 @app.route('/admin/projects/', methods=['GET', 'POST'])
+@login_required
 def projects_admin():
 	return show_admin(AdminPages.projects)
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
+@login_required
 def files(embedded=False):
 	path = request.args.get('path')
 	filter = request.args.get('filter')
@@ -140,11 +158,13 @@ def files(embedded=False):
 			return create_page_admin('Files', 'admin/files.html', **model.files_list(filter=filter))
 
 @app.route('/admin/files/embed/', methods=['GET', 'POST'])
+@login_required
 def files_embed():
 	return files(True)
 
 
 @app.route('/admin/messages/', methods=['GET', 'POST'])
+@login_required
 def messages():
 	if request.method == 'POST':
 		try:
@@ -161,6 +181,7 @@ def messages():
 		return show_admin(AdminPages.messages)
 
 @app.route('/admin/messages/blacklist/', methods=['GET', 'POST'])
+@login_required
 def blacklist():
 	if request.method == 'POST':
 		try:
@@ -178,6 +199,7 @@ def blacklist():
 		return show_admin(AdminPages.blacklist)
 
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
+@login_required
 def edit_project(project=''):
 	if project == '':
 		flash("Project creation not implemented", "danger")
@@ -237,6 +259,8 @@ def page_not_found(error):
 	return redirect(url_for('main'), 303)
 
 @app.errorhandler(403)
+@app.errorhandler(401)
+@login_manager.unauthorized_handler
 def not_logged_in(error):
-	flash("Access Denied", "danger")
-	return redirect(url_for('login'), 303)
+	flash('<a href="'+url_for('login')+'">Access Denied</a>', "warning")
+	return redirect(url_for('main'), 303)

@@ -16,7 +16,7 @@
     <PythonWsgiHandler>{StartupModule}.wsgi_app</PythonWsgiHandler>
     <Name>Aggrathon Server</Name>
     <RootNamespace>Aggrathon Server</RootNamespace>
-    <InterpreterId>{6054fc70-4703-4bcc-9692-9328e239cd79}</InterpreterId>
+    <InterpreterId>{c48a5014-1e60-495e-bd98-9327959a5b01}</InterpreterId>
     <InterpreterVersion>3.4</InterpreterVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -175,19 +175,6 @@
     <Content Include="templates\layout\content.html" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>{6054fc70-4703-4bcc-9692-9328e239cd79}</Id>
-      <BaseInterpreter>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</BaseInterpreter>
-      <Version>3.4</Version>
-      <Description>env (Python 64-bit 3.4)</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <LibraryPath>Lib\</LibraryPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>Amd64</Architecture>
-    </Interpreter>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="files\" />
     <Folder Include="files\projects\" />
     <Folder Include="files\test\" />
@@ -250,6 +237,19 @@
     <Folder Include="templates\layout\" />
     <Folder Include="templates\frontend\" />
     <Folder Include="templates\frontend\projects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="env\">
+      <Id>{c48a5014-1e60-495e-bd98-9327959a5b01}</Id>
+      <BaseInterpreter>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</BaseInterpreter>
+      <Version>3.4</Version>
+      <Description>env (Python 64-bit 3.4)</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <LibraryPath>Lib\</LibraryPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>Amd64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
