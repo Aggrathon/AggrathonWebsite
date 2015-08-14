@@ -237,7 +237,11 @@ class User(db.Model):
 
 def create_db():
 	db.create_all()
-	setup()
+	db.session.add(Site(app.config['WEBSITE_NAME'], app.config['WEBSITE_HEADER'], app.config['WEBSITE_LANGUAGE']))
+	for item in app.config['WEBSITE_MENU']:
+		db.session.add(Menu(item['title'], item['target'] ))
+	db.session.add( Page('/', '', 'This is the main page') )
+	db.session.commit();
 
 def reset_db():
 	db.drop_all()
@@ -261,19 +265,8 @@ def check_if_setup():
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()
 		Message.query.first()
+
+		User.query.first()
 	except:
 		return False
 	return True
-
-def setup(name="Website", header="Website", language="en"):
-	site = Site.query.first()
-	if(site is None):
-		site = Site(name, header, language)
-		db.session.add(site)
-	else:
-		site.name = name
-		site.header = header
-		site.language = language
-	if(Page.query.filter_by(path = '/').first() is None):
-		db.session.add( Page('/', '', 'This is the main page') )
-	db.session.commit()

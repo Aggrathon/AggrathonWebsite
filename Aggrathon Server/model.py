@@ -39,6 +39,23 @@ def set_menu(menu):
 		curr += 1
 	db.session.commit()
 
+def set_site_info(name, header, language):
+	if name is None:
+		name = app.config['WEBSITE_NAME']
+	if header is None:
+		header = app.config['WEBSITE_HEADER']
+	if language is None:
+		language = app.config['WEBSITE_LANGUAGE']
+	site = Site.query.first()
+	if(site is None):
+		site = Site(name, header, language)
+		db.session.add(site)
+	else:
+		site.name = name
+		site.header = header
+		site.language = language
+	db.session.commit()
+
 
 ### PAGES ###
 

@@ -50,7 +50,7 @@ def setup():
 		name = request.form['name']
 		header = request.form['header']
 		lang = request.form['language']
-		model.setup(name, header, lang)
+		model.set_site_info(name, header, lang)
 		flash("Settings updated", "success")
 		#default menu
 		if(request.values.getlist('default')):
