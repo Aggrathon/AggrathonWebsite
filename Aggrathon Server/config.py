@@ -1,5 +1,5 @@
 """ Website Setup Config """
-#	Before starting the server look through this file and change configurations id necessary
+#	Before starting the server look through this file and change configurations if necessary
 #	If the server is running, restart it to apply any changes made to this file
 
 """  DEBUG  """
@@ -40,6 +40,17 @@ WEBSITE_MENU = [
 	{'title':'Admin',  'target':'/admin/'}
 	]
 WEBSITE_ADMIN = ['admin@example.com']
+
+
+"""  EMAIL  """
+## If not using LOGIN_DISABLED email is needed to login
+MAIL_SERVER = 'localhost'
+MAIL_PORT = 25
+MAIL_USE_TLS = False
+MAIL_USE_SSL = False
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
+MAIL_SENDER_ADRESS = 'admin@example.com'
 
 
 """  SECURITY  """

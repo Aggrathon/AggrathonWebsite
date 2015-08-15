@@ -1,7 +1,8 @@
 from flask import abort, flash
 from werkzeug import secure_filename
 from database import *
-from app import login_manager
+from app import login_manager, mail
+from flask_mail import Message
 import os
 
 ### SITE ###
@@ -394,12 +395,33 @@ def message_action_recheck_all():
 
 ### LOGIN ###
 @login_manager.user_loader
-def load_user(email):
+def login_get_user_by_email(email:str):
 	return User.query.filter_by(email=email).first()
 
 @login_manager.token_loader
-def load_user(token):
+def login_get_user_by_token(token:str):
 	return User.query.get(token)
+
+def login_action_sendcode(email):
+	pass
+
+def login_action_ceckcode(email, code):
+	pass
+
+### EMAIL ###
+def email_send_text(subject:str, recipient:str, message:str, sender:str = None):
+	subject = subject.replace('\n', ' ')
+	if sender is None:
+		sender = app.config['MAIL_SENDER_ADRESS']
+	email = Message(subject=subject, recipients=[recipient], body=message, sender=sender)
+	mail.send(email)
+	
+def email_send_html(subject:str, recipient:str, message:str, sender:str = None):
+	subject = subject.replace('\n', ' ')
+	if sender is None:
+		sender = app.config['MAIL_SENDER_ADRESS']
+	email = Message(subject=subject, recipients=[recipient], html=message, sender=sender)
+	mail.send(email)
 
 
 ### TESTDATA ###
