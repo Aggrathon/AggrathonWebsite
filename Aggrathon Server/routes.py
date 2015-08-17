@@ -187,6 +187,8 @@ def messages():
 				return jsonify(result=model.message_action_unread(request.form['message']))
 			elif action == 'delete':
 				return jsonify(result=model.message_action_delete(request.form['message']))
+			elif action == 'send':
+				return jsonify(result=model.message_action_send(request.form.get('message')))
 		except KeyError as e:
 			return jsonify(result=e.message)
 	else:
@@ -273,6 +275,6 @@ def page_not_found(error):
 @app.errorhandler(403)
 @app.errorhandler(401)
 @login_manager.unauthorized_handler
-def not_logged_in(error):
+def not_logged_in():
 	flash('<a href="'+url_for('login')+'">Access Denied</a>', "warning")
 	return redirect(url_for('main'), 303)

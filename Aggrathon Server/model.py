@@ -3,6 +3,7 @@ from werkzeug import secure_filename
 from database import *
 from app import login_manager, mail
 from flask_mail import Message as MailMessage
+from flask_login import current_user
 import os
 
 ### SITE ###
@@ -392,6 +393,13 @@ def message_action_recheck_all():
 		return '1 Message deleted'
 	return '%s Messages deleted' %removed
 
+def message_action_send(id):
+	mess = Message.query.get(id)
+	if mess is not None:
+		email_send_text(mess.subject, current_user.email, mess.message, mess.email)
+		return 'success'
+	return 'Message not found'
+
 
 ### LOGIN ###
 @login_manager.user_loader
@@ -408,11 +416,15 @@ def login_action_sendcode(email):
 		return "Invalid Email"
 	if not user.get_verification_expired():
 		return "Verification sent too recently"
-	code = 'asdasdasdasdasd'
+	code = ''
 	while len(code) < 12:
-		code = os.urandom(24).decode("ascii", "ignore")
+		code = os.urandom(24).decode("utf-8", "ignore")
 	user.set_verification(code)
-	return '<a href="'+url_for('login', email=email, code=code, _external=True)+'">Verify here</a>'
+	url = url_for('login', email=email, code=code, _external=True)
+	urlmain = url_for('main', _external=True)
+	message = '<p>A login request has been made at <a href="'+urlmain+'">'+urlmain+'</a></p><p>Click here to login: <a href="'+url+'">'+url+'</a></p><p>If you did not request this login-verification, please ignore this message</p>'
+	email_send_html("Login Request - "+app.config["WEBSITE_NAME"], email, message)
+	return 'success'
 
 def login_action_ceckcode(email, code):
 	user = User.query.get(email)
@@ -428,8 +440,8 @@ def login_action_ceckcode(email, code):
 		db.session.commit()
 		return "success"
 	else:
-		#user.verification_code = ''
-		return "Invalid Verification "+code+" "+user.verification_code
+		user.verification_code = ''
+		return "Invalid Verification"
 
 
 ### EMAIL ###
