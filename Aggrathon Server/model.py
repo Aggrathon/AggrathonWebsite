@@ -1,8 +1,8 @@
-from flask import abort, flash
+from flask import abort, flash, url_for
 from werkzeug import secure_filename
 from database import *
 from app import login_manager, mail
-from flask_mail import Message
+from flask_mail import Message as MailMessage
 import os
 
 ### SITE ###
@@ -396,31 +396,55 @@ def message_action_recheck_all():
 ### LOGIN ###
 @login_manager.user_loader
 def login_get_user_by_email(email:str):
-	return User.query.filter_by(email=email).first()
+	return User.query.get(email)
 
 @login_manager.token_loader
 def login_get_user_by_token(token:str):
-	return User.query.get(token)
+	return User.query.filter_by(token=token).first()
 
 def login_action_sendcode(email):
-	pass
+	user = User.query.get(email)
+	if user is None:
+		return "Invalid Email"
+	if not user.get_verification_expired():
+		return "Verification sent too recently"
+	code = 'asdasdasdasdasd'
+	while len(code) < 12:
+		code = os.urandom(24).decode("ascii", "ignore")
+	user.set_verification(code)
+	return '<a href="'+url_for('login', email=email, code=code, _external=True)+'">Verify here</a>'
 
 def login_action_ceckcode(email, code):
-	pass
+	user = User.query.get(email)
+	if user is None:
+		return "Invalid Email"
+	if user.verification_time and user.get_verification_expired():
+		return "Verification Expired"
+	if user.verification_code == '':
+		return "New Verification needed"
+	if code == user.verification_code:
+		user.verification_code = ''
+		user.verification_time = None
+		db.session.commit()
+		return "success"
+	else:
+		#user.verification_code = ''
+		return "Invalid Verification "+code+" "+user.verification_code
+
 
 ### EMAIL ###
 def email_send_text(subject:str, recipient:str, message:str, sender:str = None):
 	subject = subject.replace('\n', ' ')
 	if sender is None:
 		sender = app.config['MAIL_SENDER_ADRESS']
-	email = Message(subject=subject, recipients=[recipient], body=message, sender=sender)
+	email = MailMessage(subject=subject, recipients=[recipient], body=message, sender=sender)
 	mail.send(email)
 	
 def email_send_html(subject:str, recipient:str, message:str, sender:str = None):
 	subject = subject.replace('\n', ' ')
 	if sender is None:
 		sender = app.config['MAIL_SENDER_ADRESS']
-	email = Message(subject=subject, recipients=[recipient], html=message, sender=sender)
+	email = MailMessage(subject=subject, recipients=[recipient], html=message, sender=sender)
 	mail.send(email)
 
 

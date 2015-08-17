@@ -1,1 +1,21 @@
-﻿[login form here]
+﻿{% from 'macros.html' import flash %}
+{{ flash() }}
+<script type="text/javascript">
+	function submitLogin() {
+		$.post('/admin/login/', { email: $('#email').val() },
+			function (data) {
+				if (data.result == 'success') {
+					$('#email').val('');
+					flash("Verification sent to email", "success");
+				} else {
+					flash("Error: "+data.result, "danger");
+				}
+			});
+	}
+</script>
+<form onsubmit="submitLogin(); return false;">
+	<div class="input-group">
+		<input type="email" required class="form-control" placeholder="admin@example.com" id="email" />
+		<span class="input-group-btn"><button type="submit" class="btn btn-info">Send Verification</button></span>
+	</div>
+</form>

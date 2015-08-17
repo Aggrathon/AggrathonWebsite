@@ -30,24 +30,25 @@ def login():
 		return redirect(url_for('admin'))
 	elif request.method == 'POST':
 		email = request.form.get('email')
-		if user:
+		if email:
 			return jsonify(result=model.login_action_sendcode(email))
 	else:
 		email = request.args.get('email')
 		code = request.args.get('code')
 		if email and code:
-			if model.login_action_ceckcode(email, code):
+			check = model.login_action_ceckcode(email, code)
+			if check == 'success':
 				login_user(model.login_get_user_by_email(email))
 				return redirect(url_for('admin'))
 			else:
-				flash('The email or code provided is not correct', 'danger')
+				flash(check, 'danger')
 	return render_page_standard(create_page_fromfile('Login', 'admin/login.html'))
 
 @app.route('/admin/logout/')
 @login_required
 def logout():
 	logout_user()
-	return redirect('main')
+	return redirect(url_for('main'))
 
 @app.route('/admin/setup/', methods=['GET', 'POST'])
 @login_required

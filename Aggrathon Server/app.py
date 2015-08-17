@@ -26,14 +26,10 @@ if __name__ == '__main__':
 	except ValueError:
 		PORT = 5555
 	app.run(HOST, PORT)
-
-	
-import database
-if not database.check_if_setup():
-	if app.config['DATABASE_SCHEMA_ERROR_ACTION'] == 'NOTHING':
-		print("The Database Schema doesn't match the website, check the database or use the 'Reset Database' function (in /admin/setup/) to remove old data")
-		flash("The Database Schema doesn't match the website, check the database or use the 'Reset Database' function (in <a href='/admin/setup/'>/admin/setup/</a>)to remove old data", "danger")
-	else:
-		database.reset_db()
-		print("The Database has been reset due to not matching the website")
-		flash("The Database has been reset due to not matching the website", "danger")
+	import database
+	if not database.check_if_setup():
+		if app.config['DATABASE_SCHEMA_ERROR_ACTION'] == 'NOTHING':
+			print('\033[93m'+"The Database Schema doesn't match the website, check the database or use the 'Reset Database' function (in /admin/setup/) to remove old data"+'\033[0m')
+		else:
+			database.reset_db()
+			print('\033[93m'+"The Database has been reset due to not matching the website"+'\033[0m')

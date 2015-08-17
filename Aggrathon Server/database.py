@@ -194,29 +194,38 @@ class MessageBlacklist(db.Model):
 
 ### USER ###
 class User(db.Model):
-	token = db.Column(db.Text, primary_key=True)
-	email = db.Column(db.Text, unique=True)
+	email = db.Column(db.Text, primary_key=True)
+	token = db.Column(db.Text, unique=True)
 
-	@property
+	verification_time = db.Column(db.DateTime)
+	verification_code = db.Column(db.Text)
+
 	def is_active(self):
 		return True
-	@property
 	def is_authenticated(self):
 		return True
-	@property
 	def is_anonymous(self):
 		return False
-	@property
 	def get_id(self):
-		return unicode(self.email)
-	@property
+		return self.email
 	def get_auth_token(self):
-		return unicode(self.token)
+		return self.token
+
+	def get_verification_expired(self):
+		if self.verification_time:
+			return (datetime.datetime.today() - self.verification_time).total_seconds() > 300
+		else:
+			return True
+
+	def set_verification(self, code):
+		self.verification_code = code
+		self.verification_time = datetime.datetime.today()
+		db.session.commit()
 
 	def __init__(self, email):
 		rand = urandom(16)
-		token = make_secure_token(email, rand)
-		while User.query.get(token) is not None:
+		token = make_secure_token(email, key=rand)
+		while User.query.filter_by(token=token).first() is not None:
 			rand = urandom(16)
 			token = make_secure_token(email, rand)
 		self.email = email
@@ -240,10 +249,18 @@ def create_db():
 	db.session.add(Site(app.config['WEBSITE_NAME'], app.config['WEBSITE_HEADER'], app.config['WEBSITE_LANGUAGE']))
 	for item in app.config['WEBSITE_MENU']:
 		db.session.add(Menu(item['title'], item['target'] ))
+	for user in app.config['WEBSITE_ADMIN']:
+		db.session.add(User(user))
 	db.session.add( Page('/', '', 'This is the main page') )
 	db.session.commit();
 
 def reset_db():
+	try:
+		for user in User.query.all():
+			if user not in app.config['WEBSITE_ADMIN']:
+				app.config['WEBSITE_ADMIN'].append(user.email)
+	except:
+		pass
 	db.drop_all()
 	create_db()
 
