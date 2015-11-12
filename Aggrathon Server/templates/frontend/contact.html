@@ -20,7 +20,7 @@
 		<textarea class="form-control" id="message" placeholder="Message" name="message" rows="5" onchange="checkMessage();" required> {% if content.data.message %}{{ content.data.message }}{% endif %}</textarea>
 		<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 	</div>
-	<div class="panel">Insert Captcha here</div>
+	<div class="panel">{{ recaptcha }}</div>
 	<button class="btn btn-primary btn-lg" type="submit" id="submitButton" disabled="disabled">Send Message</button>
 	<span class="pull-right">* Required</span>
 </form>

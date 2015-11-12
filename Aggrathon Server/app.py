@@ -1,6 +1,7 @@
-from flask import Flask
+﻿from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_recaptcha import ReCaptcha
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
@@ -9,6 +10,8 @@ app.config.from_pyfile("config.py")
 
 login_manager = LoginManager(app)
 mail = Mail(app)
+recaptcha = ReCaptcha(app=app)
+
 
 # Make the WSGI interface available at the top level so wfastcgi can get it.
 wsgi_app = app.wsgi_app

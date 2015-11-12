@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
+﻿from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
 from app import app, login_manager
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
@@ -253,9 +253,12 @@ def contact():
 			if email != '' and subject != '' and message != '':
 				if len(email.split('@')) == 2:
 					if len(email.split('@')[1].split('.')) > 1:
-						model.message_add(email, subject, message)
-						flash('Message sent', 'success')
-						return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+						if recaptcha.verify():
+							model.message_add(email, subject, message)
+							flash('Message sent', 'success')
+							return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+						else:
+							flash('ReCaptcha not valid', 'error')
 			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True))
 	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
 
