@@ -107,6 +107,7 @@ class AdminPages(Enum):
 	projects = 4
 	messages = 6
 	blacklist = 7
+	forwarding = 9
 
 def show_admin(page):
 	#if not isloggedin:
@@ -125,6 +126,8 @@ def show_admin(page):
 		return create_page_admin('Messages', 'admin/messages/messages.html', **model.message_list(try_int(request.args.get("start"), 1) - 1, try_int(request.args.get("amount"), 20)))
 	if page is AdminPages.blacklist:
 		return create_page_admin("Message Blacklist", 'admin/messages/blacklist.html', blacklist=model.message_blacklist())
+	if page is AdminPages.forwarding:
+		return create_page_admin("Message Forwarding", 'admin/messages/forwarding.html', blacklist=model.message_blacklist())
 	else:
 		flash("Unrecognized call for adminpage, showing main adminpage", "warning")
 		return show_admin(AdminPages.admin)

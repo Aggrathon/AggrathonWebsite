@@ -1,0 +1,75 @@
+﻿{% from 'macros.html' import flash %}
+{{ flash() }}
+{#
+	This page manages email forwarding
+#}
+<script>
+	function addForward() {
+		return;
+		phrase = $('input#blacklistadd').val();
+		if (phrase == '')
+			return false;
+		$.post("/admin/messages/blacklist/",
+			{ action: "ban", phrase: phrase },
+			function (data) {
+				if (data.result == "success") {
+					var row = '<tr>\n\t<td id="phrase"></td>\n\t<td>'
+						+ '\n\t\t<button class="btn btn-danger" type="button" onclick="removeFromBlacklist(this);">'
+						+ '\n\t\t\t<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+						+ '\n\t\t\t<span class="sr-only">Remove</span>'
+						+ '\n\t\t</button>\n\t</td>\n</tr>';
+					$('#blacklist').append(row);
+					$('#blacklist').children().last().find('#phrase').html(document.createTextNode(phrase));
+					$('input#blacklistadd').val('');
+				}
+				else
+					flash(data.result, 'danger');
+			});
+	}
+	function removeForward(listobj) {
+
+	}
+</script>
+<form class="panel" onsubmit="addForward(); return false;">
+	<div class="row">
+		<div class="col-xs-12 col-sm-5 col-lg-6">
+			<input type="email" class="form-control" id="forwardEmail" placeholder="Email" />
+		</div>
+		<div class="col-xs-8 col-sm-4 col-lg-4">
+			<select class="form-control">
+				<option>Forward all messages</option>
+				<option>Alert unread messages</option>
+				<option>Alert once if unread messages</option>
+			</select>
+		</div>
+		<div class="col-xs-4 col-sm-3 col-lg-2 text-right">
+			<a class="btn btn-success" onclick="addForward();">Add Forwarding</a>
+		</div>
+	</div>
+</form>
+
+<table class="table">
+	<thead>
+		<tr>
+			<td>Phrase</td>
+			<td>Type</td>
+			<td class="text-right">Remove</td>
+		</tr>
+	</thead>
+	<tbody id="list">
+		{% set forwardlist = [("email here", "every message"),("email here", "every message")] %}		
+		{% for email, type in forwardlist %}		
+		{# {% for email, type in content.data.forwardlist %} #}
+		<tr>
+			<td id="email">{{ email }}</td>
+			<td id="type" style="white-space: nowrap;">{{ type }}</td>
+			<td  class="text-right">
+				<button class="btn btn-danger" type="button" onclick="removeForward(this);">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					<span class="sr-only">Remove</span>
+				</button>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

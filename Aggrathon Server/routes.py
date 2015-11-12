@@ -48,6 +48,7 @@ def login():
 @login_required
 def logout():
 	logout_user()
+	flash("You have been logged out", "success")
 	return redirect(url_for('main'))
 
 @app.route('/admin/setup/', methods=['GET', 'POST'])
@@ -211,6 +212,24 @@ def blacklist():
 		return jsonify(result='Action not recognized')
 	else:
 		return show_admin(AdminPages.blacklist)
+
+@app.route('/admin/messages/forwarding/', methods=['GET', 'POST'])
+@login_required
+def forwarding():
+	if request.method == 'POST':
+		try:
+			action = request.form['action']
+			if action == 'ban':
+				return jsonify(result=model.message_action_ban(request.form['phrase']))
+			elif action == 'unban':
+				return jsonify(result=model.message_action_unban(request.form['phrase']))
+			elif action == 'checkall':
+				return jsonify(result=model.message_action_recheck_all())
+		except KeyError as e:
+			return jsonify(result=e.message)
+		return jsonify(result='Action not recognized')
+	else:
+		return show_admin(AdminPages.forwarding)
 
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
 @login_required

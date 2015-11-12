@@ -94,13 +94,14 @@
 
 <form class="panel" id="blacklist" onsubmit="return addToBlacklist();">
 	<div class="row">
-		<div class="col-xs-2">
-			<a class="btn btn-primary" href="/admin/messages/blacklist/">Edit Blacklist</a>
+		<div class="col-xs-12 col-sm-2">
+			<a class="btn btn-info" href="/admin/messages/forwarding/">Forwarding</a>
 		</div>
 		<div class="col-xs-12 col-sm-10">
 			<div class="input-group">
+				<a class="input-group-addon btn btn-warning" href="/admin/messages/blacklist/">Edit Blacklist</a>
 				<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
-				<a class="input-group-addon btn btn-info" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
+				<a class="input-group-addon btn btn-success" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
 			</div>
 		</div>
 	</div>
