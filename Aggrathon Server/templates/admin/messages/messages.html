@@ -54,6 +54,13 @@
 				}
 			});
 	}
+	function replyEmail(messageId) {
+		var mess = $('#messagelist').children('#message' + messageId);
+		var email = mess.find('#email').html();
+		var subject = "RE: "+mess.find('#subject').html();
+		var body = "\n\n\nOn "+mess.find('#time').html()+", "+email+" wrote:\n|"+("\n"+mess.find('#message').html()).replace(/(?:\r\n|\r|\n)/g, "\n | ");
+		window.location = "mailto:"+encodeURIComponent(email)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+	}
 
 	function getMessages(start, amount) {
 		window.location = "/admin/messages/?start="+start+"&amount="+amount
@@ -77,8 +84,8 @@
 
 	function toggleMessage(messageId) {
 		var message = $('#messagelist').children('#message' + messageId);
-		message.children('#message').children('div').slideToggle();
-		message.children('#email').children('#time').slideToggle();
+		message.find("#message").slideToggle();
+		message.find('#time').slideToggle();
 		if ( message.children('#read').find('.glyphicon-ok').length > 0 ) {
 			readMessage(messageId);
 		}
@@ -137,6 +144,7 @@
 				<td style="width:99%">Message</td>
 				<td>Sender</td>
 				<td>Email</td>
+				<td>Reply</td>
 				<td>Ban</td>
 				<td>Delete</td>
 			</tr>
@@ -155,20 +163,26 @@
 						</button>
 						{% endif %}
 					</td>
-					<td id="message" onclick="toggleMessage({{ mess.id }});">
-						<strong>{{ mess.subject }}</strong>
-						<div hidden>{{ mess.message }}</div>
+					<td onclick="toggleMessage({{ mess.id }});">
+						<strong id="subject">{{ mess.subject }}</strong>
+						<div id="message" hidden>{{ mess.message }}</div>
 					</td>
-					<td id="email">
-						<a href="mailto:{{ mess.email }}">{{ mess.email }}</a>
-						<div hidden id="time">{{ mess.time.year }}.{{ mess.time.month }}.{{ mess.time.day }} {{ mess.time.hour }}:{{ mess.time.minute }}</div>
+					<td>
+						<a id="email" href="mailto:{{ mess.email }}">{{ mess.email }}</a>
+						<div id="time" hidden>{{ mess.time.year }}-{{ mess.time.month }}-{{ mess.time.day }} {{ mess.time.hour }}:{{ mess.time.minute }}</div>
 					</td>
-					<td colspan="3">
+					<td colspan="4">
 						<div class=" btn-group">
-							<button class="btn btn-warning" type="button" title="Send to Email" onclick="sendEmail({{ mess.id }});">
+							<button class="btn btn-success" type="button" title="Send to Email" onclick="sendEmail({{ mess.id }});">
 								<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
 								<span class="sr-only">Send to Email</span>
 							</button>
+							<button class="btn btn-info" type="button" title="Reply to Email" onclick="replyEmail({{ mess.id }});">
+								<span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+								<span class="sr-only">Reply to Email</span>
+							</button>
+						</div>
+						<div class=" btn-group pull-right">
 							<button class="btn btn-danger" type="button" title="Ban Sender" onclick="banSender({{ mess.id }});">
 								<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
 								<span class="sr-only">Ban Sender</span>

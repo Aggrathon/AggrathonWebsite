@@ -1,5 +1,5 @@
 ﻿from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
-from app import app, login_manager
+from app import app, login_manager, recaptcha
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
 import model
