@@ -308,6 +308,7 @@ def message_add(email, subject, message):
 				db.session.add(mess)
 				db.session.add(unr)
 				db.session.commit()
+				message_forward(mess)
 				return 'success'
 	return 'blocked'
 
@@ -412,9 +413,14 @@ def message_action_send(id):
 def message_forward_add(email, type):
 	forw = MessageForwarding.query.get(email)
 	if forw is None:
-		forw = MessageForwarding(email, type, get_random_code())
+		code = get_random_code()
+		forw = MessageForwarding(email, type, code)
 		db.session.add(forw)
 		db.session.commit()
+		url = url_for('forwarding_remove', email=email, code=code, _external=True)
+		email_send_html(get_site_info()['name']+" - Message Forwarding Confirmation", email, """
+		This email has been setup to recieve notifications on messages sent to the site\n<br />
+		Click here to unsubscribe: <a href=\""""+url+"\">"+url+"</a>\n<br />")
 		flash("Forwarding Email added ("+email+")", "success")
 	else:
 		forw.type = type
@@ -429,8 +435,34 @@ def message_forward_remove(email):
 		return 'success'
 	return "Email not found ("+email+")"
 
+def message_forward_unsubscribe(email, code):
+	forw = MessageForwarding.query.get(email)
+	if forw is not None:
+		if forw.code == code:
+			db.session.delete(forw)
+			db.session.commit()
+			return True
+	return False
+
 def message_forward_list():
 	return db.session.query(MessageForwarding.email, MessageForwarding.type)
+
+def message_forward(message):
+	unr = message_unread_count()
+	frwds = MessageForwarding.query.all()
+	one = unr == 1
+	remind = one or (unr == 5 or (unr < 100 and unr%10 == 0) or unr%100 == 0)
+	for frw in frwds:
+		if frw.type == 0:
+			email_send_text(message.subject, frw.email, message.message, message.email)
+		elif (frw.type == 1 and remind) or (frw.type == 2 and one):
+			url = url_for('messages', _external=True)
+			url2 = url_for('forwarding_remove', email=frw.email, code=frw.code, _external=True)
+			email_send_html(get_site_info()['name']+" - Unread messages: "+unr, frw.email, """
+			This email has been setup to recieve notifications on messages sent to the site\n<br />\n<br />
+			You have """+unr+""" unread messages\n<br />
+			Click here to read them: <a href=\""""+url+"\">"+url+"""</a>\n<br />\n<br />\n<br />
+			Click here to unsubscribe: <a href=\""""+url2+"\">"+url2+"</a>\n<br />")
 
 
 ### LOGIN ###

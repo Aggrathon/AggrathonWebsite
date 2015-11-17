@@ -228,6 +228,23 @@ def forwarding():
 				model.message_forward_add(email, type)
 	return show_admin(AdminPages.forwarding)
 
+@app.route('/admin/messages/forwarding/unsubscribe', methods=['GET'])
+def forwarding_remove():
+	email = request.args.get("email")
+	code = request.args.get("code")
+	conf = request.args.get("confirmation")
+	if code and email:
+		if conf:
+			if model.message_forward_unsubscribe(email, code):
+				flash("Forwarding Email removed", "success")
+				return redirect(url_for('main'), 303)
+		else:
+			return render_page_standard(create_page("Unsubscribe", """
+			<big>Do you wish to remove &nbsp;<em>"""+email+"""</em>&nbsp; from the forwarding list?</big><br>\n<br>\n
+			<a class="btn btn-primary" href="?email="""+email+"&code="+code+"&confirmation=true\">Confirm</a>"))
+	flash("Forwarding Email not recognised", "warning")
+	return redirect(url_for('main'), 303)
+
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
 @login_required
 def edit_project(project=''):
