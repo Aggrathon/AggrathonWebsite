@@ -217,19 +217,16 @@ def blacklist():
 @login_required
 def forwarding():
 	if request.method == 'POST':
-		try:
-			action = request.form['action']
-			if action == 'ban':
-				return jsonify(result=model.message_action_ban(request.form['phrase']))
-			elif action == 'unban':
-				return jsonify(result=model.message_action_unban(request.form['phrase']))
-			elif action == 'checkall':
-				return jsonify(result=model.message_action_recheck_all())
-		except KeyError as e:
-			return jsonify(result=e.message)
-		return jsonify(result='Action not recognized')
-	else:
-		return show_admin(AdminPages.forwarding)
+		action = request.form.get('action')
+		if action:
+			if action == 'remove':
+				return jsonify(result=model.message_forward_remove(request.form.get('email')))
+		else:
+			email = request.form.get('email')
+			type = request.form.get('type')
+			if email and type:
+				model.message_forward_add(email, type)
+	return show_admin(AdminPages.forwarding)
 
 @app.route('/admin/projects/create/', methods=['GET', 'POST'])
 @login_required

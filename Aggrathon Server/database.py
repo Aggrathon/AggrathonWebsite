@@ -1,4 +1,4 @@
-from flask.ext.sqlalchemy import SQLAlchemy
+﻿from flask.ext.sqlalchemy import SQLAlchemy
 from app import app
 from database import *
 from flask_login import make_secure_token
@@ -191,6 +191,19 @@ class MessageBlacklist(db.Model):
 	def __repr__(self):
 		return '<Blacklisted Phrase: %r>' %self.text
 
+class MessageForwarding(db.Model):
+	email = db.Column(db.Text, primary_key=True)
+	type = db.Column(db.Integer)
+	code = db.Column(db.Text)
+
+	def __init__(self, email, type, code):
+		self.email = email
+		self.type = type
+		self.code = code
+
+	def __repr__(self):
+		return '<Message Forwarding Email: %r>' %self.email
+
 
 ### USER ###
 class User(db.Model):
@@ -257,7 +270,7 @@ def create_db():
 def reset_db():
 	try:
 		for user in User.query.all():
-			if user not in app.config['WEBSITE_ADMIN']:
+			if user.email not in app.config['WEBSITE_ADMIN']:
 				app.config['WEBSITE_ADMIN'].append(user.email)
 	except:
 		pass
@@ -282,6 +295,7 @@ def check_if_setup():
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()
 		Message.query.first()
+		MessageForwarding.query.first();
 
 		User.query.first()
 	except:

@@ -1,10 +1,18 @@
-from flask import abort, flash, url_for
+﻿from flask import abort, flash, url_for
 from werkzeug import secure_filename
 from database import *
 from app import login_manager, mail
 from flask_mail import Message as MailMessage
 from flask_login import current_user
 import os
+from random import SystemRandom
+import string
+
+###  UTILITIES  ###
+
+def get_random_code():
+	return ''.join(SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(app.config['CODE_LENGTH']))
+
 
 ### SITE ###
 
@@ -401,6 +409,30 @@ def message_action_send(id):
 	return 'Message not found'
 
 
+def message_forward_add(email, type):
+	forw = MessageForwarding.query.get(email)
+	if forw is None:
+		forw = MessageForwarding(email, type, get_random_code())
+		db.session.add(forw)
+		db.session.commit()
+		flash("Forwarding Email added ("+email+")", "success")
+	else:
+		forw.type = type
+		db.session.commit()
+		flash("Forwarding settings changed for "+email, "success")
+
+def message_forward_remove(email):
+	forw = MessageForwarding.query.get(email)
+	if forw is not None:
+		db.session.delete(forw)
+		db.session.commit()
+		return 'success'
+	return "Email not found ("+email+")"
+
+def message_forward_list():
+	return db.session.query(MessageForwarding.email, MessageForwarding.type)
+
+
 ### LOGIN ###
 @login_manager.user_loader
 def login_get_user_by_email(email:str):
@@ -416,9 +448,7 @@ def login_action_sendcode(email):
 		return "Invalid Email"
 	if not user.get_verification_expired():
 		return "Verification sent too recently"
-	code = ''
-	while len(code) < 12:
-		code = os.urandom(24).decode("utf-8", "ignore")
+	code = get_random_code();
 	user.set_verification(code)
 	url = url_for('login', email=email, code=code, _external=True)
 	urlmain = url_for('main', _external=True)

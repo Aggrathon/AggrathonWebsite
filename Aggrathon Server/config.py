@@ -62,8 +62,10 @@ RECAPTCHA_SECRET_KEY = ""
 
 """  SECURITY  """
 ## SECRET_KEY is used for sessions
-import os
-SECRET_KEY = os.urandom(24)
+from os import urandom
+SECRET_KEY = urandom(24)
+## CODE_LENGTH is used for verification codes
+CODE_LENGTH = 20
 
 
 """  EXTERNAL HTML LIBRARIES  """

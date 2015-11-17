@@ -127,7 +127,7 @@ def show_admin(page):
 	if page is AdminPages.blacklist:
 		return create_page_admin("Message Blacklist", 'admin/messages/blacklist.html', blacklist=model.message_blacklist())
 	if page is AdminPages.forwarding:
-		return create_page_admin("Message Forwarding", 'admin/messages/forwarding.html', blacklist=model.message_blacklist())
+		return create_page_admin("Message Forwarding", 'admin/messages/forwarding.html', forwardlist=model.message_forward_list())
 	else:
 		flash("Unrecognized call for adminpage, showing main adminpage", "warning")
 		return show_admin(AdminPages.admin)
