@@ -36,8 +36,7 @@ WEBSITE_MENU = [
 	{'title':'Home',  'target':'/'},
 	{'title':'Pages',  'target':'/pages/'},
 	{'title':'Projects',  'target':'/projects/'},
-	{'title':'Contact',  'target':'/contact/'},
-	{'title':'Admin',  'target':'/admin/'}
+	{'title':'Contact',  'target':'/contact/'}
 	]
 WEBSITE_ADMIN = ['admin@example.com']
 

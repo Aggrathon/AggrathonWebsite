@@ -19,10 +19,12 @@ def get_random_code():
 def get_menu():
 	return Menu.query.all()
 
-def get_site_info():
+def get_site_info(editable=False):
 	site = Site.query.first()
 	if(site is None):
 		abort(500)
+	if (current_user.is_authenticated or app.config.get('LOGIN_DISABLED')):
+		return {'name':site.name, 'header':site.header, 'language':site.language, 'menu':get_menu(), 'admin':{'unread':message_unread_count(), 'edit':editable}}
 	return {'name':site.name, 'header':site.header, 'language':site.language, 'menu':get_menu()}
 
 def get_site_info_embed():

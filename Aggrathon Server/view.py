@@ -2,6 +2,8 @@
 	File containing all methods required for rendering pages
 """
 from flask import render_template, flash, abort, request
+from flask_login import current_user
+from app import app
 import model
 
 """
@@ -30,12 +32,12 @@ def __render_page(siteInfo, pageInfo, sidebarInfo=None):
 	return render_template("layout/layout.html", site=siteInfo, content=pageInfo, sidebar=sidebarInfo)
 
 # renders the page with the standard siteInfo
-def render_page(pageInfo, sidebarInfo=None):
-	return __render_page(model.get_site_info(), pageInfo, sidebarInfo)
+def render_page(pageInfo, sidebarInfo=None, editable=False):
+	return __render_page(model.get_site_info(editable), pageInfo, sidebarInfo)
 
 # renders the page with the standard siteInfo and sidebar
-def render_page_standard(pageInfo):
-	return render_page(pageInfo, create_sidebar_featured())
+def render_page_standard(pageInfo, editable=False):
+	return render_page(pageInfo, create_sidebar_featured(), editable)
 
 """
 	Methods for rendering embedded pages (without header)
@@ -84,7 +86,7 @@ def create_sidebar_featured():
 		return create_sidebar_fromfile("frontend/sidebar_featured.html", featuredPages=pages, featuredProjects=projects)
 
 def create_sidebar_admin():
-	return create_sidebar_fromfile("admin/sidebar.html", unread_messages=model.message_unread_count())
+	return create_sidebar_fromfile("admin/sidebar.html")
 
 
 """
@@ -92,7 +94,14 @@ def create_sidebar_admin():
 """
 def show_page(path):
 	page = model.page_get(path)
-	return render_page_standard(create_page(page.title, page.content))
+	return render_page_standard(create_page(page.title, page.content), True)
+
+
+"""
+	Methods for rendering projects of standard types
+"""
+def show_project(project):
+	return render_page(create_page_fromfile(project, 'frontend/projects/project.html'), True)
 
 
 """
@@ -140,7 +149,4 @@ def try_int(value, default):
 		return int(value)
 	except (ValueError, TypeError):
 		return default
-
-def show_project(project):
-	return render_page(create_page_fromfile(project, 'frontend/projects/project.html'))
 

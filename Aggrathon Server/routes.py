@@ -255,10 +255,31 @@ def edit_project(project=''):
 		flash("Project editing not yet implemented", "warning")
 		return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html'))
 
+@app.route('/admin/edit/', methods=['GET'])
+@login_required
+def edit_item():
+	path = request.args.get('path')
+	if path:
+		if path == '/':
+			return redirect(url_for('pages_edit', page=path), 303)
+		if '/pages/' == path:
+			return redirect(url_for('pages_admin'), 303)
+		if '/pages/' in path:
+			return redirect(url_for('pages_edit', page=path.replace('/pages/', '')), 303)
+		if path == '/contact/':
+			return redirect(url_for('messages'), 303)
+		if '/projects/' == path:
+			return redirect(url_for('projects_admin'), 303)
+		if '/projects/' in path:
+			return redirect(url_for('projects_edit', page=path.replace('/projects/', '')), 303)
+	flash('Path not recognized', 'error')
+	return redirect(url_for('admin'), 303)
+
+
 ### pages ###
 @app.route('/pages/')
 def pages():
-	return render_page_standard(create_page_fromfile("Pages", 'frontend/pages.html', pages=model.page_list()))
+	return render_page_standard(create_page_fromfile("Pages", 'frontend/pages.html', pages=model.page_list()), True)
 
 @app.route('/pages/<path:path>/')
 def page(path):
@@ -268,7 +289,7 @@ def page(path):
 @app.route('/projects/')
 def projects():
 	flash("Not implemented", "danger")
-	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html'), create_sidebar_fromfile("frontend/projects/sidebar.html"))
+	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html'), create_sidebar_fromfile("frontend/projects/sidebar.html"), True)
 
 @app.route('/projects/<path:project>/')
 def project(project):
@@ -289,11 +310,11 @@ def contact():
 						if recaptcha.verify():
 							model.message_add(email, subject, message)
 							flash('Message sent', 'success')
-							return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+							return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'), True)
 						else:
 							flash('ReCaptcha not valid', 'error')
-			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True))
-	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'))
+			return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html', email=email, subject=subject, message=message, check=True), True)
+	return render_page_standard(create_page_fromfile('Contact', 'frontend/contact.html'), True)
 
 
 ### files ###
