@@ -458,9 +458,9 @@ def message_forward(message):
 		elif (frw.type == 1 and remind) or (frw.type == 2 and one):
 			url = url_for('messages', _external=True)
 			url2 = url_for('forwarding_remove', email=frw.email, code=frw.code, _external=True)
-			email_send_html(get_site_info()['name']+" - Unread messages: "+unr, frw.email, """
+			email_send_html(get_site_info()['name']+" - Unread messages: "+str(unr), frw.email, """
 			This email has been setup to recieve notifications on messages sent to the site\n<br />\n<br />
-			You have """+unr+""" unread messages\n<br />
+			You have """+str(unr)+""" unread messages\n<br />
 			Click here to read them: <a href=\""""+url+"\">"+url+"""</a>\n<br />\n<br />\n<br />
 			Click here to unsubscribe: <a href=\""""+url2+"\">"+url2+"</a>\n<br />")
 

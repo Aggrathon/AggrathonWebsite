@@ -54,7 +54,7 @@ MAIL_SENDER_ADRESS = 'admin@example.com'
 
 
 """  CONTACT  """
-## Get ReCaptcha key here https://www.google.com/recaptcha/
+## Get ReCaptcha keys here https://www.google.com/recaptcha/
 RECAPTCHA_ENABLED = True
 RECAPTCHA_SITE_KEY = ""
 RECAPTCHA_SECRET_KEY = ""

@@ -26,7 +26,7 @@ def admin():
 
 @app.route('/admin/login/', methods=['GET', 'POST'])
 def login():
-	if current_user.is_authenticated():
+	if current_user.is_authenticated:
 		return redirect(url_for('admin'))
 	elif request.method == 'POST':
 		email = request.form.get('email')
