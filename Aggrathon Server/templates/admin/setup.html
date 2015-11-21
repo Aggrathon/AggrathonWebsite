@@ -1,6 +1,29 @@
-﻿<form class="form-horizontal" method=post>
+﻿<script>
+	function addMenuItem() {
+		$('div#menu').append('<div class="row" style="padding-bottom:1px;">'
+				+ '<div class="col-sm-3"><input type="text" class="form-control" placeholder="Title" name="menu_title" /></div>'
+				+ '<div class="col-sm-6 col-md-5 col-lg-6"><input type="text" class="form-control" placeholder="Target" name="menu_target" /></div>'
+				+ '<div class="col-sm-3 col-md-4 col-lg-3 pull-right text-right" style="padding-left:0px;">'
+				+ '<div class="btn-group">'
+				+	'<button type="button" class="btn btn-primary" onclick="moveMenuItemUp(this);">/\\</button>'
+				+	'<button type="button" class="btn btn-primary" onclick="moveMenuItemDown(this);">\\/</button>'
+				+ '</div> <button type="button" class="btn btn-danger" onclick="removeMenuItem(this);">X</button></div></div>');
+	}
+	function removeMenuItem(item) {
+		$(item).parent().remove();
+	}
+	function moveMenuItemUp(item) {
+		var it = $(item).parent().parent();
+		it.insertBefore(it.prev());
+	}
+	function moveMenuItemDown(item) {
+		var it = $(item).parent().parent();
+		it.insertAfter(it.next());
+	}
+</script>
 
-	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Website</h3></div></div></div>
+<form class="form-horizontal" method=post>
+
 	<div class="form-group form-group-lg">
 		<label for="name" class="col-sm-2 control-label">Website Name</label>
 		<div class="col-sm-10"><input type="text" class="form-control col-sm-10" placeholder="Website" id="name" name="name" value="{{ content.data.name }}" /></div>
@@ -13,59 +36,32 @@
 		<label for="language" class="col-sm-2 control-label">Language Code</label>
 		<div class="col-sm-2"><input type="text" class="form-control col-sm-10" placeholder="Website" id="language" name="language" value="{{ content.data.language }}"/></div>
 	</div>
-
-
-	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Menu</h3></div></div></div>
+	<br />
 	<div class="form-group">
-		<label for="menu" class="col-sm-2 control-label">Menu Items</label>
-		<div class="col-sm-5"><big>Title</big></div>
-		<div class="col-sm-5"><big>Target</big></div>
-		<div class="col-sm-10 col-sm-offset-2" id="menu">
+		<big class="col-sm-2 control-label">Menu</big>
+		<div class="col-sm-10" id="menu">
 			{% for item in content.data.menu %}
-			<div class="row menuitem" style="padding-bottom:1px;">
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" value="{{ item.title }}" name="menu_title" /></div>
-				<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" value="{{ item.target }}" name="menu_target" /></div>
+			<div class="row" style="padding-bottom:1px;">
+				<div class="col-sm-3"><input type="text" class="form-control" placeholder="Title" value="{{ item.title }}" name="menu_title" /></div>
+				<div class="col-sm-6 col-lg-7"><input type="text" class="form-control" placeholder="Target" value="{{ item.target }}" name="menu_target" /></div>
+				<div class="col-sm-3 col-lg-2 pull-right text-right" style="padding-left:0px;">
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary" onclick="moveMenuItemUp(this);">/\</button>
+						<button type="button" class="btn btn-primary" onclick="moveMenuItemDown(this);">\/</button>
+					</div>
+					<button type="button" class="btn btn-danger" onclick="removeMenuItem(this);">X</button>
+				</div>
 			</div>
-			{% else %}
-			<div class="form-control-static">No Menu</div>
 			{% endfor %}
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="menusize" class="col-sm-2 control-label">Menu Size</label>
-		
-		<div class="col-sm-10" id="menusize">
-			<script>
-				function addMenuItem() {
-					var menu = $('div#menu');
-					if ($('div.menuitem').length == 0)
-						menu.html('');
-					menu.append('<div class="row menuitem" style="padding-bottom:1px;">\n'
-						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="Name" name="menu_title" /></div>\n'
-						+ '<div class="col-sm-6"><input type="text" class="form-control" placeholder="url" name="menu_target" /></div>\n'
-						+ '</div>');
-				}
-				function removeMenuItem() {
-					items = $('div.menuitem');
-					if (items.length == 1) {
-						$('div#menu').html('<div class="form-control-static">No Menu</div>');
-					}
-					items.last().remove();
-				}
-			</script>
-			<div class="btn-group" role="group">
-				<button class="btn btn-primary" type="button" onclick="addMenuItem();">
-					<span class="glyphicon glyphicon-plus" aria-hidden="true"><span class="sr-only">Add menu item</span></span>
-				</button>
-				<button class="btn btn-primary" type="button" onclick="removeMenuItem();">
-					<span class="glyphicon glyphicon-minus" aria-hidden="true"><span class="sr-only">Remove menu item</span></span>
-				</button>
-			</div>
+		<div class="col-sm-10 col-sm-offset-2" id="menusize">
+			<button class="btn btn-primary" type="button" onclick="addMenuItem();">Add menu item</button>
 		</div>
 	</div>
 
-
-	<div class="form-group"><div class="col-sm-2"><div class="pull-left"><h3>Database</h3></div></div></div>
+	<br />
 	<script>
 		function switchResetButton() {
 			if ($('input#reset').is(':checked')) {
