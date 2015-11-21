@@ -2,23 +2,29 @@
 	function addMenuItem() {
 		$('div#menu').append('<div class="row" style="padding-bottom:1px;">'
 				+ '<div class="col-sm-3"><input type="text" class="form-control" placeholder="Title" name="menu_title" /></div>'
-				+ '<div class="col-sm-6 col-md-5 col-lg-6"><input type="text" class="form-control" placeholder="Target" name="menu_target" /></div>'
-				+ '<div class="col-sm-3 col-md-4 col-lg-3 pull-right text-right" style="padding-left:0px;">'
+				+ '<div class="col-sm-6 col-lg-7"><input type="text" class="form-control" placeholder="Target" name="menu_target" /></div>'
+				+ '<div class="col-sm-3 col-lg-2 pull-right text-right" style="padding-left:0px;">'
 				+ '<div class="btn-group">'
 				+	'<button type="button" class="btn btn-primary" onclick="moveMenuItemUp(this);">/\\</button>'
 				+	'<button type="button" class="btn btn-primary" onclick="moveMenuItemDown(this);">\\/</button>'
-				+ '</div> <button type="button" class="btn btn-danger" onclick="removeMenuItem(this);">X</button></div></div>');
-	}
-	function removeMenuItem(item) {
-		$(item).parent().remove();
+				+ '</div> <button type="button" class="btn btn-danger" onclick="removeItem(this);">X</button></div></div>');
 	}
 	function moveMenuItemUp(item) {
-		var it = $(item).parent().parent();
+		var it = $(item).parent().parent().parent();
 		it.insertBefore(it.prev());
 	}
 	function moveMenuItemDown(item) {
-		var it = $(item).parent().parent();
+		var it = $(item).parent().parent().parent();
 		it.insertAfter(it.next());
+	}
+
+	function removeItem(item) {
+		$(item).parent().parent().remove();
+	}
+
+	function addUser() {
+		$('div#users').append('<div class="row" style="padding-bottom:1px;"><div class="col-xs-11"><input type="email" class="form-control" placeholder="admin@email.com" name="user" /></div>'
+				+ '<div class="col-xs-1 text-right pull-right" style="padding-left:0px;"><button type="button" class="btn btn-danger" onclick="removeItem(this);">X</button></div></div>');
 	}
 </script>
 
@@ -49,7 +55,7 @@
 						<button type="button" class="btn btn-primary" onclick="moveMenuItemUp(this);">/\</button>
 						<button type="button" class="btn btn-primary" onclick="moveMenuItemDown(this);">\/</button>
 					</div>
-					<button type="button" class="btn btn-danger" onclick="removeMenuItem(this);">X</button>
+					<button type="button" class="btn btn-danger" onclick="removeItem(this);">X</button>
 				</div>
 			</div>
 			{% endfor %}
@@ -59,6 +65,22 @@
 		<div class="col-sm-10 col-sm-offset-2" id="menusize">
 			<button class="btn btn-primary" type="button" onclick="addMenuItem();">Add menu item</button>
 		</div>
+	</div>
+
+	<br />
+	<div class="form-group">
+		<big class="col-sm-2 control-label">Administrators</big>
+		<div class="col-sm-10" id="users">
+			{% for user in content.data.users %}
+			<div class="row" style="padding-bottom:1px;">
+				<div class="col-xs-11"><input type="email" class="form-control" placeholder="admin@email.com" name="user" value="{{ user.email }}" /></div>
+				<div class="col-xs-1 text-right pull-right" style="padding-left:0px;"><button type="button" class="btn btn-danger" onclick="removeItem(this);">X</button></div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-10 col-sm-offset-2"><button type="button" class="btn btn-primary" onclick="addUser();">Add User</button></div>
 	</div>
 
 	<br />
@@ -105,10 +127,8 @@
 	</div>
 
 	<div class="form-group">
-		<div class="input-group col-sm-10 col-sm-offset-1">
-			<div class="pull-right">
-				<input class="btn btn-primary" type="submit" value="Update Site" />
-			</div>
+		<div class="col-xs-12 text-right">
+			<input class="btn btn-primary btn-lg" type="submit" value="Save Settings" />
 		</div>
 	</div>
 </form>

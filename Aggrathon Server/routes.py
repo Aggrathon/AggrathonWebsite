@@ -75,11 +75,11 @@ def setup():
 			targets = request.values.getlist('menu_target')
 			menu = []
 			curr = 0
-			while curr < len(titles):
-				menu.append({'title': titles[curr], 'target':targets[curr]})
-				curr += 1
-			model.set_menu(menu)
-			flash("Menu updated", "success")
+			if model.set_menu(titles, targets):
+				flash("Menu updated", "success")
+		users = request.values.getlist('user')
+		if len(users) == 0 or not model.set_user_list(users):
+			flash("The site must have at least one active administrator", "danger")
 		#testdata
 		if(request.values.getlist('test')):
 			model.create_test_data()

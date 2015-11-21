@@ -119,12 +119,10 @@ class AdminPages(Enum):
 	forwarding = 9
 
 def show_admin(page):
-	#if not isloggedin:
-		#abort(403)
 	if page is AdminPages.admin:
 		return create_page_admin('Admin', 'admin/overview.html', **model.get_stats())
 	if page is AdminPages.setup:
-		return create_page_admin('Setup', 'admin/setup.html', **model.get_site_info())
+		return create_page_admin('Setup', 'admin/setup.html', users=model.get_user_list(), **model.get_site_info())
 	if page is AdminPages.pages:
 		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list_admin())
 	if page is AdminPages.createpage:

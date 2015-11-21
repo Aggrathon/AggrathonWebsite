@@ -36,20 +36,29 @@ def get_stats():
 	messages = Message.query.count()
 	return {'pages':pages, 'projects':projects, 'messages':messages}
 
-def set_menu(menu):
+def set_menu(titles, targets):
 	oldmenu = Menu.query.all()
+	if len(oldmenu) == len(titles):
+		same = True
+		for index, val in enumerate(oldmenu):
+			if val.title != titles[index] or val.target != targets[index]:
+				same = False
+				break
+		if same:
+			return False
 	curr = 0
-	while( curr < len(oldmenu) and curr < len(menu) ):
-		oldmenu[curr].title = menu[curr]['title']
-		oldmenu[curr].target = menu[curr]['target']
+	while( curr < len(oldmenu) and curr < len(titles) ):
+		oldmenu[curr].title = titles[curr]
+		oldmenu[curr].target = targets[curr]
 		curr += 1
-	while(curr < len(menu)):
-		db.session.add(Menu(menu[curr]['title'], menu[curr]['target']))
+	while(curr < len(titles)):
+		db.session.add(Menu(titles[curr], targets[curr]))
 		curr += 1
 	while(curr < len(oldmenu)):
 		db.session.delete(oldmenu[curr])
 		curr += 1
 	db.session.commit()
+	return True
 
 def set_site_info(name, header, language):
 	if name is None:
@@ -67,6 +76,34 @@ def set_site_info(name, header, language):
 		site.header = header
 		site.language = language
 	db.session.commit()
+
+def get_user_list():
+	return db.session.query(User.email).all()
+
+def set_user_list(list):
+	usrs = User.query.all()
+	matched = []
+	for usr in usrs:
+		if usr.email not in list:
+			db.session.delete(usr)
+		else:
+			matched.append(usr.email)
+	if len(usrs) == len(list) == len(matched):
+		return True
+	for email in list:
+		if email not in matched:
+			if len(email.split('@')) == 2 and len(email.split('@')[1].split('.')) > 1:
+				matched.append(email)
+				db.session.add(User(email))
+			else:
+				flash('\''+email+'\' is not a valid email', 'danger')
+	if len(matched) > 0:
+		flash("Administrators changed", "success")
+		db.session.commit()
+		return True
+	else:
+		session.rollback()
+		return False
 
 
 ### PAGES ###
