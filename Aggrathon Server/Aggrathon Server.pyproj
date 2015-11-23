@@ -145,6 +145,7 @@
     <Content Include="static\external\CKEditor\custom-4.5.1\skins\moono-dark\readme.md" />
     <Content Include="static\external\CKEditor\custom-4.5.1\styles.js" />
     <Content Include="static\external\jquery-1.11.3.min.js" />
+    <Content Include="static\favicon.ico" />
     <Content Include="static\style.css" />
     <Content Include="templates\admin\files.html" />
     <Content Include="templates\admin\messages\blacklist.html" />
