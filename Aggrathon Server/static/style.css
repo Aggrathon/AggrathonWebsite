@@ -242,4 +242,23 @@ table.table.table-hover tbody tr:hover {
 
 .cke_source {
 	color: #333;
+	border-radius: 4px
+}
+
+.cke_editable {
+	margin: 0px 5px;
+}
+
+.cke_bottom,
+.cke_top {
+	border: none;
+	border-radius: 4px
+}
+
+.cke {
+	border: none !important;
+}
+
+.cke_inner {
+	background: none !important;
 }
