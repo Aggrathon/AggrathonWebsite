@@ -129,9 +129,12 @@ class LastPage(db.Model):
 	def __init__(self, page):
 		self.page = page
 		self.time = datetime.datetime.today()
+	
+	def update(self):
+		self.time = datetime.datetime.today()
 
 	def __repr__(self):
-		return '<Last Page: \'%r\' at %r>' %self.page.title %self.time
+		return '<Last Page: %r at %r>' %(self.page.title, self.time)
 
 
 ###  PROJECTS  ###
@@ -185,8 +188,11 @@ class LastProject(db.Model):
 		self.project = project
 		self.time = datetime.datetime.today()
 
+	def update(self):
+		self.time = datetime.datetime.today()
+
 	def __repr__(self):
-		return '<Last Project: \'%r\' at %r>' %self.page.name %self.time
+		return '<Last Project: %r at %r>' %(self.page.name, self.time)
 
 
 ###  MESSAGES  ###

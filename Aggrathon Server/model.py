@@ -31,8 +31,8 @@ def get_site_info_embed():
 	return Site.query.first()
 
 def get_admin_front():
-	pages = LastPage.query.all()
-	projects = LastProject.query.all()
+	pages = LastPage.query.order_by(LastPage.time.desc()).all()
+	projects = LastProject.query.order_by(LastProject.time.desc()).all()
 	notes = Text.query.get('ADMIN_NOTES')
 	if notes:
 		return {'pages':pages, 'projects':projects, 'notes':notes.text}
@@ -133,15 +133,30 @@ def page_get(path):
 	return page
 
 def page_get_admin(path):
-	page = db.session.query(
-		Page.title.label('title'), Page.content.label('content'), 
-		FeaturedPage.page_id.label('featured'), FeaturedPage.priority.label('priority'),
-		PageBlurb.image.label('thumbnail'), PageBlurb.description.label('description'),
-		PagePrivate.page_id.label('private')
-		).filter_by(path=path).outerjoin(FeaturedPage).outerjoin(PageBlurb).outerjoin(PagePrivate).first()
+	page = Page.query.filter_by(path=path).first()
 	if(page is None):
 		return {}
-	return {'header':page.title, 'content':page.content, 'featured':page.featured, 'priority':page.priority, 'thumbnail':page.thumbnail, 'description': page.description, 'private': page.private}
+	ret = {'header':page.title, 'content':page.content }
+	blurb = PageBlurb.query.get(page.id)
+	if blurb:
+		ret['thumbnail'] = blurb.image
+		ret['description'] = blurb.description
+	featured = FeaturedPage.query.get(page.id)
+	if featured:
+		ret['featured'] = True
+		ret['priority'] = featured.priority
+	private = PagePrivate.query.get(page.id)
+	if private:
+		ret['private'] = True
+	last = LastPage.query.get(page.id)
+	if last is None:
+		if LastPage.query.count() >= 5:
+			db.session.delete(LastPage.query.order_by('time').first())
+		db.session.add(LastPage(page))
+	else:
+		last.update()
+	db.session.commit()
+	return ret
 
 def page_list():
 	pages = db.session.query(
@@ -226,6 +241,9 @@ def page_action_delete(path):
 		fp = FeaturedPage.query.get(page.id)
 		if fp is not None:
 			db.session.delete(fp)
+		lp = LastPage.query.get(page.id)
+		if lp is not None:
+			db.session.delete(lp)
 		db.session.delete(page)
 		db.session.commit()
 		return 'success'

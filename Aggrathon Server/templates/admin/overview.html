@@ -23,8 +23,13 @@
 				<table class="table table-hover"><tbody>
 					{% for p in content.data.pages %}
 					<tr>
+						{% if p.page.path == '/' %}
+						<td>Main Page</td>
+						<td>/</td>
+						{% else %}
 						<td>{{ p.page.title }}</td>
-						<td>{% if path == '/' %}/{% else %}/pages/{{ p.page.path }}/{% endif %}</td>
+						<td>/pages/{{ p.page.path }}/</td>
+						{% endif %}
 						<td class="text-right" style="padding:0px; vertical-align:middle"><div class="btn-group">
 							<a target="_blank" href="{% if path == '/' %}/{% else %}/pages/{{ p.page.path }}/{% endif %}" class="btn btn-success" title="View Page">
 								<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
