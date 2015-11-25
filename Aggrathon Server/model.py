@@ -30,11 +30,27 @@ def get_site_info(editable=False):
 def get_site_info_embed():
 	return Site.query.first()
 
-def get_stats():
-	pages = Page.query.count()
-	projects = Project.query.count()
-	messages = Message.query.count()
-	return {'pages':pages, 'projects':projects, 'messages':messages}
+def get_admin_front():
+	pages = LastPage.query.all()
+	projects = LastProject.query.all()
+	notes = Text.query.get('ADMIN_NOTES')
+	if notes:
+		return {'pages':pages, 'projects':projects, 'notes':notes.text}
+	else:
+		return {'pages':pages, 'projects':projects}
+
+def set_admin_notes(notes):
+	dbn = Text.query.get('ADMIN_NOTES')
+	if dbn:
+		if notes == "":
+			db.session.delete(dbn)
+		else:
+			dbn.text = notes
+		db.session.commit()
+	elif notes != "":
+		db.session.add(Text('ADMIN_NOTES', notes))
+		db.session.commit()
+	return 'success'
 
 def set_menu(titles, targets):
 	oldmenu = Menu.query.all()

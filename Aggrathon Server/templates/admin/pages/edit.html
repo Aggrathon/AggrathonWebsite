@@ -18,7 +18,7 @@
 </script>
 <form method="post" onsubmit="addFormData();">
 	<div class="form-group">
-		<input type="text" class="form-control" name="title" placeholder="Page Title" required {% if content.data.header %}value="{{ content.data.header }}"{% endif %}   />
+		<input type="text" class="form-control" name="title" placeholder="Page Title" {% if request.args.get('page') != '/' %}required{% endif %} {% if content.data.header %}value="{{ content.data.header }}"{% endif %}   />
 	</div>
 	<div class="form-group">
 		<textarea class="form-control" id="rich-text" name="content" required placeholder="Page Content">{% if content.data.content %}{{ content.data.content }}{% endif %}</textarea>		

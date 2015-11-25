@@ -12,16 +12,15 @@ def main():
 	return show_page('/')
 
 ### admin ###
-@app.route('/admin/')
+@app.route('/admin/', methods=['GET', 'POST'])
 @login_required
 def admin():
-	if not model.check_if_setup():
-		try:
-			model.create_db()
-			flash("Website initialized successfully", "success")
-		except:
-			flash("Unable to setup database, check config or use the 'Reset Database' function to remove old data", "danger")
-		return redirect(url_for('setup'))
+	if request.method == 'POST':
+		action = request.form.get('action')
+		if action == 'notes':
+			return jsonify(result=model.set_admin_notes(request.form.get('notes')))
+		else:
+			return "Unrecognized Action"
 	return show_admin(AdminPages.admin)
 
 @app.route('/admin/login/', methods=['GET', 'POST'])

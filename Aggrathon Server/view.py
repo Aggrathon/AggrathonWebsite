@@ -120,7 +120,7 @@ class AdminPages(Enum):
 
 def show_admin(page):
 	if page is AdminPages.admin:
-		return create_page_admin('Admin', 'admin/overview.html', **model.get_stats())
+		return create_page_admin('Admin', 'admin/overview.html', **model.get_admin_front())
 	if page is AdminPages.setup:
 		return create_page_admin('Setup', 'admin/setup.html', users=model.get_user_list(), **model.get_site_info())
 	if page is AdminPages.pages:

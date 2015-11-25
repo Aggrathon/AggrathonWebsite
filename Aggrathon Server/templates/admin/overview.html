@@ -1,47 +1,85 @@
 ﻿{#
 	This file renders the main admin page with stats and overviews for the site
 #}
-
-<!--  STATS  -->
-{% set stats = [
-	('pages/', 'Pages', content.data.pages),
-	('projecs/', 'Projects', content.data.projects),
-	('messages/', 'Messages', content.data.messages),
-	('views/', 'Views', 'not implemented')
-] %}
+{% from 'macros.html' import rich_text, rich_text_insert %}
+<script type="text/javascript">
+	function saveNotes() {
+		$.post('/admin/',
+			{action: "notes", notes: CKEDITOR.instances['rich-text'].getData() },
+			function (data) {
+				if (data.result == 'success') {
+					flash("Notes saved", "success");
+				} else {
+					flash("Notes could not be saved:<br />\n"+data.result, "danger");
+				}
+			});
+	}
+</script>
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-sx-12 col-sm-6" id="stats">
-			<h3>Website stats</h3>
-			<div class="btn-group-vertical" role="group" style="width:100%">
-				{% for url, title, stat in stats %}
-				<a class="btn btn-default" href={{ url }} style="text-align:right;">
-					<span class="pull-left">{{ title }}</span>
-					<span>{{ stat }}</span>
-				</a>
-				{% endfor %}
+		<div class="col-sx-12 col-sm-6">
+			<div class="panel">
+				<h3>Latest Pages</h3>
+				<table class="table table-hover"><tbody>
+					{% for p in content.data.pages %}
+					<tr>
+						<td>{{ p.page.title }}</td>
+						<td>{% if path == '/' %}/{% else %}/pages/{{ p.page.path }}/{% endif %}</td>
+						<td class="text-right" style="padding:0px; vertical-align:middle"><div class="btn-group">
+							<a target="_blank" href="{% if path == '/' %}/{% else %}/pages/{{ p.page.path }}/{% endif %}" class="btn btn-success" title="View Page">
+								<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+								<span class="sr-only">View</span>
+							</a>
+							<a target="_blank" href="/admin/pages/edit/?page={{ p.page.path }}" class="btn btn-info" title="Edit Page">
+								<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+								<span class="sr-only">Edit</span>
+							</a>
+						</div></td>
+					</tr>
+					{% endfor %}
+				</tbody></table>
+				<br />
+				<a class="btn btn-primary" href="/admin/pages/create/">Create Page</a>
 			</div>
 		</div>
-		<div class="col-sx-12 col-sm-6" id="notes">
-			<h3>Notes</h3>
+		<div class="col-sx-12 col-sm-6">
+			<div class="panel">
+				<h3>Latest Projects</h3>
+				<table class="table table-hover"><tbody>
+					{% for p in content.data.projects %}
+					<tr>
+						<td>{{ p.project.title }}</td>
+						<td>/projects/{{ p.project.path }}</td>
+						<td class="text-right" style="padding:0px; vertical-align:middle"><div class="btn-group">
+							<a target="_blank" href="/projects/{{ p.project.path }}" class="btn btn-success" title="View Page">
+								<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+								<span class="sr-only">View</span>
+							</a>
+							<a target="_blank" href="/admin/pages/edit/?page={{ p.project.path }}" class="btn btn-info" title="Edit Page">
+								<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+								<span class="sr-only">Edit</span>
+							</a>
+						</div></td>
+					</tr>
+					{% endfor %}
+				</tbody></table>
+				<br />
+				<a class="btn btn-primary" href="/admin/projects/create/">Create Project</a>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12" id="notes">
 			<form class="panel">
-				<div class="form-group">
-					<div class="btn-group">
-						<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							Select Note <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a>Old Note 1</a></li>
-							<li><a>Old Note 2</a></li>
-							<li role="separator" class="divider"></li>
-							<li><a>New Note</a></li>
-						</ul>
-					</div>
-					<button type="submit" class="btn btn-success pull-right">Save</button>
+				<h3>Notes</h3>
+				<div>
+					<textarea class="form-control" id="rich-text" rows="10">{{ content.data.notes }}</textarea>
+					{{ rich_text('rich-text') }}
 				</div>
-				<div class="form-group">
-					<input type="text" readonly disabled class="form-control" placeholder="Title" />
-					<textarea readonly disabled class="form-control">Not implemented</textarea>
+				<br />
+				<div>
+					<span>{{ rich_text_insert('rich-text') }}</span>
+					<span class="pull-right"><button type="button" class="btn btn-success" onclick="saveNotes();">Save</button></span>
 				</div>
 			</form>
 		</div>

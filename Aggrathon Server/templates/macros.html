@@ -70,13 +70,12 @@
 	{% endif %}
 	<script>
 		{{ config.EDITOR_CONFIG | replace("TEXTAREA_ID", id) | safe }}
-		function rich_text_insert(html) {
+		function rich_text_insert_{{ id | replace("-", "_") }}(html) {
 			{{ config.EDITOR_JS_INSERT | replace("TEXTAREA_ID", id) | replace('INSERT_HTML', 'html') | safe }}
 		}
 	</script>
 {% endmacro %}
-{% macro rich_text_insert() %}
-	{{ rich_text() }}
+{% macro rich_text_insert(id='rich-text') %}
 	{{ file_selector() }}
 	<script>
 		function rich_text_select_file() {
@@ -87,9 +86,9 @@
 				var split = path.split('.');
 				var type = split[split.length - 1];
 				if (['png', 'jpg', 'jpeg', 'gif'].indexOf(type) != -1) {
-					rich_text_insert('<img src="' + path + '" class="img-responsive img-rounded" />');
+					rich_text_insert_{{ id | replace("-", "_") }}('<img src="' + path + '" class="img-responsive img-rounded" />');
 				} else {
-					rich_text_insert('<a href="'+path+'">'+path+'</a>');
+					rich_text_insert_{{ id | replace("-", "_") }}('<a href="'+path+'">'+path+'</a>');
 				}
 			}
 		}

@@ -30,6 +30,8 @@ db = SQLAlchemy(app)
 	MessageBlacklist(text)
 """
 
+###  SITE  ###
+
 class Site(db.Model):
 	name = db.Column(db.Text, primary_key=True)
 	header = db.Column(db.Text)
@@ -55,7 +57,19 @@ class Menu(db.Model):
 	def __repr__(self):
 		return '<Menuitem %r>' %self.title
 
+class Text(db.Model):
+	id = db.Column(db.String(12, None, True), primary_key=True)
+	text = db.Column(db.Text)
 
+	def __init__(self, id, text):
+		self.id = id
+		self.text = text
+
+	def __repr__(self):
+		return '<Text %r>' %self.id
+
+
+###  PAGES  ###
 
 class Page(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -107,7 +121,20 @@ class PagePrivate(db.Model):
 	def __repr__(self):
 		return '<Private: Page %r>' %self.page.title
 
+class LastPage(db.Model):
+	page_id = db.Column(db.Integer, db.ForeignKey('page.id'), primary_key=True)
+	page = db.relationship('Page')
+	time = db.Column(db.DateTime)
 
+	def __init__(self, page):
+		self.page = page
+		self.time = datetime.datetime.today()
+
+	def __repr__(self):
+		return '<Last Page: \'%r\' at %r>' %self.page.title %self.time
+
+
+###  PROJECTS  ###
 
 class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -148,6 +175,21 @@ class FeaturedProject(db.Model):
 
 	def __repr__(self):
 		return '<Featured: Project %r>' %self.project.title
+
+class LastProject(db.Model):
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+	project = db.relationship('Project')
+	time = db.Column(db.DateTime)
+
+	def __init__(self, project):
+		self.project = project
+		self.time = datetime.datetime.today()
+
+	def __repr__(self):
+		return '<Last Project: \'%r\' at %r>' %self.page.name %self.time
+
+
+###  MESSAGES  ###
 
 class Message(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -206,6 +248,7 @@ class MessageForwarding(db.Model):
 
 
 ### USER ###
+
 class User(db.Model):
 	email = db.Column(db.Text, primary_key=True)
 	token = db.Column(db.Text, unique=True)
@@ -282,15 +325,18 @@ def check_if_setup():
 		if(Site.query.first() is None):
 			raise Exception
 		Menu.query.first()
+		Text.query.first()
 
 		Page.query.first()
 		PageBlurb.query.first()
 		FeaturedPage.query.first()
 		PagePrivate.query.first()
+		LastPage.query.first()
 
 		Project.query.first()
 		ProjectBlurb.query.first()
 		FeaturedProject.query.first()
+		LastProject.query.first()
 
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()

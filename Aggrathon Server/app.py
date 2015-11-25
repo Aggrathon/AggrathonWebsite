@@ -28,7 +28,6 @@ if __name__ == '__main__':
 		PORT = int(os.environ.get('SERVER_PORT', '5555'))
 	except ValueError:
 		PORT = 5555
-	app.run(HOST, PORT)
 	import database
 	if not database.check_if_setup():
 		if app.config['DATABASE_SCHEMA_ERROR_ACTION'] == 'NOTHING':
@@ -36,3 +35,4 @@ if __name__ == '__main__':
 		else:
 			database.reset_db()
 			print('\033[93m'+"The Database has been reset due to not matching the website"+'\033[0m')
+	app.run(HOST, PORT)
