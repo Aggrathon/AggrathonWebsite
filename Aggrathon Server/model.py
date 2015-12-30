@@ -610,12 +610,9 @@ def create_test_data():
 	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
 
 def create_default_menu():
-	menu = [{'title':"Home", 'target':"/"},
-		 {'title':"Pages", 'target':"/pages/"},
-		 {'title':"Projects", 'target':"/projects/"},
-		 {'title':"Contact", 'target':"/contact/"},
-		 {'title':"Admin", 'target':"/admin/"}]
-	set_menu(menu)
+	titles  = ["Home",	"Pages",	"Projects",		"Contact"]
+	targets = ["/",		"/pages/",	"/projects/",	"/contact/"]
+	set_menu(titles, targets)
 
 def create_debug_content():
 	reset_db()

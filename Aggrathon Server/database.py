@@ -308,13 +308,15 @@ class User(db.Model):
 
 def create_db():
 	db.create_all()
-	db.session.add(Site(app.config['WEBSITE_NAME'], app.config['WEBSITE_HEADER'], app.config['WEBSITE_LANGUAGE']))
+	db.session.commit()
+	session = SQLAlchemy.create_scoped_session(db)
+	session.add(Site(app.config['WEBSITE_NAME'], app.config['WEBSITE_HEADER'], app.config['WEBSITE_LANGUAGE']))
 	for item in app.config['WEBSITE_MENU']:
-		db.session.add(Menu(item['title'], item['target'] ))
+		session.add(Menu(item['title'], item['target'] ))
 	for user in app.config['WEBSITE_ADMIN']:
-		db.session.add(User(user))
-	db.session.add( Page('/', '', 'This is the main page') )
-	db.session.commit();
+		session.add(User(user))
+	session.add( Page('/', '', 'This is the main page') )
+	session.commit();
 
 def reset_db():
 	try:
@@ -329,7 +331,7 @@ def reset_db():
 def check_if_setup():
 	try:
 		if(Site.query.first() is None):
-			raise Exception
+			raise Exception ("Site information not found")
 		Menu.query.first()
 		Text.query.first()
 
@@ -350,6 +352,7 @@ def check_if_setup():
 		MessageForwarding.query.first();
 
 		User.query.first()
-	except:
+	except Exception as e:
+		print('\033[93m'+format(e)+'\033[0m')
 		return False
 	return True

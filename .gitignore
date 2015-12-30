@@ -196,3 +196,5 @@ ModelManifest.xml
 /Aggrathon Server/web.config
 /Aggrathon Server/web.debug.config
 /Aggrathon Server/files/test
+.pydevproject
+.project
