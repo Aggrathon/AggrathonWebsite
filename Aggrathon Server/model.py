@@ -296,9 +296,8 @@ def featured_pages():
 
 def featured_projects():
 	projects = db.session.query(
-		Project.path.label('path'), ProjectBlurb.description.label('description'), Project.title.label('title'), ProjectBlurb.image.label('img'))\
-		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).join(ProjectBlurb).filter(ProjectBlurb.project_id==Project.id)\
-		.order_by(FeaturedProject.priority).all()
+		Project.path.label('path'), Project.description.label('description'), Project.title.label('title'), Project.thumbnail.label('img'))\
+		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).order_by(FeaturedProject.priority).all()
 	return projects
 
 

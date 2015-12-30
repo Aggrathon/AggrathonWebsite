@@ -143,29 +143,82 @@ class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	path = db.Column(db.Text, unique=True)
 	title = db.Column(db.Text)
-	content = db.Column(db.Text)
+	text = db.Column(db.Text)
+	description = db.Column(db.Text)
+	thumbnail = db.Column(db.Text)
 
-	def __init__(self, path, title, content):
+	def __init__(self, path, title, text, description, thumbnail):
 		self.title = title
 		self.path = path
-		self.content = content
+		self.text = text
+		self.description = description
+		self.thumbnail = thumbnail
 
 	def __repr__(self):
 		return '<Project %r>' %self.title
-
-class ProjectBlurb(db.Model):
+	
+class ProjectImage(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
 	project = db.relationship('Project')
-	description = db.Column(db.Text)
-	image = db.Column(db.Text)
+	image = db.Column(db.Text, primary_key=True)
+	number = db.Column(db.Integer)
 
-	def __init__(self, project, description, image=""):
+	def __init__(self, project, image, number=0):
 		self.project = project
-		self.description = description
 		self.image = image
+		self.number = number
 
 	def __repr__(self):
-		return '<Blurb: Project %r>' %self.project.title
+		return '<Project %r Image: %r>' %(self.project.title, self.image)
+
+class ProjectLink(db.Model):
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+	project = db.relationship('Project')
+	link = db.Column(db.Text, primary_key=True)
+	number = db.Column(db.Integer)
+	
+	def __init__(self, project, link, number=0):
+		self.project = project
+		self.link = link
+		self.number = number
+
+	def __repr__(self):
+		return '<Project %r Link: %r>' %(self.project.title, self.link)
+
+class ProjectVersion(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+	project = db.relationship('Project')
+	major = db.Column(db.Integer)
+	minor = db.Column(db.Integer)
+	patch = db.Column(db.Integer)
+	changelog = db.Column(db.Text)
+	files = db.relationship("ProjectFile", back_populates="version")
+	__table_args__ = (None, db.UniqueConstraint('project_id', 'major', 'minor', 'patch', name='project_version_unique') )
+	
+	def __init__(self, project, major=1, minor=0, patch=0, changelog=""):
+		self.project = project
+		self.major = major
+		self.minor = minor
+		self.patch = patch
+		self.changelog = changelog
+
+	def __repr__(self):
+		return '<Project %r Version: %r.%r.%r>' %(self.project.title, self.major, self.minor, self.patch)
+
+class ProjectFile(db.Model):	
+	version_id = db.Column(db.Integer, db.ForeignKey('project_version.id'), primary_key=True)
+	version = db.relationship('ProjectVersion', back_populates="files")
+	title = db.Column(db.Text, primary_key=True)
+	url = db.Column(db.Text)
+	
+	def __init__(self, version, title, url):
+		self.version = version
+		self.title = title
+		self.url = url
+		
+	def __repr__(self):
+		return '<Project %r (%r.%r.%r) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
 
 class FeaturedProject(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
@@ -342,7 +395,10 @@ def check_if_setup():
 		LastPage.query.first()
 
 		Project.query.first()
-		ProjectBlurb.query.first()
+		ProjectImage.query.first()
+		ProjectLink.query.first()
+		ProjectVersion.query.first()
+		ProjectFile.query.first()
 		FeaturedProject.query.first()
 		LastProject.query.first()
 
