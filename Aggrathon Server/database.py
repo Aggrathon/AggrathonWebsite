@@ -146,6 +146,11 @@ class Project(db.Model):
 	text = db.Column(db.Text)
 	description = db.Column(db.Text)
 	thumbnail = db.Column(db.Text)
+	
+	images = db.relationship("ProjectImage", back_populates="project")
+	links = db.relationship("ProjectLink", back_populates="project")
+	versions = db.relationship("ProjectVersion", back_populates="project")
+	
 
 	def __init__(self, path, title, text, description, thumbnail):
 		self.title = title
@@ -158,29 +163,29 @@ class Project(db.Model):
 		return '<Project %r>' %self.title
 	
 class ProjectImage(db.Model):
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	project = db.relationship('Project')
-	image = db.Column(db.Text, primary_key=True)
-	number = db.Column(db.Integer)
+	id = db.Column(db.Integer, primary_key=True)
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+	project = db.relationship('Project', back_populates="images")
+	image = db.Column(db.Text)
 
-	def __init__(self, project, image, number=0):
+	def __init__(self, project, image):
 		self.project = project
 		self.image = image
-		self.number = number
 
 	def __repr__(self):
 		return '<Project %r Image: %r>' %(self.project.title, self.image)
 
 class ProjectLink(db.Model):
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	project = db.relationship('Project')
-	link = db.Column(db.Text, primary_key=True)
-	number = db.Column(db.Integer)
+	id = db.Column(db.Integer, primary_key=True)
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+	project = db.relationship('Project', back_populates="links")
+	link = db.Column(db.Text)
+	title = db.Column(db.Text)
 	
-	def __init__(self, project, link, number=0):
+	def __init__(self, project, title, link):
 		self.project = project
+		self.title = title
 		self.link = link
-		self.number = number
 
 	def __repr__(self):
 		return '<Project %r Link: %r>' %(self.project.title, self.link)
@@ -188,7 +193,7 @@ class ProjectLink(db.Model):
 class ProjectVersion(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	project = db.relationship('Project')
+	project = db.relationship('Project', back_populates="versions")
 	major = db.Column(db.Integer)
 	minor = db.Column(db.Integer)
 	patch = db.Column(db.Integer)
@@ -220,7 +225,7 @@ class ProjectFile(db.Model):
 	def __repr__(self):
 		return '<Project %r (%r.%r.%r) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
 
-class FeaturedProject(db.Model):
+class ProjectFeatured(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
 	project = db.relationship('Project')
 	priority = db.Column(db.Integer)
@@ -399,7 +404,7 @@ def check_if_setup():
 		ProjectLink.query.first()
 		ProjectVersion.query.first()
 		ProjectFile.query.first()
-		FeaturedProject.query.first()
+		ProjectFeatured.query.first()
 		LastProject.query.first()
 
 		MessageBlacklist.query.first()

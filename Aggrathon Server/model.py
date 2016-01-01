@@ -8,6 +8,13 @@ import os
 from random import SystemRandom
 import string
 
+### CONSTANTS ###
+RETURN_SUCCESS = 'success'
+
+FLASH_SUCCESS = 'success'
+FLASH_WARNING = 'warning'
+FLASH_ERROR = 'danger'
+
 ###  UTILITIES  ###
 
 def get_random_code():
@@ -50,7 +57,7 @@ def set_admin_notes(notes):
 	elif notes != "":
 		db.session.add(Text('ADMIN_NOTES', notes))
 		db.session.commit()
-	return 'success'
+	return RETURN_SUCCESS
 
 def set_menu(titles, targets):
 	oldmenu = Menu.query.all()
@@ -112,9 +119,9 @@ def set_user_list(list):
 				matched.append(email)
 				db.session.add(User(email))
 			else:
-				flash('\''+email+'\' is not a valid email', 'danger')
+				flash('\''+email+'\' is not a valid email', FLASH_ERROR)
 	if len(matched) > 0:
-		flash("Administrators changed", "success")
+		flash("Administrators changed", FLASH_SUCCESS)
 		db.session.commit()
 		return True
 	else:
@@ -129,7 +136,7 @@ def page_get(path):
 	if(page is None):
 		abort(404)
 	if PagePrivate.query.get(page.id) is not None:
-		flash('This Page is Private', 'warning')
+		flash('This Page is Private', FLASH_WARNING)
 	return page
 
 def page_get_admin(path):
@@ -181,7 +188,7 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 			db.session.add( PagePrivate(page) )
 		db.session.commit()
 		if flash_result:
-			flash('New Page Created', 'success')
+			flash('New Page Created', FLASH_SUCCESS)
 	else:
 		page.path = path
 		page.title = title
@@ -215,7 +222,7 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 				db.session.add( PagePrivate(page) )
 		db.session.commit()
 		if flash_result:
-			flash('Page Saved', 'success')
+			flash('Page Saved', FLASH_SUCCESS)
 
 
 ### PAGE EDIT ACTIONS ###
@@ -246,7 +253,7 @@ def page_action_delete(path):
 			db.session.delete(lp)
 		db.session.delete(page)
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 
 def page_action_move(path, newpath):
 	if path == '/':
@@ -260,7 +267,7 @@ def page_action_move(path, newpath):
 	else:
 		page.path = newpath
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 
 def page_action_copy(path, newpath):
 	page = Page.query.filter_by(path=path).first()
@@ -277,7 +284,7 @@ def page_action_copy(path, newpath):
 			description = pageblurb.description
 			thumbnail = pageblurb.image
 		page_set(newpath, page.title, page.content, False, 0, description, thumbnail, flash_result=False)
-		return 'success'
+		return RETURN_SUCCESS
 
 def page_action_check(path):
 	page = Page.query.filter_by(path=path).first()
@@ -297,11 +304,112 @@ def featured_pages():
 def featured_projects():
 	projects = db.session.query(
 		Project.path.label('path'), Project.description.label('description'), Project.title.label('title'), Project.thumbnail.label('img'))\
-		.join(FeaturedProject).filter(FeaturedProject.project_id==Project.id).order_by(FeaturedProject.priority).all()
+		.join(ProjectFeatured).filter(ProjectFeatured.project_id==Project.id).order_by(ProjectFeatured.priority).all()
 	return projects
 
 
-### PROJECT EDIT ACTIONS ###
+### PROJECT GET ###
+
+### PROJECT EDIT ###
+"""
+	id = db.Column(db.Integer, primary_key=True)
+	path = db.Column(db.Text, unique=True)
+	title = db.Column(db.Text)
+	text = db.Column(db.Text)
+	description = db.Column(db.Text)
+	thumbnail = db.Column(db.Text)
+	
+	images = db.relationship("ProjectImage", back_populates="project")
+	links = db.relationship("ProjectLink", back_populates="project")
+	versions = db.relationship("ProjectVersion", back_populates="project")
+	
+	def __init__(self, path, title, text, description, thumbnail):
+"""
+def project_set(path, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		project_create(path, title, text, description, thumbnail, images, link_titles, link_urls, featured, priority, private, flash_result)
+	else:
+		project_update(project, title, text, description, thumbnail, images, link_titles, link_urls, featured, priority, private, flash_result)
+
+def project_create(path, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+	project = Project(path, title, text, description, thumbnail)
+	db.session.add(project)
+	if(featured and not private):
+		db.session.add( ProjectFeatured(project, priority) )
+	counter = 0
+	while counter < len(images):
+		db.session.add(ProjectImage(project, images[counter]))
+		counter += 1
+	counter = 0
+	while counter < len(link_titles):
+		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
+		counter += 1
+	db.session.commit()
+	if flash_result:
+		flash('New Project Created', FLASH_SUCCESS)
+		
+def project_update(project, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+	project.title = title
+	project.text = text
+	project.description = description
+	project.thumbnail = thumbnail
+	#featured
+	feat = ProjectFeatured.query.get(project.id)
+	if(featured and not private):
+		if(feat is None):
+			db.session.add(ProjectFeatured(project, priority))
+		else:
+			feat.priority = priority
+	elif(feat is not None):
+		db.session.delete(feat)
+	#images
+	counter = 0
+	while counter < len(project.images) and counter < len(images):
+		project.images[counter].image = images[counter]
+		counter += 1
+	while counter < len(project.images):
+		db.session.delete(project.images[counter])
+		counter += 1
+	while counter < len(images):
+		db.session.add(ProjectImage(project, images[counter]))
+		counter += 1
+	#links
+	counter = 0
+	while counter < len(project.links) and counter < len(link_titles):
+		project.links[counter].title = link_titles[counter]
+		project.links[counter].link = link_urls[counter]
+		counter += 1
+	while counter < len(project.links):
+		db.session.delete(project.links[counter])
+		counter += 1
+	while counter < len(link_titles):
+		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
+		counter += 1
+	db.session.commit()
+	if flash_result:
+		flash('Project Updated', FLASH_SUCCESS)
+
+def project_delete(path):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		return 'Could not find project to delete (%r)' %path
+	else:
+		for img in project.images:
+			db.session.delete(img)
+		for link in project.links:
+			db.session.delete(link)
+		for version in project.versions:
+			for file in version.files:
+				db.session.delete(file)
+			db.session.delete(version)
+		feat = ProjectFeatured.query.get(project.id)
+		if feat is not None:
+			db.session.delete(feat)
+		db.session.commit()
+		db.session.delete(project)
+		db.session.commit()
+		return RETURN_SUCCESS
 
 
 ### FILES ###
@@ -311,15 +419,15 @@ def files_check_path(path, flash_errors=True):
 		path = path[1:]
 	if not os.path.isdir(path):
 		if flash_errors:
-			flash('Path not found', 'danger')
+			flash('Path not found', FLASH_ERROR)
 		return ''
 	if path.find('files') != 0:
 		if flash_errors:
-			flash('Invalid path', 'danger')
+			flash('Invalid path', FLASH_ERROR)
 		return ''
 	if len(path) > 5 and path[5] != '/':
 		if flash_errors:
-			flash('Invalid path', 'danger')
+			flash('Invalid path', FLASH_ERROR)
 		return ''
 	return path
 
@@ -331,7 +439,7 @@ def files_list(path='files/', filter=None, flash_errors=True):
 	if not path:
 		path='files/'
 		if flash_errors:
-			flash('Showing default location', 'warning')
+			flash('Showing default location', FLASH_WARNING)
 	folders = []
 	files = []
 	pathsplit = [x for x in path.split('/') if x]
@@ -381,7 +489,7 @@ def message_add(email, subject, message):
 				db.session.add(unr)
 				db.session.commit()
 				message_forward(mess)
-				return 'success'
+				return RETURN_SUCCESS
 	return 'blocked'
 
 def message_unread_count():
@@ -412,7 +520,7 @@ def message_action_unread(id):
 		if MessageUnread.query.get(id) is None:
 			db.session.add(MessageUnread(mess))
 			db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 	return 'Message not found'
 
 def message_action_read(id):
@@ -420,7 +528,7 @@ def message_action_read(id):
 	if unr is not None:
 		db.session.delete(unr)
 		db.session.commit()
-	return 'success'
+	return RETURN_SUCCESS
 
 def message_action_delete(id):
 	mess = Message.query.get(id)
@@ -430,7 +538,7 @@ def message_action_delete(id):
 			db.session.delete(unr)
 		db.session.delete(mess)
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 	return 'Message not found'
 
 def message_action_ban(phrase):
@@ -438,7 +546,7 @@ def message_action_ban(phrase):
 	if mb is None:
 		db.session.add(MessageBlacklist(phrase))
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 	return "Phrase already banned"
 
 def message_action_unban(phrase):
@@ -446,7 +554,7 @@ def message_action_unban(phrase):
 	if mb is not None:
 		db.session.delete(mb)
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 	return 'Phrase not found'
 
 def message_action_recheck_all():
@@ -478,7 +586,7 @@ def message_action_send(id):
 	mess = Message.query.get(id)
 	if mess is not None:
 		email_send_text(mess.subject, current_user.email, mess.message, mess.email)
-		return 'success'
+		return RETURN_SUCCESS
 	return 'Message not found'
 
 
@@ -493,18 +601,18 @@ def message_forward_add(email, type):
 		email_send_html(get_site_info()['name']+" - Message Forwarding Confirmation", email, """
 		This email has been setup to recieve notifications on messages sent to the site\n<br />
 		Click here to unsubscribe: <a href=\""""+url+"\">"+url+"</a>\n<br />")
-		flash("Forwarding Email added ("+email+")", "success")
+		flash("Forwarding Email added ("+email+")", FLASH_SUCCESS)
 	else:
 		forw.type = type
 		db.session.commit()
-		flash("Forwarding settings changed for "+email, "success")
+		flash("Forwarding settings changed for "+email, FLASH_SUCCESS)
 
 def message_forward_remove(email):
 	forw = MessageForwarding.query.get(email)
 	if forw is not None:
 		db.session.delete(forw)
 		db.session.commit()
-		return 'success'
+		return RETURN_SUCCESS
 	return "Email not found ("+email+")"
 
 def message_forward_unsubscribe(email, code):
@@ -558,7 +666,7 @@ def login_action_sendcode(email):
 	urlmain = url_for('main', _external=True)
 	message = '<p>A login request has been made at <a href="'+urlmain+'">'+urlmain+'</a></p><p>Click here to login: <a href="'+url+'">'+url+'</a></p><p>If you did not request this login-verification, please ignore this message</p>'
 	email_send_html("Login Request - "+app.config["WEBSITE_NAME"], email, message)
-	return 'success'
+	return RETURN_SUCCESS
 
 def login_action_ceckcode(email, code):
 	user = User.query.get(email)
@@ -572,7 +680,7 @@ def login_action_ceckcode(email, code):
 		user.verification_code = ''
 		user.verification_time = None
 		db.session.commit()
-		return "success"
+		return RETURN_SUCCESS
 	else:
 		user.verification_code = ''
 		return "Invalid Verification"
@@ -601,11 +709,8 @@ def create_test_data():
 	page_set("test2", "Test Page 2", "[insert content here]", flash_result=False)
 	page_set("test3", "Test Page 3", "[insert content here]", flash_result=False)
 	
-	proj = Project("/projects/test/", "Test Project 1", "[insert content here]")
-	db.session.add(FeaturedProject(proj, 10))
-	db.session.add(ProjectBlurb(proj, "Test Project 1 description here", ""))
-	db.session.commit();
-
+	project_set("test", "Test Project 1", "[insert content here]", "test project", "/static/background.jpg", ["/static/background.jpg"], ["Ludum Dare"], ["http://ludumdare.com/compo/"], True, flash_result=False)
+	
 	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
 
 def create_default_menu():
