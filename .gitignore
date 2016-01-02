@@ -191,7 +191,7 @@ ModelManifest.xml
 ### Own ignores ###
 /Aggrathon Server/__pycache__
 /Aggrathon Server/env
-/Aggrathon Server/database.db
+/Aggrathon Server/*.db
 /Aggrathon Server/ptvs_virtualenv_proxy.py
 /Aggrathon Server/web.config
 /Aggrathon Server/web.debug.config
