@@ -100,8 +100,9 @@ def show_page(path):
 """
 	Methods for rendering projects of standard types
 """
-def show_project(project):
-	return render_page(create_page_fromfile(project, 'frontend/projects/project.html'), True)
+def show_project(path):
+	project = model.project_get(path)
+	return render_page_standard(create_page_fromfile(file='frontend/projects/project.html', **project), True)
 
 
 """

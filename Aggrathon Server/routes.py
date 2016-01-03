@@ -292,7 +292,6 @@ def projects():
 
 @app.route('/projects/<path:project>/')
 def project(project):
-	flash("Projects not fully implemented", "warning")
 	return show_project(project)
 
 ### contact ###

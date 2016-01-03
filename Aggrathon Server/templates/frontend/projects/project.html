@@ -1,1 +1,82 @@
-﻿[page for project]
+﻿{% macro links() %}
+<div id="project-links" class="panel">
+	<h3>Links</h3>
+	<ul class="list-unstyled">
+		{% for link in content.data.links %}
+		<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+		{% endfor %}
+	</ul>
+</div>
+{% endmacro %}
+{% macro files() %}
+<div id="project-files" class="panel">
+	<h3>Downloads</h3>
+	{% for link in content.data.files %}
+	<a class="btn btn-primary btn-block" href="{{ link.url }}">{{ link.title }}</a>
+	{% endfor %}
+</div>
+{% endmacro %}
+{% macro changelog() %}
+<div class="panel">
+	<h3>Changelog (Version {{ content.data.version }})</h3>
+	<pre>{{ content.data.changelog | safe }}</pre>
+	<button class="btn btn-primary">Older downloads and changelogs</button>
+</div>
+{% endmacro %}
+
+{% if content.data.version %}
+<div style="position:absolute; right:3em; top:1.5em; text-align:right;">
+	<big>Version {{ content.data.version }}</big>
+</div>
+{% endif %}
+
+{% if content.data.images %}
+<div class="row">
+	<div class="col-xs-12 col-sm-9">
+		<img class="img-rounded center-block" style="max-height: 25em; max-width:100%;" src="{{ content.data.images[0].image }}" />
+	</div>
+	<div class="col-xs-12 col-sm-3 hidden-xs" style="max-height:25em; max-width:100%; overflow: auto;">
+		<ul class="list-group">
+		{% for image in content.data.images %}
+		<li class="list-group-item" style="padding:0px; border-color: #000; background:transparent;"><img style="max-width: 100%;" src="{{ image.image }}" /></li>
+		<li class="list-group-item" style="padding:0px; border-color: #000; background:transparent;"><img style="max-width: 100%;" src="{{ image.image }}" /></li>
+		{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endif %}
+
+<br />
+<div id="project-text">
+	{{ content.data.text | safe }}
+</div>
+<br />
+
+{% if content.data.links and content.data.files and not content.data.changelog %}
+<div class="row">
+	<div class="col-xs-12 col-sm-6">{{ links() }}</div>
+	<div class="col-xs-12 col-sm-6">{{ files() }}</div>
+</div>
+{% elif content.data.links and not content.data.files and content.data.changelog %}
+<div class="row">
+	<div class="col-xs-12 col-sm-4">{{ links() }}</div>
+	<div class="col-xs-12 col-sm-8">{{ changelog() }}</div>
+</div>
+{% elif not content.data.links and content.data.files and content.data.changelog %}
+<div class="row">
+	<div class="col-xs-12 col-sm-4">{{ files() }}</div>
+	<div class="col-xs-12 col-sm-8">{{ changelog() }}</div>
+</div>
+{% elif content.data.links and content.data.files and content.data.changelog %}
+<div class="row">
+	<div class="col-xs-12 col-sm-6">{{ links() }}</div>
+	<div class="col-xs-12 col-sm-6">{{ files() }}</div>
+	<div class="col-xs-12 col-sm-12">{{ changelog() }}</div>
+</div>
+{% elif content.data.links %}
+	{{ links() }}
+{% elif content.data.files %}
+	{{ files() }}
+{% elif content.data.changelog %}
+	{{ changelog() }}
+{% endif %}

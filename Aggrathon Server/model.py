@@ -310,21 +310,19 @@ def featured_projects():
 
 ### PROJECT GET ###
 
+def project_get(path):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		abort(404)
+	files = ProjectVersion.query.filter_by(project=project, major=0, minor=0, patch=0).first().files
+	latest = project.get_latest_version()
+	if latest is not None:
+		files += latest.files
+		return {"title":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":latest.get_version(), "changelog":latest.changelog}
+	return {"title":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":"2.4.21", "changelog":"f1\nf2\nf3\nf4"}
+
 ### PROJECT EDIT ###
-"""
-	id = db.Column(db.Integer, primary_key=True)
-	path = db.Column(db.Text, unique=True)
-	title = db.Column(db.Text)
-	text = db.Column(db.Text)
-	description = db.Column(db.Text)
-	thumbnail = db.Column(db.Text)
-	
-	images = db.relationship("ProjectImage", back_populates="project")
-	links = db.relationship("ProjectLink", back_populates="project")
-	versions = db.relationship("ProjectVersion", back_populates="project")
-	
-	def __init__(self, path, title, text, description, thumbnail):
-"""
+
 def project_set(path, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
@@ -345,6 +343,7 @@ def project_create(path, title, text, description, thumbnail, images, link_title
 	while counter < len(link_titles):
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
+	db.session.add(ProjectVersion(project, 0, 0, 0))
 	db.session.commit()
 	if flash_result:
 		flash('New Project Created', FLASH_SUCCESS)

@@ -158,6 +158,12 @@ class Project(db.Model):
 		self.text = text
 		self.description = description
 		self.thumbnail = thumbnail
+		
+	def get_latest_version(self):
+		ver = ProjectVersion.query.filter_by(project=self).order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).first()
+		if ver.major is 0 and ver.minor is 0 and ver.patch is 0:
+			return None
+		return ver
 
 	def __repr__(self):
 		return '<Project %r>' %self.title
@@ -207,15 +213,26 @@ class ProjectVersion(db.Model):
 		self.minor = minor
 		self.patch = patch
 		self.changelog = changelog
+	
+	def get_version(self):
+		ver = str(major)
+		if(minor != 0 and patch != 0):
+			ver += ".%r" %minor
+		if(patch != 0):
+			ver += ".%r" %patch
+		return ver
 
 	def __repr__(self):
 		return '<Project %r Version: %r.%r.%r>' %(self.project.title, self.major, self.minor, self.patch)
 
 class ProjectFile(db.Model):	
-	version_id = db.Column(db.Integer, db.ForeignKey('project_version.id'), primary_key=True)
+	id = db.Column(db.Integer, primary_key=True)
+	version_id = db.Column(db.Integer, db.ForeignKey('project_version.id'))
 	version = db.relationship('ProjectVersion', back_populates="files")
-	title = db.Column(db.Text, primary_key=True)
+	title = db.Column(db.Text)
 	url = db.Column(db.Text)
+	__table_args__ = (None, db.UniqueConstraint('version_id', 'title', name='project_file_unique') )
+	
 	
 	def __init__(self, version, title, url):
 		self.version = version
