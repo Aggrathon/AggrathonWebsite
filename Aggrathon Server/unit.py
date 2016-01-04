@@ -29,6 +29,27 @@ class TestProjectModel(unittest.TestCase):
 		num = Project.query.count()
 		project_delete("a")
 		self.assertEqual(num-1, Project.query.count(), "Project not deleted")
+		
+	def test_version(self):
+		project_set("a", "a", "text", "short", "img", [], [], [], True, flash_result=False)
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1"}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1 adasdasd"}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1"}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':[], 'file_urls':[]}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd'], 'file_urls':['asd']}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd', 'dfg'], 'file_urls':['asd', 'dfg']}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd2', 'dfg'], 'file_urls':['asd2', 'dfg']}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd'], 'file_urls':['asd']}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':[], 'file_urls':[]}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""}])
+		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd2', 'dfg'], 'file_urls':['asd2', 'dfg']},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1"}])
+		numver = ProjectVersion.query.count()
+		numfil = ProjectFile.query.count()
+		project_delete("a")
+		self.assertEqual(numver-3, ProjectVersion.query.count(), "Project versions not deleted")
+		self.assertEqual(numfil-2, ProjectFile.query.count(), "Project files not deleted")
 
 if __name__ == '__main__':
 	setup_db()

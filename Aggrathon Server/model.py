@@ -388,6 +388,52 @@ def project_update(project, title, text, description, thumbnail, images, link_ti
 	db.session.commit()
 	if flash_result:
 		flash('Project Updated', FLASH_SUCCESS)
+	
+def project_version_set(path, versions):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		return "Project '%r' not found" %path
+	counter = 0
+	for ver in versions:
+		pv = ProjectVersion.query.filter_by(project_id=project.id, major=ver['major'], minor=ver['minor'], patch=ver['patch']).first()
+		if pv is None:
+			project_version_create(project, ver['major'], ver['minor'], ver['patch'], ver['changelog'], ver.get('file_titles'), ver.get('file_urls'))
+		else:
+			counter += 1
+			pv.changelog = ver['changelog']
+			project_files_set(pv, ver.get('file_titles'), ver.get('file_urls'))
+	if counter < len(project.versions):
+		for ver in project.versions:
+			delete = True
+			for v in versions:
+				if ver.major == v['major'] and ver.minor == v['minor'] and ver.patch == v['patch']:
+					delete = False
+					break
+			if delete:
+				db.session.delete(ver)
+	db.session.commit()
+	
+def project_version_create(project, major, minor, patch, changelog, file_titles, file_urls):
+	pv = ProjectVersion(project, major, minor, patch, changelog)
+	db.session.add(pv)
+	project_files_set(pv, file_titles, file_urls)
+		
+def project_files_set(version, titles, urls):
+	if titles is None:
+		for file in version.files:
+			db.session.delete(file)
+		return
+	counter = 0
+	while counter < len(version.files) and counter < len(titles):
+		version.files[counter].title = titles[counter]
+		version.files[counter].url = urls[counter]
+		counter += 1
+	while counter < len(version.files):
+		db.session.delete(version.files[counter])
+		counter += 1
+	while counter < len(titles):
+		db.session.add(ProjectFile(version, titles[counter], urls[counter]))
+		counter += 1
 
 def project_delete(path):
 	project = Project.query.filter_by(path=path).first()
