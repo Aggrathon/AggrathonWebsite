@@ -25,15 +25,14 @@
 </div>
 {% endmacro %}
 
-{% if content.data.version %}
-<div style="position:absolute; right:3em; top:1.5em; text-align:right;">
-	<big>Version {{ content.data.version }}</big>
-</div>
-{% endif %}
-
 {% if content.data.images %}{{ image_viewer(content.data.images) }}{% endif %}
 
-<br />
+<h2>
+	{{content.data.name}}
+	{% if content.data.version %}&nbsp;&nbsp;&nbsp;&nbsp;
+	<small>Version: {{ content.data.version }}</small>
+	{% endif %}
+</h2>
 <div id="project-text">
 	{{ content.data.text | safe }}
 </div>

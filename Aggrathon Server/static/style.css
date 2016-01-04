@@ -263,14 +263,14 @@ table.table.table-hover tbody tr:hover {
 	background: none !important;
 }
 
-.image-carousel-img {
-	max-height: 25em;
-	max-width:100%;
-}
 .image-carousel-li {
-	padding: 0px; 
+	padding: 2px; 
 	border: none;
 	background: transparent;
+}
+.image-carousel-li.selected img {
+	border: 2px solid #eee;
+	margin: -1px;
 }
 .image-carousel-select {
 	height:25em; 
@@ -282,3 +282,26 @@ table.table.table-hover tbody tr:hover {
 	border: 2px solid #eee;
 	margin: 1px;
 }
+.image-carousel-control {
+	height: 25em;
+}
+.image-carousel-control img {
+	max-height: 25em;
+	vertical-align: middle;
+}
+.image-carousel {
+	margin: -15px 0px 15px;
+	border: 1px solid gba(96,96,96,0.2);
+	border-radius: 0.4em;
+	background-color: rgba(96,96,96,0.35);
+}
+.image-carousel div {
+	padding: 0px;
+}
+.image-carousel-control .carousel-control.right {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.3) 100%);
+}
+.image-carousel-control .carousel-control.left {
+    background-image: linear-gradient(to left, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.3) 100%);
+}
+

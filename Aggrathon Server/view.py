@@ -102,7 +102,7 @@ def show_page(path):
 """
 def show_project(path):
 	project = model.project_get(path)
-	return render_page_standard(create_page_fromfile(file='frontend/projects/project.html', **project), True)
+	return render_page_standard(create_page_fromfile(None, file='frontend/projects/project.html', **project), True)
 
 
 """

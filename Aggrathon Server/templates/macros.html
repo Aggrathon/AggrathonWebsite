@@ -12,13 +12,13 @@
 	{% endif %}
 {% endmacro %}
 {% macro image_viewer(images, id='image-viewer') %}
-	<div class="row">
+	<div class="row image-carousel">
 		<div class="col-xs-12 col-sm-9">
-			<div id="{{id}}" class="carousel slide" data-ride="carousel" data-interval="10000">
+			<div id="{{id}}" class="carousel slide image-carousel-control" data-ride="carousel" data-interval="10000">
 				<div class="carousel-inner text-middle" role="listbox">
 				{% for image in images %}
-			    	<div class="item{% if loop.first %} active{% endif %}">
-			    		<img class="img-rounded center-block image-carousel-img" src="{{ image.image }}" />
+			    	<div class="item image-carousel-control{% if loop.first %} active{% endif %}">
+			    		<img class="img-rounded center-block" src="{{ image.image }}" />
 			    	</div>
 				{% endfor %}
 				</div>
@@ -35,8 +35,8 @@
 		<div class="col-xs-12 col-sm-3 hidden-xs image-carousel-select">
 			<ol class="list-group" id="{{id}}-selector">
 				{% for image in images %}
-				<li class="list-group-item image-carousel-li{% if loop.first %} selected{% endif %}" data-target="#{{id}}" data-slide-to="{{ loop.index0 }}">
-					<img class="image-carousel-img img-rounded" src="{{ image.image }}" />
+				<li class="list-group-item image-carousel-li thumbnail{% if loop.first %} selected{% endif %}" data-target="#{{id}}" data-slide-to="{{ loop.index0 }}">
+					<img class="img-rounded" src="{{ image.image }}" />
 				</li>
 				{% endfor %}
 			</ol>

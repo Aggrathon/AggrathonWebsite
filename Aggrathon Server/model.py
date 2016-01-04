@@ -319,7 +319,7 @@ def project_get(path):
 	if latest is not None:
 		files += latest.files
 		return {"title":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":latest.get_version(), "changelog":latest.changelog}
-	return {"title":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":"2.4.21", "changelog":"f1\nf2\nf3\nf4"}
+	return {"name":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":"2.4.21", "changelog":"f1\nf2\nf3\nf4"}
 
 ### PROJECT EDIT ###
 
