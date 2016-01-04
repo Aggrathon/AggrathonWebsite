@@ -262,3 +262,23 @@ table.table.table-hover tbody tr:hover {
 .cke_inner {
 	background: none !important;
 }
+
+.image-carousel-img {
+	max-height: 25em;
+	max-width:100%;
+}
+.image-carousel-li {
+	padding: 0px; 
+	border: none;
+	background: transparent;
+}
+.image-carousel-select {
+	height:25em; 
+	max-width:100%; 
+	overflow-x: hidden; 
+	overflow-y: auto;
+}
+.selected .image-carousel-img {
+	border: 2px solid #eee;
+	margin: 1px;
+}

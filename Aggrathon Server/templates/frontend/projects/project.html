@@ -1,4 +1,5 @@
-﻿{% macro links() %}
+﻿{% from 'macros.html' import image_viewer %}
+{% macro links() %}
 <div id="project-links" class="panel">
 	<h3>Links</h3>
 	<ul class="list-unstyled">
@@ -30,21 +31,7 @@
 </div>
 {% endif %}
 
-{% if content.data.images %}
-<div class="row">
-	<div class="col-xs-12 col-sm-9">
-		<img class="img-rounded center-block" style="max-height: 25em; max-width:100%;" src="{{ content.data.images[0].image }}" />
-	</div>
-	<div class="col-xs-12 col-sm-3 hidden-xs" style="max-height:25em; max-width:100%; overflow: auto;">
-		<ul class="list-group">
-		{% for image in content.data.images %}
-		<li class="list-group-item" style="padding:0px; border-color: #000; background:transparent;"><img style="max-width: 100%;" src="{{ image.image }}" /></li>
-		<li class="list-group-item" style="padding:0px; border-color: #000; background:transparent;"><img style="max-width: 100%;" src="{{ image.image }}" /></li>
-		{% endfor %}
-		</ul>
-	</div>
-</div>
-{% endif %}
+{% if content.data.images %}{{ image_viewer(content.data.images) }}{% endif %}
 
 <br />
 <div id="project-text">
