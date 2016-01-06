@@ -140,6 +140,7 @@ fieldset[disabled] .btn-primary:hover {
 	opacity: 0.8;
 }
 
+
 .panel {
 	background-color: rgba(96,96,96,0.35);
 	padding: 1em;
@@ -161,17 +162,16 @@ fieldset[disabled] .btn-primary:hover {
   max-width: 1400px;
 }
 
+
 .alert-default {
 	background-color: rgba(96, 96, 96, 0.5);
 	border: white;
 	color: white;
 }
-
 .alert-info {
     background-color: rgba(170, 223, 249, 0.8);
 	border-color: #08719B
 }
-
 .alert-danger {
 	border-color: #A94442;
 	background-color: rgba(255, 205, 205, 0.8);
@@ -185,6 +185,29 @@ fieldset[disabled] .btn-primary:hover {
 	border-color: #3C763D;
 }
 
+
+a {
+	color: #4898f0;
+}
+a:focus, a:hover {
+	color: #54a4ff;
+}
+
+
+.label-default {
+	background-color: rgba(96,96,96,0.5);
+	
+}
+a.label-default:hover,
+a.label-default:active,
+a.label-default:focus,
+a.label-default.active,
+a.label-default.focus {
+	border: 1px solid #fff;
+	
+}
+
+
 .blurb-list .media-body {
 	text-align: left;
 	white-space: normal;
@@ -192,18 +215,16 @@ fieldset[disabled] .btn-primary:hover {
 .blurb-list .media-heading {
 	text-align: left;
 }
-
 .blurb-list .media-object {
 	width: 5em;
 }
-
 .blurb-list.blurb-list-big .media-object {
 	width: 8em;
 }
-
 .blurb-list .btn {
 	padding: 6px;
 }
+
 
 label {
 	font-size: 15px;
@@ -224,9 +245,6 @@ label {
 	border-radius: 6px !important;
 }
 
-a:focus, a:hover {
-	color: #4090D0;
-}
 
 table.table.table-hover tbody tr:hover {
 	color: #333;
@@ -240,28 +258,26 @@ table.table.table-hover tbody tr:hover {
 	color: #333;
 }
 
+
 .cke_source {
 	color: #333;
 	border-radius: 4px
 }
-
 .cke_editable {
 	margin: 0px 5px;
 }
-
 .cke_bottom,
 .cke_top {
 	border: none;
 	border-radius: 4px
 }
-
 .cke {
 	border: none !important;
 }
-
 .cke_inner {
 	background: none !important;
 }
+
 
 .image-carousel-li {
 	padding: 2px; 

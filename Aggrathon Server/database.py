@@ -4,6 +4,7 @@ from database import *
 from flask_login import make_secure_token
 from os import urandom
 import datetime
+from sqlalchemy.orm import relationship
 
 db = SQLAlchemy(app)
 
@@ -150,6 +151,7 @@ class Project(db.Model):
 	images = db.relationship("ProjectImage", back_populates="project")
 	links = db.relationship("ProjectLink", back_populates="project")
 	versions = db.relationship("ProjectVersion", back_populates="project")
+	tags = relationship("ProjectTagged", back_populates="project")
 	
 
 	def __init__(self, path, title, text, description, thumbnail):
@@ -215,11 +217,11 @@ class ProjectVersion(db.Model):
 		self.changelog = changelog
 	
 	def get_version(self):
-		ver = str(major)
-		if(minor != 0 and patch != 0):
-			ver += ".%r" %minor
-		if(patch != 0):
-			ver += ".%r" %patch
+		ver = str(self.major)
+		if(self.minor is not 0 or self.patch is not 0):
+			ver += ".%r" %self.minor
+		if(self.patch != 0):
+			ver += ".%r" %self.patch
 		return ver
 
 	def __repr__(self):
@@ -242,6 +244,33 @@ class ProjectFile(db.Model):
 	def __repr__(self):
 		return '<Project %r (%r.%r.%r) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
 
+class ProjectTag(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	tag = db.Column(db.String, unique=True)
+	
+	projects = relationship("ProjectTagged", back_populates="tag")
+	
+	def __init_(self, tag):
+		self.tag = tag
+		
+	def __repr__(self):
+		return '<Tag: %r>' %self.tag
+	
+class ProjectTagged(db.Model):
+	tag_id = db.Column(db.Integer, db.ForeignKey('project_tag.id'), primary_key=True)
+	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+	
+	tag = relationship("ProjectTag", back_populates="projects")
+	project = relationship("Project", back_populates="tags")
+	
+	def __init__(self, tag, project):
+		self.tag = tag
+		self.project = project
+	
+	def __repr__(self):
+		return "<Project Tag: '%r' '%r'>" %(self.project.title, self.tag.tag)
+	
+	
 class ProjectFeatured(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
 	project = db.relationship('Project')
@@ -254,7 +283,7 @@ class ProjectFeatured(db.Model):
 	def __repr__(self):
 		return '<Featured: Project %r>' %self.project.title
 
-class LastProject(db.Model):
+class ProjectLast(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
 	project = db.relationship('Project')
 	time = db.Column(db.DateTime)
@@ -421,8 +450,10 @@ def check_if_setup():
 		ProjectLink.query.first()
 		ProjectVersion.query.first()
 		ProjectFile.query.first()
+		ProjectTag.query.first()
+		ProjectTagged.query.first()
 		ProjectFeatured.query.first()
-		LastProject.query.first()
+		ProjectLast.query.first()
 
 		MessageBlacklist.query.first()
 		MessageUnread.query.first()

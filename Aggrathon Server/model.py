@@ -39,7 +39,7 @@ def get_site_info_embed():
 
 def get_admin_front():
 	pages = LastPage.query.order_by(LastPage.time.desc()).all()
-	projects = LastProject.query.order_by(LastProject.time.desc()).all()
+	projects = ProjectLast.query.order_by(ProjectLast.time.desc()).all()
 	notes = Text.query.get('ADMIN_NOTES')
 	if notes:
 		return {'pages':pages, 'projects':projects, 'notes':notes.text}
@@ -318,19 +318,19 @@ def project_get(path):
 	latest = project.get_latest_version()
 	if latest is not None:
 		files += latest.files
-		return {"title":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":latest.get_version(), "changelog":latest.changelog}
-	return {"name":project.title, "text":project.text, "images":project.images, "links":project.links, "files":files, "version":"2.4.21", "changelog":"f1\nf2\nf3\nf4"}
+		return {"name":project.title, "text":project.text, "images":project.images, "tags":["Ludum Dare", "Game Jam", "Game", "Test", "Plesase Ignore"], "links":project.links, "files":files, "version":latest.get_version(), "changelog":latest.changelog}
+	return {"name":project.title, "text":project.text, "images":project.images, "tags":["Ludum Dare", "Game Jam", "Game", "Test", "Plesase Ignore"], "links":project.links, "files":files}
 
 ### PROJECT EDIT ###
 
-def project_set(path, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+def project_set(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
-		project_create(path, title, text, description, thumbnail, images, link_titles, link_urls, featured, priority, private, flash_result)
+		project_create(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured, priority, private, flash_result)
 	else:
-		project_update(project, title, text, description, thumbnail, images, link_titles, link_urls, featured, priority, private, flash_result)
+		project_update(project, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured, priority, private, flash_result)
 
-def project_create(path, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+def project_create(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
 	project = Project(path, title, text, description, thumbnail)
 	db.session.add(project)
 	if(featured and not private):
@@ -344,11 +344,12 @@ def project_create(path, title, text, description, thumbnail, images, link_title
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
 	db.session.add(ProjectVersion(project, 0, 0, 0))
+	project_tags_set(project, tags)
 	db.session.commit()
 	if flash_result:
 		flash('New Project Created', FLASH_SUCCESS)
 		
-def project_update(project, title, text, description, thumbnail, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
+def project_update(project, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
 	project.title = title
 	project.text = text
 	project.description = description
@@ -385,6 +386,7 @@ def project_update(project, title, text, description, thumbnail, images, link_ti
 	while counter < len(link_titles):
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
+	project_tags_set(project, tags)
 	db.session.commit()
 	if flash_result:
 		flash('Project Updated', FLASH_SUCCESS)
@@ -435,6 +437,37 @@ def project_files_set(version, titles, urls):
 		db.session.add(ProjectFile(version, titles[counter], urls[counter]))
 		counter += 1
 
+def project_tags_set(project, tags):
+	if tags is None or tags is "":
+		for tag in project.tags:
+			db.session.delete(tag.tag)
+		return
+	taglist = [x.strip() for x in tags.split(',')]
+	for tag in project.tags:
+		if tag.tag.tag not in taglist:
+			db.session.delete(tag.tag)
+	for t in taglist:
+		tag = ProjectTag.query.filter_by(tag=t).first()
+		if tag is None:
+			tag = ProjectTag(t)
+			db.session.add(tag)
+		db.session.add(ProjectTagged(project, tag))
+		
+def project_tags_create(tag):
+	t = ProjectTag.query.filter_by(tag=tag).first()
+	if t is None:
+		db.session.add(ProjectTag(t))
+		db.session.commit()
+
+def project_tags_delete(tag):
+	t = ProjectTag.query.filter_by(tag=tag).first()
+	if t is not None:
+		for p in t.projects:
+			db.session.delete(p)
+		db.session.delete(t)
+		db.session.commit()
+	
+
 def project_delete(path):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
@@ -451,6 +484,8 @@ def project_delete(path):
 		feat = ProjectFeatured.query.get(project.id)
 		if feat is not None:
 			db.session.delete(feat)
+		for tag in project.tags:
+			db.session.delete(tag)
 		db.session.commit()
 		db.session.delete(project)
 		db.session.commit()

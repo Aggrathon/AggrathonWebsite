@@ -28,9 +28,14 @@
 {% if content.data.images %}{{ image_viewer(content.data.images) }}{% endif %}
 
 <h2>
-	{{content.data.name}}
-	{% if content.data.version %}&nbsp;&nbsp;&nbsp;&nbsp;
+	{{content.data.name}} &nbsp;&nbsp;
+	{% if content.data.version %}&nbsp;
 	<small>Version: {{ content.data.version }}</small>
+	{% endif %}
+	{% if content.data.tags %}&nbsp;
+	<small style="display: inline-block;">
+		Tags:&nbsp;{% for tag in content.data.tags %} <a class="label label-default" href="{{ url_for('projects', tag=tag) }}">{{ tag }}</a>{% endfor %}
+	</small>
 	{% endif %}
 </h2>
 <div id="project-text">
