@@ -39,6 +39,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="routes.py" />
+    <Compile Include="unit.py" />
     <Compile Include="view.py">
       <SubType>Code</SubType>
     </Compile>
