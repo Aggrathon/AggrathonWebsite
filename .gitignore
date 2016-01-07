@@ -189,12 +189,12 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 ### Own ignores ###
-/Aggrathon Server/__pycache__
-/Aggrathon Server/env
-/Aggrathon Server/*.db
-/Aggrathon Server/ptvs_virtualenv_proxy.py
-/Aggrathon Server/web.config
-/Aggrathon Server/web.debug.config
-/Aggrathon Server/files/test
+/website/__pycache__
+/website/env
+/website/*.db
+/website/ptvs_virtualenv_proxy.py
+/website/web.config
+/website/web.debug.config
+/website/files/test
 .pydevproject
 .project
