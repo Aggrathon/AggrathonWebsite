@@ -147,11 +147,10 @@ class Project(db.Model):
 	text = db.Column(db.Text)
 	description = db.Column(db.Text)
 	thumbnail = db.Column(db.Text)
-	
 	images = db.relationship("ProjectImage", back_populates="project")
 	links = db.relationship("ProjectLink", back_populates="project")
 	versions = db.relationship("ProjectVersion", back_populates="project")
-	tags = relationship("ProjectTagged", back_populates="project")
+	tags = db.relationship("ProjectTagged", back_populates="project")
 	
 
 	def __init__(self, path, title, text, description, thumbnail):
@@ -247,10 +246,9 @@ class ProjectFile(db.Model):
 class ProjectTag(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	tag = db.Column(db.String, unique=True)
+	projects = db.relationship('ProjectTagged', back_populates="tag")
 	
-	projects = relationship("ProjectTagged", back_populates="tag")
-	
-	def __init_(self, tag):
+	def __init__(self, tag):
 		self.tag = tag
 		
 	def __repr__(self):
@@ -258,10 +256,9 @@ class ProjectTag(db.Model):
 	
 class ProjectTagged(db.Model):
 	tag_id = db.Column(db.Integer, db.ForeignKey('project_tag.id'), primary_key=True)
+	tag =  db.relationship("ProjectTag", back_populates="projects")
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	
-	tag = relationship("ProjectTag", back_populates="projects")
-	project = relationship("Project", back_populates="tags")
+	project = db.relationship("Project", back_populates="tags")
 	
 	def __init__(self, tag, project):
 		self.tag = tag

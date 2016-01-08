@@ -317,8 +317,8 @@ def project_get(path):
 	files = ProjectVersion.query.filter_by(project=project, major=0, minor=0, patch=0).first().files
 	latest = project.get_latest_version()
 	if latest is not None:
-		return {"name":project.title, "text":project.text, "images":project.images, "tags":["Ludum Dare", "Game Jam", "Game", "Test", "Plesase Ignore"], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
-	return {"name":project.title, "text":project.text, "images":project.images, "tags":["Ludum Dare", "Game Jam", "Game", "Test", "Plesase Ignore"], "links":project.links, "files":files}
+		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
+	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
 
 ### PROJECT EDIT ###
 
@@ -450,7 +450,7 @@ def project_tags_set(project, tags):
 		if tag is None:
 			tag = ProjectTag(t)
 			db.session.add(tag)
-		db.session.add(ProjectTagged(project, tag))
+		db.session.add(ProjectTagged(tag, project))
 		
 def project_tags_create(tag):
 	t = ProjectTag.query.filter_by(tag=tag).first()
@@ -465,7 +465,6 @@ def project_tags_delete(tag):
 			db.session.delete(p)
 		db.session.delete(t)
 		db.session.commit()
-	
 
 def project_delete(path):
 	project = Project.query.filter_by(path=path).first()
@@ -788,9 +787,9 @@ def create_test_data():
 	page_set("test2", "Test Page 2", "[insert content here]", flash_result=False)
 	page_set("test3", "Test Page 3", "[insert content here]", flash_result=False)
 	
-	project_set("test", "Test Project 1", "[insert content here]", "test project", "/static/background.jpg", "", ["/static/background.jpg"], ["Ludum Dare"], ["http://ludumdare.com/compo/"], True, flash_result=False)
+	project_set("test", "Test Project 1", "[insert content here]", "test project", "/static/background.jpg", "test", ["/static/background.jpg"], ["Ludum Dare"], ["http://ludumdare.com/compo/"], True, flash_result=False)
 	project_version_set("test", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':99, 'minor':99, 'patch':99, 'changelog':"Feature 1\nFeature 2\nFeature 3\nFeature 4", 'file_titles':['File 1'], 'file_urls':['file.txt']}])
-	
+
 	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
 
 def create_default_menu():
