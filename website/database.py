@@ -260,7 +260,7 @@ class ProjectTagged(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
 	project = db.relationship("Project", back_populates="tags")
 	
-	def __init__(self, tag, project):
+	def __init__(self, project, tag):
 		self.tag = tag
 		self.project = project
 	

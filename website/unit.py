@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 import timeit
 from model import *
 
@@ -21,7 +21,7 @@ class TestProjectModel(unittest.TestCase):
 	def setUpClass(cls):
 		setup_db()
 	
-	@profile_time
+	#@profile_time
 	def test_create(self):
 		path = "a"
 		while Project.query.filter_by(path=path).first() is not None:
@@ -30,7 +30,7 @@ class TestProjectModel(unittest.TestCase):
 		project_set(path, "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		self.assertEqual(num+1, Project.query.count(), "Project not created")
 	
-	@profile_time
+	#@profile_time
 	def test_edit(self):
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], False, flash_result=False)
@@ -45,14 +45,14 @@ class TestProjectModel(unittest.TestCase):
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], [], [], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		
-	@profile_time
+	#@profile_time
 	def test_delete(self):
 		project_set("a", "a", "text", "short", "img",  None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		num = Project.query.count()
 		project_delete("a")
 		self.assertEqual(num-1, Project.query.count(), "Project not deleted")
 	
-	@profile_time
+	#@profile_time
 	def test_version(self):
 		project_set("a", "a", "text", "short", "img", None, [], [], [], True, flash_result=False)
 		project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1"}])
@@ -74,10 +74,22 @@ class TestProjectModel(unittest.TestCase):
 		self.assertEqual(numver-3, ProjectVersion.query.count(), "Project versions not deleted")
 		self.assertEqual(numfil-2, ProjectFile.query.count(), "Project files not deleted")
 	
-	#@profile_time
-	#def test_set_time(self):
-	#	project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
-	#	project_version_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'file_titles':['asd2', 'dfg'], 'file_urls':['asd2', 'dfg']},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2"},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1"}])
+	def test_tags(self):
+		numTags = ProjectTag.query.filter(ProjectTag.tag.isnot("test")).filter(ProjectTag.tag.isnot("test2")).count()
+		project_set("a", "a", "text", "short", "img", None, [], [], [], True, flash_result=False)
+		project_set("a", "a", "text", "short", "img", "test", [], [], [], True, flash_result=False)
+		project_set("a", "a", "text", "short", "img", "test, test2", [], [], [], True, flash_result=False)
+		project_set("a", "a", "text", "short", "img", None, [], [], [], True, flash_result=False)
+		project_set("a", "a", "text", "short", "img", "test, test", [], [], [], True, flash_result=False)
+		self.assertEqual(numTags+2, ProjectTag.query.count(), "Tags not created inline")
+		project_tags_create("test3")
+		self.assertEqual(numTags+3, ProjectTag.query.count(), "Tag not created standalone")
+		project_tags_delete("test")
+		project_tags_delete("test2")
+		project_tags_delete("test3")
+		self.assertFalse(Project.query.filter_by(path="a").first().tags, "Tag not removed")
+		self.assertEqual(numTags, ProjectTag.query.count(), "Tags not deleted (%s)"%ProjectTag.query.all())
+
 
 if __name__ == '__main__':
 	setup_db()

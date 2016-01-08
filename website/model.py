@@ -439,7 +439,7 @@ def project_files_set(version, titles, urls):
 def project_tags_set(project, tags):
 	if tags is None or tags is "":
 		for tag in project.tags:
-			db.session.delete(tag.tag)
+			db.session.delete(tag)
 		return
 	taglist = [x.strip() for x in tags.split(',')]
 	for tag in project.tags:
@@ -450,12 +450,16 @@ def project_tags_set(project, tags):
 		if tag is None:
 			tag = ProjectTag(t)
 			db.session.add(tag)
-		db.session.add(ProjectTagged(tag, project))
+			db.session.add(ProjectTagged(project, tag))
+		else:
+			tagged = ProjectTagged.query.filter_by(project=project, tag=tag).first()
+			if tagged is None:
+				db.session.add(ProjectTagged(project, tag))
 		
 def project_tags_create(tag):
 	t = ProjectTag.query.filter_by(tag=tag).first()
 	if t is None:
-		db.session.add(ProjectTag(t))
+		db.session.add(ProjectTag(tag))
 		db.session.commit()
 
 def project_tags_delete(tag):
