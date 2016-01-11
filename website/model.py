@@ -320,6 +320,25 @@ def project_get(path):
 		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
 	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
 
+def project_list(tag=None,order='name'):
+	projects = None
+	if tag is not None:
+		ptags = ProjectTag.query.filter_by(tag=tag).first()
+		if ptags is not None:
+			projects = [p.project for p in ptags.projects]
+	else:
+		projects = Project.query.all()
+	if order is 'name':
+		projects.sort(key=lambda p: p.title)
+	elif order is 'created':
+		pass
+	elif order is 'edited':
+		pass
+	return projects
+
+def project_tags():
+	return db.session.query(db.func.count(ProjectTagged.project_id).label("count"), ProjectTag.tag).group_by(ProjectTagged.tag_id).join(ProjectTag).order_by(db.desc("count")).all()
+
 ### PROJECT EDIT ###
 
 def project_set(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
