@@ -1,1 +1,4 @@
-﻿[list of projects here]
+﻿[list of projects here]<br />
+{% for project in content.data.projects %}
+{{project.title}}<br />
+{% endfor %}

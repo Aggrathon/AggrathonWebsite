@@ -287,8 +287,10 @@ def page(path):
 ### projects ###
 @app.route('/projects/')
 def projects():
-	flash("Not implemented", "danger")
-	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html'), create_sidebar_fromfile("frontend/projects/sidebar.html"), True)
+	tags =  request.args.getlist('tag')
+	order = request.args.get('sorting')
+	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html', projects=model.project_list(tags, order)),\
+	    create_sidebar_fromfile("frontend/projects/sidebar.html", tags=model.project_tags()), True)
 
 @app.route('/projects/<path:project>/')
 def project(project):

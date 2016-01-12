@@ -320,19 +320,17 @@ def project_get(path):
 		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
 	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
 
-def project_list(tag=None,order='name'):
+def project_list(tags=None,order=None):
 	projects = None
-	if tag is not None:
-		ptags = ProjectTag.query.filter_by(tag=tag).first()
-		if ptags is not None:
-			projects = [p.project for p in ptags.projects]
+	if tags is not None and len(tags) is not 0:
+		projects = Project.query.join(ProjectTagged).join(ProjectTag).filter(ProjectTag.tag.in_(tags)).group_by(Project.id).all()
 	else:
 		projects = Project.query.all()
 	if order is 'name':
 		projects.sort(key=lambda p: p.title)
-	elif order is 'created':
-		pass
 	elif order is 'edited':
+		pass
+	else: #order is 'created'
 		pass
 	return projects
 

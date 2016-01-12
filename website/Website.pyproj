@@ -160,6 +160,7 @@
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />
+    <Content Include="templates\frontend\projects\sidebar.html" />
     <Content Include="templates\layout\embed.html" />
     <Content Include="templates\macros.html" />
     <Content Include="templates\frontend\contact.html" />
@@ -172,7 +173,6 @@
     <Content Include="templates\admin\projects\toolbar.html" />
     <Content Include="templates\frontend\projects\project.html" />
     <Content Include="templates\frontend\projects\projects.html" />
-    <Content Include="templates\frontend\projects\sidebar.html" />
     <Content Include="templates\layout\sidebar.html" />
     <Content Include="templates\layout\header.html" />
     <Content Include="templates\layout\content.html" />

@@ -161,7 +161,11 @@ fieldset[disabled] .btn-primary:hover {
   margin-left: auto;
   max-width: 1400px;
 }
-
+@media (min-width: 1430px) {
+	.container {
+		width: 1400px;
+	}
+}
 
 .alert-default {
 	background-color: rgba(96, 96, 96, 0.5);

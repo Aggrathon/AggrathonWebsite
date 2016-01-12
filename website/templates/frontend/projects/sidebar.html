@@ -1,1 +1,35 @@
-﻿[projects list filter sidebar]
+<form method="get">
+	<h2>Project tags</h2>
+	<div id="project-tags">
+		{% set sidebar_projects_tags = request.args.getlist('tag') %}
+		{% for tag in sidebar.data.tags %}
+		<span class="btn btn-default" style="margin:2px;">
+			<label class="checkbox-inline">
+				<input type="checkbox" name="tag" value="{{tag.tag}}" {% if sidebar_projects_tags and tag.tag in sidebar_projects_tags %} checked {% endif %} />
+				{{tag.tag}}&nbsp;
+				<span class="badge">{{tag.count}}</span>
+			</label>
+		</span>
+		{% endfor %}
+	</div>
+
+	<br />
+
+	<h2>Sorting</h2>
+	<div id="projects-sorting">
+		{% set sidebar_projects_sorting = request.args.get('sorting') %}
+		<div class="radio-inline">
+			<label><input type="radio" name="sorting" value="created" {% if sidebar_projects_sorting =='created' or sidebar_projects_sorting ==none %} checked {% endif %} />Created</label>
+		</div>
+		<div class="radio-inline">
+			<label><input type="radio" name="sorting" value="edited" {% if sidebar_projects_sorting =='edited' %} checked {% endif %} />Edited</label>
+		</div>
+		<div class="radio-inline">
+			<label><input type="radio" name="sorting" value="name" {% if sidebar_projects_sorting =='name' %} checked {% endif %} />Name</label>
+		</div>
+	</div>
+
+	<br />
+
+	<input type="submit" class="btn btn-primary btn-lg" value="Filter" />
+</form>
