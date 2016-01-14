@@ -323,16 +323,19 @@ def project_get(path):
 def project_list(tags=None,order=None):
 	projects = None
 	if tags is not None and len(tags) is not 0:
-		projects = Project.query.join(ProjectTagged).join(ProjectTag).filter(ProjectTag.tag.in_(tags)).group_by(Project.id).all()
+		tq = db.session.query(ProjectTag.id).filter(ProjectTag.tag.in_(tags)).subquery()
+		pq = db.session.query(ProjectTagged.project_id).join(tq).group_by(ProjectTagged.project_id).subquery()
+		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail).join(pq).order_by(Project.title).all()
 	else:
-		projects = Project.query.all()
-	if order is 'name':
+		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail).all()
+	if order == 'name':
 		projects.sort(key=lambda p: p.title)
-	elif order is 'edited':
+	elif order == 'updated':
 		pass
 	else: #order is 'created'
 		pass
-	return projects
+	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'tags':[t[0] for t in \
+		db.session.query(ProjectTag.tag).join(db.session.query(ProjectTagged.tag_id).filter_by(project_id=p.id).subquery()).all()]} for p in projects]
 
 def project_tags():
 	return db.session.query(db.func.count(ProjectTagged.project_id).label("count"), ProjectTag.tag).group_by(ProjectTagged.tag_id).join(ProjectTag).order_by(db.desc("count")).all()

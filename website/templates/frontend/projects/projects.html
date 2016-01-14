@@ -1,4 +1,26 @@
-﻿[list of projects here]<br />
-{% for project in content.data.projects %}
-{{project.title}}<br />
-{% endfor %}
+﻿<div class="blurb-list blurb-list-big">
+	<ul class="media-list">
+		{% for project in content.data.projects %}
+		<li class="media">
+			<a class="btn btn-default" href="{{ project.path }}/">
+				{% if project.thumbnail %}<div class="media-left"><img class="media-object img-rounded" src="{{ project.thumbnail }}" /></div>{% endif %}
+				<div class="media-body">
+					<h3 class="media-heading">
+						{{ project.title }}						
+						{% if project.tags %}&nbsp;
+						<small style="display: inline-block;">
+							Tags:&nbsp;{% for tag in project.tags %}{{ tag }}{% if not loop.last %},{% endif %} {% endfor %}&nbsp;
+						</small>
+						{% endif %}
+						<small style="display: inline-block;">
+							Created:&nbsp;2016-05-31 &nbsp;
+							Updated:&nbsp;2016-07-23
+						</small>
+					</h3>
+					{% if project.description %}{{ project.description }}{% endif %}
+				</div>
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>

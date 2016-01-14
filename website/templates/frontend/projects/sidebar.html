@@ -3,13 +3,13 @@
 	<div id="project-tags">
 		{% set sidebar_projects_tags = request.args.getlist('tag') %}
 		{% for tag in sidebar.data.tags %}
-		<span class="btn btn-default" style="margin:2px;">
+		<label class="btn btn-default" style="margin:2px;">
 			<label class="checkbox-inline">
 				<input type="checkbox" name="tag" value="{{tag.tag}}" {% if sidebar_projects_tags and tag.tag in sidebar_projects_tags %} checked {% endif %} />
 				{{tag.tag}}&nbsp;
 				<span class="badge">{{tag.count}}</span>
 			</label>
-		</span>
+		</label>
 		{% endfor %}
 	</div>
 
@@ -22,7 +22,7 @@
 			<label><input type="radio" name="sorting" value="created" {% if sidebar_projects_sorting =='created' or sidebar_projects_sorting ==none %} checked {% endif %} />Created</label>
 		</div>
 		<div class="radio-inline">
-			<label><input type="radio" name="sorting" value="edited" {% if sidebar_projects_sorting =='edited' %} checked {% endif %} />Edited</label>
+			<label><input type="radio" name="sorting" value="updated" {% if sidebar_projects_sorting =='updated' %} checked {% endif %} />Updated</label>
 		</div>
 		<div class="radio-inline">
 			<label><input type="radio" name="sorting" value="name" {% if sidebar_projects_sorting =='name' %} checked {% endif %} />Name</label>

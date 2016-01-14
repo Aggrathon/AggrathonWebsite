@@ -17,15 +17,12 @@ body {
     display: inline-block;
     margin: 20px 0px 10px 0px;
 }
-
-
 .page-header h1 {
 	font-family: 'Special Elite', cursive;
     display: inline-block;
     margin-top: 7px;
 	color: #eee;
 }
-
 .page-header div {
     float: right;
 }
@@ -146,11 +143,9 @@ fieldset[disabled] .btn-primary:hover {
 	padding: 1em;
 	border-radius:0.4em;
 }
-
 .panel h2 {
 	margin-top: 0px;
 }
-
 .panel h3 {
 	margin-top: 0px;
 	text-align: center;
@@ -161,10 +156,25 @@ fieldset[disabled] .btn-primary:hover {
   margin-left: auto;
   max-width: 1400px;
 }
-@media (min-width: 1430px) {
+@media (min-width: 1400px) {
 	.container {
 		width: 1400px;
 	}
+}
+
+.h1 .small, .h1 small, 
+.h2 .small, .h2 small,
+.h3 .small, .h3 small,
+.h4 .small, .h4 small,
+.h5 .small, .h5 small,
+.h6 .small, .h6 small,
+h1 .small, h1 small,
+h2 .small, h2 small,
+h3 .small, h3 small,
+h4 .small, h4 small,
+h5 .small, h5 small,
+h6 .small, h6 small {
+	color: #AAA;
 }
 
 .alert-default {

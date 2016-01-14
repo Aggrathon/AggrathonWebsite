@@ -289,7 +289,13 @@ def page(path):
 def projects():
 	tags =  request.args.getlist('tag')
 	order = request.args.get('sorting')
-	return render_page(create_page_fromfile("Projects", 'frontend/projects/projects.html', projects=model.project_list(tags, order)),\
+	title = "Projects"
+	if len(tags) > 0:
+		if len(tags) == 1:
+			title += " (Tag: %s)" %tags[0]
+		else:
+			title += " (Tags: %s)" %', '.join(tags)
+	return render_page(create_page_fromfile(title, 'frontend/projects/projects.html', projects=model.project_list(tags, order)),\
 	    create_sidebar_fromfile("frontend/projects/sidebar.html", tags=model.project_tags()), True)
 
 @app.route('/projects/<path:project>/')
