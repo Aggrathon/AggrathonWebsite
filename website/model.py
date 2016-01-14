@@ -562,7 +562,7 @@ def files_create_folder(path, name):
 		name = secure_filename(name)
 		fullpath = path+'/'+name
 		if not os.path.isdir(fullpath):
-			os.makedirs(fullpath)
+			os.makedirs(fullpath, exist_ok=True)
 		return fullpath
 	else:
 		return ''

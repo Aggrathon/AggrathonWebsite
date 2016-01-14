@@ -162,7 +162,7 @@ def files(embedded=False):
 		if embedded:
 			return render_page_embed_fromfile('', 'admin/files.html', **model.files_list(path, filter))
 		else:
-			return create_page_admin('File: %r' %path, 'admin/files.html', **model.files_list(path, filter))
+			return create_page_admin('Folder: %r' %path, 'admin/files.html', **model.files_list(path, filter))
 	else:
 		if embedded:
 			return render_page_embed_fromfile('', 'admin/files.html', **model.files_list(filter=filter))

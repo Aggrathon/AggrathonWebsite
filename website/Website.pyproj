@@ -45,11 +45,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="files\test\test_aud.ogg" />
-    <Content Include="files\test\test_img.png" />
-    <Content Include="files\test\test_text.txt" />
-    <Content Include="files\test\test_vid.mp4" />
-    <Content Include="files\test\test_zip.zip" />
     <Content Include="requirements.txt" />
     <Content Include="static\background.jpg" />
     <Content Include="static\external\bootstrap-3.3.5\css\bootstrap-theme.css" />
@@ -178,9 +173,6 @@
     <Content Include="templates\layout\content.html" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="files\" />
-    <Folder Include="files\projects\" />
-    <Folder Include="files\test\" />
     <Folder Include="static\" />
     <Folder Include="static\external\" />
     <Folder Include="static\external\bootstrap-3.3.5\" />

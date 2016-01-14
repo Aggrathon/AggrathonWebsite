@@ -35,4 +35,5 @@ if __name__ == '__main__':
 		else:
 			database.reset_db()
 			print('\033[93m'+"The Database has been reset due to not matching the website"+'\033[0m')
+	os.makedirs(os.path.join('files','projects'), exist_ok=True)
 	app.run(HOST, PORT)
