@@ -152,35 +152,34 @@ def files(embedded=False):
 	path = request.args.get('path')
 	filter = request.args.get('filter')
 	if request.method == 'POST':
-		if path:
-			files = request.files.getlist("files")
-			if files:
-				for file in files:
-					if not model.files_save_file(path, file):
-						flash('Could not save %r' %file.name, 'danger')
-				flash('Files saved', 'success')
-			else:
-				folder = request.form.get('folder')
-				if folder:
-					newpath = model.files_create_folder(path, folder)
-					if newpath:
-						flash('Folder created', 'success')
-						if embedded:
-							if filter:
-								return redirect(url_for('files_embed')+'?path='+newpath+'&filter='+filter)
-							else:
-								return redirect(url_for('files_embed')+'?path='+newpath)
-						else:
-							if filter:
-								return redirect(url_for('files')+'?path='+newpath+'&filter='+filter)
-							else:
-								return redirect(url_for('files')+'?path='+newpath)
-					else:
-						flash('Invalid folder name', 'danger')
-				else:
-					flash('Faulty Request', 'danger')
+		files = request.files.getlist("files")
+		if not path:
+			path = "files"
+		if files:
+			for file in files:
+				if not model.files_save_file(path, file):
+					flash('Could not save %r' %file.name, 'danger')
+			flash('Files saved', 'success')
 		else:
-			flash('Invalid Path', 'warning')
+			folder = request.form.get('folder')
+			if folder:
+				newpath = model.files_create_folder(path, folder)
+				if newpath:
+					flash('Folder created', 'success')
+					if embedded:
+						if filter:
+							return redirect(url_for('files_embed', path=newpath, filter=filter))
+						else:
+							return redirect(url_for('files_embed', path=newpath))
+					else:
+						if filter:
+							return redirect(url_for('files', path=newpath, filter=filter))
+						else:
+							return redirect(url_for('files', path=newpath))
+				else:
+					flash('Invalid folder name', 'danger')
+			else:
+				flash('Faulty Request', 'danger')
 	if path:
 		if embedded:
 			return render_page_embed_fromfile('', 'admin/files.html', **model.files_list(path, filter))

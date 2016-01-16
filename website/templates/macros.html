@@ -81,10 +81,10 @@
 					var iframe = modal.find('#file_selector_iframe')
 					if (images) {
 						modal.find('.modal-header h4').html('Select Image');
-						iframe.attr('src', "/admin/files/embed/?filter=png,jpg,jpeg,gif");
+						iframe.attr('src', "{{ url_for('files_embed', filter='png,jpg,jpeg,gif') }}");
 					} else {
 						modal.find('.modal-header h4').html('Select File');
-						iframe.attr('src', "/admin/files/embed/");
+						iframe.attr('src', "{{ url_for('files_embed') }}");
 					}
 					modal.modal('show');
 					file_selector_callback = callback;
