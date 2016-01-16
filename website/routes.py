@@ -118,10 +118,33 @@ def pages_create():
 			return jsonify(result=model.page_action_check(request.form.get('path')))
 	return show_admin(AdminPages.createpage)
 
+
 @app.route('/admin/projects/', methods=['GET', 'POST'])
 @login_required
 def projects_admin():
 	return show_admin(AdminPages.projects)
+
+@app.route('/admin/projects/edit/', methods=['GET', 'POST'])
+@login_required
+def projects_edit():
+	if request.method == 'POST':
+		action = request.form.get('action')
+		path = request.form.get('path')
+		if action == 'move':
+			return jsonify(result=model.project_move(path, request.form.get('target')))
+		elif action == 'delete':
+			return jsonify(result=model.project_delete(path))
+	path = request.args.get('path')
+	if not path or path == '':
+		return show_admin(AdminPages.createproject)
+	flash("Project editing not yet implemented", "warning")
+	return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html'))
+	
+@app.route('/admin/projects/create/', methods=['GET'])
+@login_required
+def projects_create():
+	return show_admin(AdminPages.createproject)
+
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
 @login_required
@@ -243,16 +266,6 @@ def forwarding_remove():
 			<a class="btn btn-primary" href="?email="""+email+"&code="+code+"&confirmation=true\">Confirm</a>"))
 	flash("Forwarding Email not recognised", "warning")
 	return redirect(url_for('main'), 303)
-
-@app.route('/admin/projects/create/', methods=['GET', 'POST'])
-@login_required
-def edit_project(project=''):
-	if project == '':
-		flash("Project creation not implemented", "danger")
-		return render_page(create_page_fromfile('Create Project', 'admin/projects/edit.html'))
-	else:
-		flash("Project editing not yet implemented", "warning")
-		return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html'))
 
 @app.route('/admin/edit/', methods=['GET'])
 @login_required

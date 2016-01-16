@@ -340,6 +340,10 @@ def project_list(tags=None,order=None):
 def project_tags():
 	return db.session.query(db.func.count(ProjectTagged.project_id).label("count"), ProjectTag.tag).group_by(ProjectTagged.tag_id).join(ProjectTag).order_by(db.desc("count")).all()
 
+def project_list_admin():
+	projects = db.session.query(Project.title, Project.path, ProjectFeatured.project_id.label('featured')).outerjoin(ProjectFeatured).all()
+	return projects
+
 ### PROJECT EDIT ###
 
 def project_set(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
@@ -409,6 +413,16 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 	db.session.commit()
 	if flash_result:
 		flash('Project Updated', FLASH_SUCCESS)
+
+def project_move(path, newpath):
+	if db.session.query(Project.path).filter_by(path=newpath).first():
+		return "Target path %r already has a project" %newpath
+	p = Project.query.filter_by(path=path).first()
+	if p:
+		p.path = newpath
+		db.session.commit()
+		return RETURN_SUCCESS
+	return "Project '%r' not found" %path
 	
 def project_version_set(path, versions):
 	project = Project.query.filter_by(path=path).first()

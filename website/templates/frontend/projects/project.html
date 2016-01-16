@@ -34,7 +34,7 @@
 	{% endif %}
 	{% if content.data.tags %}&nbsp;
 	<small style="display: inline-block;">
-		Tags:&nbsp;{% for tag in content.data.tags %} <a class="label label-default" href="{{ url_for('projects', tag=tag) }}">{{ tag }}</a>{% endfor %}
+		Tags:&nbsp;{% for tag in content.data.tags %} <a class="label label-primary" href="{{ url_for('projects', tag=tag) }}">{{ tag }}</a>{% endfor %}
 	</small>
 	{% endif %}
 </h2>

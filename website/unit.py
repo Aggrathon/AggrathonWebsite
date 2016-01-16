@@ -44,6 +44,12 @@ class TestProjectModel(unittest.TestCase):
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], [], [], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
+		project_set("a1", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
+		project_move("a", "a2")
+		project_move("a1", "a2")
+		project_move("a2", "a1")
+		project_move("a2", "a")
+		project_move("a3", "a4")
 		
 	#@profile_time
 	def test_delete(self):
@@ -90,6 +96,17 @@ class TestProjectModel(unittest.TestCase):
 		self.assertFalse(Project.query.filter_by(path="a").first().tags, "Tag not removed")
 		self.assertEqual(numTags, ProjectTag.query.count(), "Tags not deleted (%s)"%ProjectTag.query.all())
 
+	def test_list(self):
+		project_set("a", "a", "text", "short", "img", "test,test2,asd", ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
+		project_list(None, None)
+		project_list(None, "created")
+		project_list(None, "asd")
+		project_list(None, "updated")
+		project_list([], None)
+		project_list(["asd","test","test2"], None)
+		project_list(["dfkhjsjkflhasdjkflhdsafyehaklhbnjklaeyhu"], None)
+		project_tags()
+		project_list_admin()
 
 if __name__ == '__main__':
 	setup_db()

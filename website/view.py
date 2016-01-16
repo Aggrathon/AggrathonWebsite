@@ -115,6 +115,7 @@ class AdminPages(Enum):
 	pages = 3
 	createpage = 8
 	projects = 4
+	createproject = 10
 	messages = 6
 	blacklist = 7
 	forwarding = 9
@@ -129,7 +130,9 @@ def show_admin(page):
 	if page is AdminPages.createpage:
 		return create_page_admin('Create Page', 'admin/pages/create.html')
 	if page is AdminPages.projects:
-		return create_page_admin('Projects', 'admin/projects/projects.html')
+		return create_page_admin('Projects', 'admin/projects/projects.html', projects=model.project_list_admin())
+	if page is AdminPages.createproject:
+		return create_page_admin('Create Project', 'admin/projects/create.html')
 	if page is AdminPages.messages:
 		return create_page_admin('Messages', 'admin/messages/messages.html', **model.message_list(try_int(request.args.get("start"), 1) - 1, try_int(request.args.get("amount"), 20)))
 	if page is AdminPages.blacklist:

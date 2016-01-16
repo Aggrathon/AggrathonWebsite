@@ -7,7 +7,7 @@ body {
 	background-attachment:local;
 	background-position: center top;
 	font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, "Arial", sans-serif;
-	color: white;
+	color: #EEE;
 }
 
 
@@ -44,8 +44,8 @@ body {
 }
 
 .btn-primary {
-	background-color: white;
-	border: 1px solid white;
+	background-color: #EEE;
+	border: 1px solid #EEE;
 	color: #333;
 }
 .btn-primary:hover,
@@ -55,8 +55,15 @@ body {
 .btn-primary.focus {
 	background-color: rgba(255,255,255,0.8);
 	color: #333;
-	border: 1px solid rgba(255,255,255,0.8);
 }	
+.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, 
+.btn-primary.focus:active, .btn-primary:active:focus, .btn-primary:active:hover, 
+.open > .dropdown-toggle.btn-primary.focus, 
+.open > .dropdown-toggle.btn-primary:focus, 
+.open > .dropdown-toggle.btn-primary:hover {
+    background-color: #FFF;
+    color: #333;
+}
 
 .btn-success {
 	border: 1px solid #429942;
@@ -210,17 +217,24 @@ a:focus, a:hover {
 
 .label-default {
 	background-color: rgba(96,96,96,0.5);
-	
 }
-a.label-default:hover,
-a.label-default:active,
-a.label-default:focus,
-a.label-default.active,
-a.label-default.focus {
+.label-default[href]:hover,
+.label-default[href]:focus {
 	border: 1px solid #fff;
-	
+}
+.label-primary {
+	color: #333;
+	background-color: #EEE;
+}
+.label-primary[href]:hover,
+.label-primary[href]:focus {
+	color: #333;
+	background-color: rgba(256,256,256,0.8);
 }
 
+.glyphicon-none:before {
+    color: transparent !important;
+}
 
 .blurb-list .media-body {
 	text-align: left;
@@ -237,12 +251,6 @@ a.label-default.focus {
 }
 .blurb-list .btn {
 	padding: 6px;
-}
-
-
-label {
-	font-size: 15px;
-	font-weight: normal;
 }
 
 .floating-dropdown-toggle {

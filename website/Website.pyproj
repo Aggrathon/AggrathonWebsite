@@ -150,6 +150,7 @@
     <Content Include="templates\admin\pages\editbar.html" />
     <Content Include="templates\admin\pages\pages.html" />
     <Content Include="templates\admin\messages\messages.html" />
+    <Content Include="templates\admin\projects\create.html" />
     <Content Include="templates\admin\projects\projects.html" />
     <Content Include="templates\admin\overview.html" />
     <Content Include="templates\admin\sidebar.html" />

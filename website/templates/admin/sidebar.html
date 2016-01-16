@@ -6,7 +6,7 @@
 	('/admin/', 'Overview', [], ''),
 	('/admin/setup/', 'Setup', [], ''),
 	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')], ''),
-	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')], 'X'),
+	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')], ''),
 	('/admin/files/', 'Files', [], ''),
 	('/admin/messages/', 'Messages', [('/admin/messages/blacklist/', 'Blacklist'),('/admin/messages/forwarding/', 'Forwarding')], site.admin.unread),
 	('/admin/logout/', 'Log Out', [], '')
@@ -16,7 +16,7 @@
 {% for url, title, dropdown, badge in links %}
 {% if dropdown %}
 <div class="btn-group btn-group-lg button-list-gap" style="width:100%;">
-	<a class="floating-dropdown-toggle btn btn-default pull-right dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+	<a class="floating-dropdown-toggle btn btn-primary pull-right dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 		<span class="caret"></span>
 		<span class="sr-only">Toggle Dropdown</span>
 	</a>
@@ -26,13 +26,13 @@
 		{% endfor %}
 	</ul>
 
-	<a href="{{ url }}" class="btn btn-default btn-block{% if request.path == url %} active{% endif %}">
+	<a href="{{ url }}" class="btn btn-primary btn-block{% if request.path == url %} active{% endif %}">
 		{{ title }}
 		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
 	</a>
 </div>
 {% else %}
-	<a href="{{ url }}" class="btn btn-default btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">
+	<a href="{{ url }}" class="btn btn-primary btn-block btn-lg button-list-gap{% if request.path == url %} active{% endif %}">
 		{{ title }}
 		{% if badge and badge != 0 %} <span class="badge">{{ badge }}</span>{% endif %}
 	</a>
