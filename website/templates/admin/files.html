@@ -6,7 +6,7 @@
 	{% set files_filter = '' %}
 {% endif %}
 <div class="row">
-	<div class="col-xs-12 col-sm-8 col-lg-9">
+	<div class="col-xs-12 col-sm-8 col-md-12 col-lg-8">
 		<div class="panel" id="files_path">
 			Path:&emsp;
 			<div class="btn-group btn-group-sm">					
@@ -52,8 +52,23 @@
 			[ Folder is Empty ]
 			{% endif %}
 		</div>
+		<div class="panel hidden-xs hidden-md" id="files_create">
+			<form method=post enctype="multipart/form-data" onsubmit="return uploadFiles();">
+				<div class="input-group">
+					<span class="form-control"><input type="file" name="files" id="files_upload" required placeholder="Select file to upload" style="width:100%;" multiple></span>
+					<span class="input-group-btn"><button type="submit" class="btn btn-info">Upload Files</button></span>
+				</div>
+			</form>
+			<br />
+			<form method="post" onsubmit="return createFolder();">
+				<div class="input-group">
+					<input type="text" class="form-control" id="files_newfolder" placeholder="Folder Name" required name="folder" />
+					<span class="input-group-btn"><button type="submit" class="btn btn-info">Create Folder</button></span>
+				</div>
+			</form>
+		</div>
 	</div>
-	<div class="col-xs-12 col-sm-4 col-lg-3">
+	<div class="col-xs-12 col-sm-4 col-md-6 col-lg-4">
 		<div class="panel" id="files_viewer">
 			<h3>{{ content.data.path[-1:][0] }}</h3>
 			<table>
@@ -70,7 +85,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-xs-12 col-md-8 col-lg-9">
+	<div class="col-xs-12 col-md-6 hidden-sm hidden-lg">
 		<div class="panel" id="files_create">
 			<form method=post enctype="multipart/form-data" onsubmit="return uploadFiles();">
 				<div class="input-group">
@@ -94,7 +109,7 @@
 	var files = ["{{ content.data.files | join('", "') | safe }}"];
 
 	function selectFile(file, preview) {
-		var html = '<h3>' + file + '</h3>';
+		var html = '<h3 style="word-wrap: break-word;">' + file + '</h3>';
 		if (preview) {
 			if (preview == 'img') {
 				html += '<img src="/' + path + '/' + file + '" class="img-responsive img-rounded" />';
@@ -102,10 +117,9 @@
 				html += '<' + preview + ' class="img-responsive img-rounded" controls><source src="/' + path + '/' + file + '"></' + preview + '>';
 			}
 		}
-		html += '<div class="input-group"><span class="input-group-addon">Path:</span>'
-			+ '<input id="files_selected_path" class="form-control" type="text" value="/' + path + '/' + file + '" readonly autofocus onclick="this.select();" />'
-			+ '<a onclick="$(this).parent().find(\'input\').select();document.execCommand(\'copy\');" class="input-group-addon btn btn-info">Copy</a></div>'
-		html += '<br /><a href="/'+path+'/'+file+'" download class="btn btn-success">Download</a>'
+		html += '<input id="files_selected_path" class="form-control" type="text" value="{{ url_for("main") }}' + path + '/' + file + '" readonly autofocus onclick="this.select();" />'
+			+ '<div class="btn-group btn-group-justified"><a onclick="$(this).parent().find(\'input\').select();document.execCommand(\'copy\');" class="btn btn-info">Copy</a>'
+			+ '<a href="{{ url_for("main") }}'+path+'/'+file+'" download class="btn btn-success">Download</a></div>'
 		$('#files_viewer').html(html)
 	}
 	function uploadFiles() {

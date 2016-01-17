@@ -2,7 +2,7 @@
 	<ul class="media-list">
 		{% for page in content.data.pages %}
 		<li class="media">
-			<a class="btn btn-default" href="{% if page.path == '/' %}/{% else %}/pages/{{ page.path }}/{% endif %}">
+			<a class="btn btn-default" href="{% if page.path == '/' %}{{ url_for('main') }}{% else %}{{ url_for('page', page=page.path) }}{% endif %}">
 				{% if page.img %}<div class="media-left"><img class="media-object img-rounded" src="{{ page.img }}" /></div>{% endif %}
 				<div class="media-body">
 					<h3 class="media-heading">{% if page.path == '/' and page.title == '' %}Main Page{% endif %}{{ page.title }}</h3>

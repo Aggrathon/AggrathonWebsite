@@ -17,14 +17,14 @@
 			$('#create #path').val(path)
 		}
 
-		$.post('/admin/pages/create/',
+		$.post('{{ url_for("pages_create") }}',
 			{ page: path, action: "check", path: path },
 			function (data) {
 				if (data.result == 'exists') {
 					flash('Page already exists', 'danger');
 				} else {
 					flash("Page at '" + path + "' created", "success");
-					window.location.href = '/admin/pages/edit/?page=' + path;
+					window.location.href = '{{ url_for("pages_edit") }}?page=' + path;
 				}
 			});
 		return false;

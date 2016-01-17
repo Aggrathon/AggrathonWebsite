@@ -5,11 +5,11 @@
 		window.location.href = '/admin/pages/';
 	}
 	function moveSuccess(oldpath, newpath) {
-		window.history.replaceState(null, 'Edit Page: \'' + newpath + '\'', '/admin/pages/edit/?page=' + newpath);
+		window.history.replaceState(null, 'Edit Page: \'' + newpath + '\'', '{{ url_for("pages_edit") }}?page=' + newpath);
 		$('#content h2')[0].html('Edit Page: \''+newpath+'\'')
 	}
 	function copySuccess(oldpath, newpath) {
-		window.location.href = '/admin/pages/edit/?page=' + newpath;
+		window.location.href = '{{ url_for("pages_edit") }}?page=' + newpath;
 	}
 	function priorityToggle(radio) {
 		if ($(radio).val() == 'featured')

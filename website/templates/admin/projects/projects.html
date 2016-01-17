@@ -54,7 +54,7 @@
 		{% for project in content.data.projects %}
 		<tr>
 			<td id="title">{{ project.title }}</td>
-			<td>/projects/<span id="path">{{ project.path }}</span>/</td>
+			<td id="path">{{ project.path }}</td>
 			<td>
 				<button class="btn btn-default">
 					{% if project.featured %}

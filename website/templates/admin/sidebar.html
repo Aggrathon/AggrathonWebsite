@@ -3,13 +3,13 @@
 #}
 {# link form: (url, title, dropdown, badge) #}
 {% set links = [
-	('/admin/', 'Overview', [], ''),
-	('/admin/setup/', 'Setup', [], ''),
-	('/admin/pages/', 'Pages', [('/admin/pages/create/', 'Create Page')], ''),
-	('/admin/projects/', 'Projects', [('/admin/projects/create/', 'Create Project')], ''),
-	('/admin/files/', 'Files', [], ''),
-	('/admin/messages/', 'Messages', [('/admin/messages/blacklist/', 'Blacklist'),('/admin/messages/forwarding/', 'Forwarding')], site.admin.unread),
-	('/admin/logout/', 'Log Out', [], '')
+	(url_for('admin'), 'Overview', [], ''),
+	(url_for('setup'), 'Setup', [], ''),
+	(url_for('pages_admin'), 'Pages', [(url_for('pages_create'), 'Create Page')], ''),
+	(url_for('projects_admin'), 'Projects', [(url_for('projects_create'), 'Create Project')], ''),
+	(url_for('files'), 'Files', [], ''),
+	(url_for('messages'), 'Messages', [(url_for('blacklist'), 'Blacklist'),(url_for('forwarding'), 'Forwarding')], site.admin.unread),
+	(url_for('logout'), 'Log Out', [], '')
 ] %}
 <h2>Adminpanel</h2>
 

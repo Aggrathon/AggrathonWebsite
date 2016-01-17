@@ -8,7 +8,7 @@
 		phrase = $('input#blacklistadd').val();
 		if (phrase == '')
 			return false;
-		$.post("/admin/messages/blacklist/",
+		$.post("{{ url_for('blacklist') }}",
 			{ action: "ban", phrase: phrase },
 			function (data) {
 				if (data.result == "success") {
@@ -28,7 +28,7 @@
 	function removeFromBlacklist(btnObject) {
 		var row = $(btnObject).parent().parent();
 		phrase = row.find('#phrase').text();
-		$.post("/admin/messages/blacklist/",
+		$.post("{{ url_for('blacklist') }}",
 			{ action: "unban", phrase: phrase },
 			function (data) {
 				if (data.result == "success") {
@@ -40,7 +40,7 @@
 
 	}
 	function checkAllMessages() {
-		$.post("/admin/messages/blacklist/",
+		$.post("{{ url_for('blacklist') }}",
 			{ action: "checkall" },
 			function (data) {
 				flash(data.result, 'warning');

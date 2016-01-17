@@ -24,12 +24,12 @@
 	}
 	function createPage() {
 		var path = promptNewPath("New path for the page", 'newpage')
-		$.post('/admin/pages/edit/',
+		$.post('{{ url_for("pages_edit") }}',
 			{ page: path, action: "create" },
 			function (data) {
 				if (data.result == 'success') {
 					flash("Page at '" + path + "' created", "success");
-					window.location.href = '/admin/pages/edit/?page=' + path;
+					window.location.href = '{{ url_for("pages_edit") }}?page=' + path;
 				} else {
 					flash("Page at '" + path + "' could not be created:\n" + status, "danger");
 				}

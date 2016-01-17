@@ -2,7 +2,7 @@
 {{ flash() }}
 <script type="text/javascript">
 	function submitLogin() {
-		$.post('/admin/login/', { email: $('#email').val() },
+		$.post('{{ url_for("login") }}', { email: $('#email').val() },
 			function (data) {
 				if (data.result == 'success') {
 					$('#email').val('');

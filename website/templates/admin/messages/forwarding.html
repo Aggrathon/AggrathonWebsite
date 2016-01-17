@@ -6,7 +6,7 @@
 <script>
 	function removeForward(obj) {
 		var row = $(obj).parent().parent();
-		$.post("/admin/messages/forwarding/",
+		$.post("{{ url_for('forwarding') }}",
 			{ action: "remove", email: row.children("#email").html() },
 			function (data) {
 				if (data.result == "success") {

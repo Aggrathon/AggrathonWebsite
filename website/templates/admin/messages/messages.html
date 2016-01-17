@@ -2,7 +2,7 @@
 {{ flash() }}
 <script language="JavaScript" type="text/javascript">
 	function addToBlacklist(phrase) {
-		$.post("/admin/messages/blacklist/",
+		$.post("{{ url_for('blacklist') }}",
 			{ action: "ban", phrase: phrase },
 			function (data) {
 				if (data.result == "success") {
@@ -17,7 +17,7 @@
 	}
 
 	function deleteMessage(messageId) {
-		$.post("/admin/messages/",
+		$.post("{{ url_for('messages') }}",
 			{ action: "delete", message: messageId },
 			function (data) {
 				if (data.result == "success") {
@@ -26,7 +26,7 @@
 			});
 	}
 	function readMessage(messageId) {
-		$.post("/admin/messages/",
+		$.post("{{ url_for('messages') }}",
 			{ action: "read", message: messageId },
 			function (data) {
 				if (data.result == "success") {
@@ -36,7 +36,7 @@
 			});
 	}
 	function unreadMessage(messageId) {
-		$.post("/admin/messages/", { action: "unread", message: messageId },
+		$.post("{{ url_for('messages') }}", { action: "unread", message: messageId },
 			function (data) {
 				if (data.result == "success") {
 					$('#messagelist').children('#message' + messageId).children('#read').html('\n\t\t<button class="btn btn-default" type="button" title="Mark Read"'
@@ -45,7 +45,7 @@
 			});
 	}
 	function sendEmail(messageId) {
-		$.post("/admin/messages/", { action: "send", message: messageId },
+		$.post("{{ url_for('messages') }}", { action: "send", message: messageId },
 			function (data) {
 				if (data.result == "success") {
 					flash("Message forwarded to your email", "success")
@@ -63,7 +63,7 @@
 	}
 
 	function getMessages(start, amount) {
-		window.location = "/admin/messages/?start="+start+"&amount="+amount
+		window.location = "{{ url_for('messages') }}?start="+start+"&amount="+amount
 	}
 	function setMessageStart() {
 		getMessages($('#liststart').val(), {{ content.data.amount }});
@@ -95,11 +95,11 @@
 <form class="panel" id="blacklist" onsubmit="return addToBlacklist();">
 	<div class="row">
 		<div class="col-xs-12 col-sm-2">
-			<a class="btn btn-info" href="/admin/messages/forwarding/">Forwarding</a>
+			<a class="btn btn-info" href="{{ url_for('forwarding') }}">Forwarding</a>
 		</div>
 		<div class="col-xs-12 col-sm-10">
 			<div class="input-group">
-				<a class="input-group-addon btn btn-warning" href="/admin/messages/blacklist/">Edit Blacklist</a>
+				<a class="input-group-addon btn btn-warning" href="{{ url_for('blacklist') }}">Edit Blacklist</a>
 				<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
 				<a class="input-group-addon btn btn-success" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
 			</div>

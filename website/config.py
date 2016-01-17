@@ -74,10 +74,12 @@ CODE_LENGTH = 20
 #	Editor: actual script for a rich-text-editor (eg CKEditor)
 #	Editor Config: config and init (TEXTAREA_ID is the selector for the replaced textarea)
 #	Editor js Insert: js for inserting html to the texteditor (TEXTAREA_ID: selector for area, INSERT_HTML: is replaced by the html to insert)
+
 ## Official CDNs:
 #BOOTSTRAP = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/'
 #JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'
 #EDITOR = '//cdn.ckeditor.com/4.5.1/standard/ckeditor.js'
+
 ## Local files:
 BOOTSTRAP = '/static/external/bootstrap-3.3.5/'
 JQUERY = '/static/external/jquery-1.11.3.min.js'

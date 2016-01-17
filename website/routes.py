@@ -127,14 +127,13 @@ def projects_admin():
 @app.route('/admin/projects/edit/', methods=['GET', 'POST'])
 @login_required
 def projects_edit():
+	path = request.form.get('project')
 	if request.method == 'POST':
 		action = request.form.get('action')
-		path = request.form.get('path')
 		if action == 'move':
 			return jsonify(result=model.project_move(path, request.form.get('target')))
 		elif action == 'delete':
 			return jsonify(result=model.project_delete(path))
-	path = request.args.get('path')
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
 	flash("Project editing not yet implemented", "warning")
@@ -292,9 +291,9 @@ def edit_item():
 def pages():
 	return render_page_standard(create_page_fromfile("Pages", 'frontend/pages.html', pages=model.page_list()), True)
 
-@app.route('/pages/<path:path>/')
-def page(path):
-	return show_page(path)
+@app.route('/pages/<path:page>/')
+def page(page):
+	return show_page(page)
 
 ### projects ###
 @app.route('/projects/')
