@@ -1,4 +1,4 @@
-﻿{% from 'macros.html' import flash %}
+{% from 'macros.html' import flash %}
 {{ flash() }}
 {% if request.args.get('filter') %}
 	{% set files_filter = '&filter='+request.args.get('filter') %}

@@ -1,4 +1,4 @@
-﻿{% macro flash(id='content') %}
+{% macro flash(id='content') %}
 	{% if not macro_flash %}
 		{% set macro_flash = true %}
 		<script>
@@ -12,6 +12,10 @@
 	{% endif %}
 {% endmacro %}
 {% macro image_viewer(images, id='image-viewer') %}
+{% if images|length == 0 %}
+{% elif images|length == 1 %}
+	<img class="img-rounded center-block image-carousel-control" src="{{ images[0].image }}" />
+{% else %}
 	<div class="row image-carousel">
 		<div class="col-xs-12 col-sm-9">
 			<div id="{{id}}" class="carousel slide image-carousel-control" data-ride="carousel" data-interval="10000">
@@ -50,6 +54,7 @@
 			selector.children().eq(id).addClass('selected');
 		})
 	</script>
+{% endif %}
 {% endmacro %}
 {% macro file_selector() %}
 	{% if not macro_file_selector %}
