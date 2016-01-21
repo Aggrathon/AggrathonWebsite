@@ -1,4 +1,4 @@
-﻿from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
+from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
 from app import app, login_manager, recaptcha
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
@@ -127,18 +127,21 @@ def projects_admin():
 @app.route('/admin/projects/edit/', methods=['GET', 'POST'])
 @login_required
 def projects_edit():
-	path = request.form.get('project')
 	if request.method == 'POST':
+		path = request.form.get('project')
 		action = request.form.get('action')
 		if action == 'move':
 			return jsonify(result=model.project_move(path, request.form.get('target')))
 		elif action == 'delete':
 			return jsonify(result=model.project_delete(path))
+	path = request.args.get('project')
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
-	flash("Project editing not yet implemented", "warning")
-	return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html'))
-	
+	project = model.project_get_admin(path)
+	if not project:
+		project = { 'path': path }
+	return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html', **project), create_sidebar_fromfile('admin/projects/editbar.html'))
+
 @app.route('/admin/projects/create/', methods=['GET'])
 @login_required
 def projects_create():
@@ -281,7 +284,7 @@ def edit_item():
 		if '/projects/' == path:
 			return redirect(url_for('projects_admin'), 303)
 		if '/projects/' in path:
-			return redirect(url_for('projects_edit', page=path.replace('/projects/', '')), 303)
+			return redirect(url_for('projects_edit', project=path.replace('/projects/', '')), 303)
 	flash('Path not recognized', 'error')
 	return redirect(url_for('admin'), 303)
 

@@ -1,4 +1,4 @@
-﻿from flask import abort, flash, url_for
+from flask import abort, flash, url_for
 from werkzeug import secure_filename
 from database import *
 from app import login_manager, mail
@@ -319,6 +319,10 @@ def project_get(path):
 	if latest is not None:
 		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
 	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
+
+def project_get_admin(path):
+	project = Project.query.filter_by(path=path).first()
+	return project
 
 def project_list(tags=None,order=None):
 	projects = None

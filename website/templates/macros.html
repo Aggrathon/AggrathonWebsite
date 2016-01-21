@@ -68,7 +68,7 @@
 							<h4 class="modal-title">Select File</h4>
 						</div>
 						<div class="modal-body">
-							<iframe  id="file_selector_iframe" style="width:100%;" onload="this.style.height = this.contentWindow.document.body.scrollHeight+3 + 'px';"></iframe>
+							<iframe  id="file_selector_iframe" style="width:100%;"></iframe>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
@@ -105,6 +105,10 @@
 						file_selector_save(url);
 					}
 				}
+				$('#file_selector_iframe').load( function() {setTimeout(function() {
+					var iframe = $('#file_selector_iframe');
+					iframe.height(iframe.contents().height());
+				}, 200) });
 			</script>
 	{% endif %}
 {% endmacro %}

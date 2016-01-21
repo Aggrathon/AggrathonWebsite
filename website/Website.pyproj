@@ -166,7 +166,7 @@
     <Content Include="templates\layout\layout.html" />
     <Content Include="templates\frontend\pages.html" />
     <Content Include="templates\admin\projects\edit.html" />
-    <Content Include="templates\admin\projects\toolbar.html" />
+    <Content Include="templates\admin\projects\editbar.html" />
     <Content Include="templates\frontend\projects\project.html" />
     <Content Include="templates\frontend\projects\projects.html" />
     <Content Include="templates\layout\sidebar.html" />
