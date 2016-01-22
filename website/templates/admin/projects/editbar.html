@@ -7,6 +7,13 @@
 		else
 			$('#priority_container').slideUp(200);
 	}
+	function add_tag(tag) {
+		tags = $('#tags');
+		string = tags.val()
+		if (string != "")
+			string += ", ";
+		tags.val(string + tag);
+	}
 </script>
 <div class="panel" id="status">
 	<h3>Status</h3>
@@ -28,9 +35,13 @@
 </div>
 <div class="text-center panel">
 	<h3>Blurb</h3>
-	<img onclick="file_selector(function (src) { $('#thumbnail').attr('src', src); }, true);" class="btn btn-default img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="thumbnail" />
+	<button type="button" class="btn btn-primary" onclick="file_selector(function (src) { $('#thumbnail').attr('src', src); }, true);">
+		<img class="img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="thumbnail" style="width:100%;" />
+	</button>
 	<textarea class="form-control" id="description" placeholder="Project Description">{% if content.data.description %}{{ content.data.description }}{% endif %}</textarea>
 </div>
 <div class="text-center panel">
 	<h3>Tags</h3>
+	<textarea class="form-control" id="tags" placeholder="tag1, tag2...">{{content.data.tags}}</textarea>
+	{% for i in range(0,5) %}<button type="button" class="btn btn-primary" style="margin:2px;" onclick="add_tag('{{i}}');">tag {{i}}</button>{% endfor %}
 </div>

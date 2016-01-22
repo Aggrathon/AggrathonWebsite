@@ -44,8 +44,8 @@ body {
 }
 
 .btn-primary {
-	background-color: #EEE;
-	border: 1px solid #EEE;
+	background-color: #FFF;
+	border: 1px solid #FFF;
 	color: #333;
 }
 .btn-primary:hover,
@@ -341,5 +341,16 @@ table.table.table-hover tbody tr:hover {
 }
 .image-carousel-control .carousel-control.left {
     background-image: linear-gradient(to left, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+div.image-scroller {
+	overflow-x:auto;
+	overflow-y:hidden;
+	white-space:nowrap;
+}
+.image-scroller img {
+	max-width:15em;
+	max-height:10em;
+	display:inline;
 }
 

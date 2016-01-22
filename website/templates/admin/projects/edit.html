@@ -3,15 +3,49 @@
 #}
 {% from 'macros.html' import rich_text, rich_text_insert, file_selector %}
 {{ file_selector() }}
+<script>
+	function project_images_add(button) {
+		file_selector(function (src) {
+			if(src != "")
+				$(button).parent().before('<img src="' + src + '" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />');
+		}, true);
+	}
+	function project_images_drag(event, image) {
+		$('#project_images_drag').attr('id', '')
+		$(image).attr('id', 'project_images_drag')
+		$('#project_images_remove').show();
+	}
+	function project_images_drop(event, target) {
+		event.preventDefault();
+		var from = $('#project_images_drag');
+		from.attr('id', '')
+		var to = $(target);
+		var src = from.attr('src');
+		from.attr('src', to.attr('src'));
+		to.attr('src', src);
+		$('#project_images_remove').hide();
+	}
+	function project_images_remove(event) {
+		event.preventDefault();
+		$('#project_images_drag').remove();
+		$('#project_images_remove').hide();
+	}
+</script>
 <form method="post">
 	<div class="form-group">
 		<input type="text" class="form-control" name="title" placeholder="Project Title" required value="{{ content.data.header }}" />
 	</div>
-	<div class="form-group">
-		<h3>Images</h3>
+	<div class="panel image-scroller" title="Drag images to reorder">
+			{% for i in range(0,3) %}
+			<img src="http://placehold.it/300x200?text={{i}}" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />
+			{% endfor %}
+		<span style="display:inline-block;">
+			<button class="btn btn-primary" type="button" onclick="project_images_add(this);">Add Image</button>
+			<p class="alert alert-danger" hidden ondrop="project_images_remove(event);" ondragover="event.preventDefault()" id="project_images_remove"><big>Drag here to remove</big></p>
+		</span>
 	</div>
 	<div class="form-group">
-		<textarea class="form-control" id="rich-text" name="content" required placeholder="Page Content">{% if content.data.content %}{{ content.data.content }}{% endif %}</textarea>
+		<textarea class="form-control" id="rich-text" name="text" required placeholder="Project Text">{% if content.data.text %}{{ content.data.text }}{% endif %}</textarea>
 		{{ rich_text('rich-text') }}
 	</div>
 	<div hidden id="additional_form_data"></div>
