@@ -1,4 +1,4 @@
-﻿"""
+"""
 	File containing all methods required for rendering pages
 """
 from flask import render_template, flash, abort, request
@@ -116,6 +116,7 @@ class AdminPages(Enum):
 	createpage = 8
 	projects = 4
 	createproject = 10
+	projecttags = 11
 	messages = 6
 	blacklist = 7
 	forwarding = 9
@@ -133,6 +134,8 @@ def show_admin(page):
 		return create_page_admin('Projects', 'admin/projects/projects.html', projects=model.project_list_admin())
 	if page is AdminPages.createproject:
 		return create_page_admin('Create Project', 'admin/projects/create.html')
+	if page is AdminPages.projecttags:
+		return create_page_admin('Project Tags', 'admin/projects/tags.html', tags=model.project_tags())
 	if page is AdminPages.messages:
 		return create_page_admin('Messages', 'admin/messages/messages.html', **model.message_list(try_int(request.args.get("start"), 1) - 1, try_int(request.args.get("amount"), 20)))
 	if page is AdminPages.blacklist:

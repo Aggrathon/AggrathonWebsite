@@ -1,3 +1,4 @@
+{% if content.data.projects %}
 <div class="blurb-list blurb-list-big">
 	<ul class="media-list">
 		{% for project in content.data.projects %}
@@ -24,3 +25,11 @@
 		{% endfor %}
 	</ul>
 </div>
+{% else %}
+<big>
+	<div class="text-danger">No Projects found</div>
+	{% if request.args.get('tag') %}
+	<div>Try changing the tag filter!</div>
+	{% endif %}
+</big>
+{% endif %}

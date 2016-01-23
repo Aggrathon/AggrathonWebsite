@@ -342,7 +342,8 @@ def project_list(tags=None,order=None):
 		db.session.query(ProjectTag.tag).join(db.session.query(ProjectTagged.tag_id).filter_by(project_id=p.id).subquery()).all()]} for p in projects]
 
 def project_tags():
-	return db.session.query(db.func.count(ProjectTagged.project_id).label("count"), ProjectTag.tag).group_by(ProjectTagged.tag_id).join(ProjectTag).order_by(db.desc("count")).all()
+	sub = db.session.query(db.func.count(ProjectTagged.project_id).label("count"), ProjectTagged.tag_id).group_by(ProjectTagged.tag_id).subquery()
+	return db.session.query(ProjectTag.tag, sub.c.count).outerjoin(sub).order_by(db.desc("count")).all()
 
 def project_list_admin():
 	projects = db.session.query(Project.title, Project.path, ProjectFeatured.project_id.label('featured')).outerjoin(ProjectFeatured).all()
@@ -494,11 +495,27 @@ def project_tags_set(project, tags):
 			if tagged is None:
 				db.session.add(ProjectTagged(project, tag))
 		
-def project_tags_create(tag):
+def project_tags_create(tag, flash_result=False):
 	t = ProjectTag.query.filter_by(tag=tag).first()
 	if t is None:
 		db.session.add(ProjectTag(tag))
 		db.session.commit()
+		if flash_result:
+			flash("New tag %r created"%tag, FLASH_SUCCESS)
+	elif flash_result:
+		flash("Tag %r already exists"%tag, FLASH_ERROR)
+
+		
+def project_tags_rename(tag, newtag):
+	t = ProjectTag.query.filter_by(tag=newtag).first()
+	if t:
+		return "New tag already exists"
+	t = ProjectTag.query.filter_by(tag=tag).first()
+	if not t:
+		return "Tag not found"
+	t.tag = newtag
+	db.session.commit()
+	return RETURN_SUCCESS
 
 def project_tags_delete(tag):
 	t = ProjectTag.query.filter_by(tag=tag).first()

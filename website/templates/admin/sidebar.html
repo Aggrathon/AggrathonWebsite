@@ -6,7 +6,7 @@
 	(url_for('admin'), 'Overview', [], ''),
 	(url_for('setup'), 'Setup', [], ''),
 	(url_for('pages_admin'), 'Pages', [(url_for('pages_create'), 'Create Page')], ''),
-	(url_for('projects_admin'), 'Projects', [(url_for('projects_create'), 'Create Project')], ''),
+	(url_for('projects_admin'), 'Projects', [(url_for('projects_create'), 'Create Project'), (url_for('project_tags'), 'Tags')], ''),
 	(url_for('files'), 'Files', [], ''),
 	(url_for('messages'), 'Messages', [(url_for('blacklist'), 'Blacklist'),(url_for('forwarding'), 'Forwarding')], site.admin.unread),
 	(url_for('logout'), 'Log Out', [], '')

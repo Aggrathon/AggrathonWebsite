@@ -6,8 +6,8 @@
 		<label class="btn btn-default" style="margin:2px;">
 			<label class="checkbox-inline">
 				<input type="checkbox" name="tag" value="{{tag.tag}}" {% if sidebar_projects_tags and tag.tag in sidebar_projects_tags %} checked {% endif %} />
-				{{tag.tag}}&nbsp;
-				<span class="badge">{{tag.count}}</span>
+				{{tag.tag}}
+				{% if tag.count %}&nbsp;<span class="badge">{{tag.count}}</span>{% endif %}
 			</label>
 		</label>
 		{% endfor %}

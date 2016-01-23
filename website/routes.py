@@ -147,6 +147,34 @@ def projects_edit():
 def projects_create():
 	return show_admin(AdminPages.createproject)
 
+@app.route('/admin/projects/tags/', methods=['GET', 'POST'])
+@login_required
+def project_tags():
+	if request.method == 'POST':
+		action = request.form.get('action')
+		if action:
+			tag = request.form.get('tag')
+			if action == 'rename':
+				if not tag:
+					return jsonify(result="No tag to rename")
+				newtag = request.form.get('newtag')
+				if not newtag:
+					return jsonify(result="No new tag")
+				if tag == newtag:
+					return jsonify(result="New tag same as old")
+				return  jsonify(result=model.project_tags_rename(tag, newtag))
+			elif action == 'delete':
+				if tag:
+					model.project_tags_delete(tag)
+					return jsonify(result=model.RETURN_SUCCESS)
+				else:
+					return jsonify(result="No tag to remove")
+		else:
+			newtag = request.form.get('newtag')
+			if newtag:
+				model.project_tags_create(newtag, True)
+	return show_admin(AdminPages.projecttags)
+
 
 @app.route('/admin/files/', methods=['GET', 'POST'])
 @login_required
