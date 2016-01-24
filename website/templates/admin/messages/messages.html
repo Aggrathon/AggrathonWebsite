@@ -92,20 +92,6 @@
 	}
 </script>
 
-<form class="panel" id="blacklist" onsubmit="return addToBlacklist();">
-	<div class="row">
-		<div class="col-xs-12 col-sm-2">
-			<a class="btn btn-info" href="{{ url_for('forwarding') }}">Forwarding</a>
-		</div>
-		<div class="col-xs-12 col-sm-10">
-			<div class="input-group">
-				<a class="input-group-addon btn btn-warning" href="{{ url_for('blacklist') }}">Edit Blacklist</a>
-				<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
-				<a class="input-group-addon btn btn-success" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
-			</div>
-		</div>
-	</div>
-</form>
 <form id="controls">
 	<div class="row" style="vertical-align:middle">
 		<div class="col-sm-2 col-xs-1">
@@ -199,3 +185,18 @@
 		</tbody>
 	</table>
 </div>
+</div><div>
+	<form class="panel" id="blacklist" onsubmit="return addToBlacklist();">
+		<div class="row">
+			<div class="col-xs-12 col-sm-4 col-md-5 btn-group">
+				<a class="btn btn-info" href="{{ url_for('forwarding') }}">Forwarding</a>
+				<a class="btn btn-warning" href="{{ url_for('blacklist') }}">Edit Blacklist</a>
+			</div>
+			<div class="col-xs-12 col-sm-8 col-md-7">
+				<div class="input-group">
+					<input type="text" class="form-control" id="blacklistadd" placeholder="Ban Phrase" />
+					<a class="input-group-addon btn btn-success" onclick="addToBlacklist($('input#blacklistadd').val()); $('input#blacklistadd').val('');">Add to Blacklist</a>
+				</div>
+			</div>
+		</div>
+	</form>

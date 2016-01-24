@@ -22,13 +22,13 @@
 {% from 'macros.html' import file_selector %}
 {{ file_selector() }}
 
-<div class="text-center panel">
+<div class="text-center">
 	<h3>Toolbar</h3>
 	{{ toolbar(request.args.get('page'), false) }}
 	<div class="text-danger">
 		Save the page before using the toolbar
 	</div>
-</div>
+</div></div>
 <div class="panel" id="status">
 	<h3>Status</h3>
 	<div class="radio">
@@ -53,8 +53,8 @@
 		</label>
 	</div>
 </div>
-<div class="text-center panel">
+<div class="panel">
 	<h3>Blurb</h3>
-	<img onclick="file_selector(function (src) { $('#page_thumbnail').attr('src', src); }, true);" class="btn btn-default img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="page_thumbnail" />
+	<img onclick="file_selector(function (src) { $('#page_thumbnail').attr('src', src); }, true);" class="btn btn-primary img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="page_thumbnail" />
 	<textarea class="form-control" id="description" placeholder="Page Description">{% if content.data.description %}{{ content.data.description }}{% endif %}</textarea>
 </div>

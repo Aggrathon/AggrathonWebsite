@@ -24,8 +24,7 @@
 	<button class="btn btn-primary">Older downloads and changelogs</button>
 </div>
 {% endmacro %}
-
-{% if content.data.images %}{{ image_viewer(content.data.images) }}{% endif %}
+{% if content.data.images %}{{ image_viewer(content.data.images) }}</div><div class="panel">{% endif %}
 
 <h2>
 	{{content.data.name}} &nbsp;&nbsp;
@@ -40,9 +39,9 @@
 </h2>
 <div id="project-text">
 	{{ content.data.text | safe }}
-</div>
-<br />
+</div></div>
 
+<div>
 {% if content.data.links and content.data.files and not content.data.changelog %}
 <div class="row">
 	<div class="col-xs-12 col-sm-6">{{ links() }}</div>

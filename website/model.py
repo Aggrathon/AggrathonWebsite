@@ -41,10 +41,7 @@ def get_admin_front():
 	pages = LastPage.query.order_by(LastPage.time.desc()).all()
 	projects = ProjectLast.query.order_by(ProjectLast.time.desc()).all()
 	notes = Text.query.get('ADMIN_NOTES')
-	if notes:
-		return {'pages':pages, 'projects':projects, 'notes':notes.text}
-	else:
-		return {'pages':pages, 'projects':projects}
+	return {'pages':pages, 'projects':projects, 'notes':notes.text if notes else None, 'page_count':Page.query.count(), 'project_count':Project.query.count(), 'user_count':User.query.count(), 'message_count':Message.query.count()}
 
 def set_admin_notes(notes):
 	dbn = Text.query.get('ADMIN_NOTES')
@@ -321,8 +318,13 @@ def project_get(path):
 	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
 
 def project_get_admin(path):
-	project = Project.query.filter_by(path=path).first()
-	return project
+	project = db.session.query(Project.title, Project.text, Project.id, Project.thumbnail, Project.description, ProjectFeatured.priority).filter_by(path=path).outerjoin(ProjectFeatured).first()
+	if not project:
+		return None
+	return {'path':path, "name":project.title, "text":project.text, "thumbnail":project.thumbnail, "description":project.description, "featured":project.priority is not None, "priority":project.priority,\
+		"images":[img[0] for img in db.session.query(ProjectImage.image).filter_by(project_id=project.id).all()],\
+		"tagged":[tag[1] for tag in db.session.query(ProjectTagged.tag_id, ProjectTag.tag).filter_by(project_id=project.id).join(ProjectTag).all()],\
+		"tags":[tag[0] for tag in db.session.query(ProjectTag.tag).all()]}
 
 def project_list(tags=None,order=None):
 	projects = None

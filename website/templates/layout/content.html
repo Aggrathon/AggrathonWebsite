@@ -20,7 +20,7 @@
 <div id="content">
 	<div class="panel">
 		{% block panel %}
-		{% if content.title %}<h2>{{ content.title }}</h2>{% endif %}
+		{% if content.title and not content.hide_title %}<h2>{{ content.title }}</h2>{% endif %}
 		{% if content.html %} {{ content.html | safe }} {% endif %}
 		{% if content.file %} {% include content.file %} {% endif %}
 		{% endblock %}

@@ -139,8 +139,9 @@ def projects_edit():
 		return show_admin(AdminPages.createproject)
 	project = model.project_get_admin(path)
 	if not project:
+		flash("Saving will create the new project", model.RETURN_SUCCESS)
 		project = { 'path': path }
-	return render_page(create_page_fromfile('Edit Project', 'admin/projects/edit.html', **project), create_sidebar_fromfile('admin/projects/editbar.html'))
+	return render_page(create_page_fromfile('Edit Project %r'%path, 'admin/projects/edit.html', **project), create_sidebar_fromfile('admin/projects/editbar.html'))
 
 @app.route('/admin/projects/create/', methods=['GET'])
 @login_required
@@ -306,13 +307,13 @@ def edit_item():
 		if '/pages/' == path:
 			return redirect(url_for('pages_admin'), 303)
 		if '/pages/' in path:
-			return redirect(url_for('pages_edit', page=path.replace('/pages/', '')), 303)
+			return redirect(url_for('pages_edit', page=path.split('/pages/', 1)[1][:-1]), 303)
 		if path == '/contact/':
 			return redirect(url_for('messages'), 303)
 		if '/projects/' == path:
 			return redirect(url_for('projects_admin'), 303)
 		if '/projects/' in path:
-			return redirect(url_for('projects_edit', project=path.replace('/projects/', '')), 303)
+			return redirect(url_for('projects_edit', project=path.split('/projects/', 1)[1][:-1]), 303)
 	flash('Path not recognized', 'error')
 	return redirect(url_for('admin'), 303)
 

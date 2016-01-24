@@ -15,7 +15,7 @@
 		tags.val(string + tag);
 	}
 </script>
-<div class="panel" id="status">
+<div id="status">
 	<h3>Status</h3>
 	<div class="radio">
 		<label>
@@ -28,12 +28,13 @@
 			<input type="radio" name="status" value="featured" onchange="priorityToggle(this);" {% if content.data.featured %} checked{% endif %} />
 			<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&ensp;Featured Project
 			<span {% if not content.data.featured %} hidden{% endif %} id="priority_container">
-				<input type="number" class="form-control" aria-label="Priority" placeholder="Priority" autocomplete="off" id="priority" name="priority" {% if content.data.priority %}value="{{ content.data.priority }}" {% endif %} />
+				<input type="number" class="form-control" aria-label="Priority" placeholder="Priority" autocomplete="off" id="priority" name="priority" {% if content.data.priority is not none %}value="{{ content.data.priority }}" {% endif %} />
 			</span>
 		</label>
 	</div>
-</div>
-<div class="text-center panel">
+	<a class="btn btn-primary btn-block" href="{{ url_for("projects_admin") }}">Manage Projects</a>
+</div></div>
+<div class="panel">
 	<h3>Blurb</h3>
 	<button type="button" class="btn btn-primary" onclick="file_selector(function (src) { $('#thumbnail').attr('src', src); }, true);">
 		<img class="img-responsive img-rounded" {% if content.data.thumbnail %}src="{{ content.data.thumbnail }}" {% endif %}alt="Thumbnail" id="thumbnail" style="width:100%;" />
@@ -42,6 +43,6 @@
 </div>
 <div class="text-center panel">
 	<h3>Tags</h3>
-	<textarea class="form-control" id="tags" placeholder="tag1, tag2...">{{content.data.tags}}</textarea>
-	{% for i in range(0,5) %}<button type="button" class="btn btn-primary" style="margin:2px;" onclick="add_tag('{{i}}');">tag {{i}}</button>{% endfor %}
+	<textarea class="form-control" id="tags" placeholder="tag1, tag2...">{% if content.data.tagged %}{{ ", ".join(content.data.tagged) }}{% endif %}</textarea>
+	{% for tag in content.data.tags %}<button type="button" class="btn btn-primary" style="margin:2px;" onclick="add_tag('{{ tag }}');">{{ tag }}</button>{% endfor %}
 </div>

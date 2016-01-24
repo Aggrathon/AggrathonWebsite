@@ -67,8 +67,8 @@ def create_sidebar(sidebar):
 """
 	Methods for creating custom pages and sidebars from files
 """
-def create_page_fromfile(title, file, **data):
-	return {'title':title, 'file':file, 'data':data}
+def create_page_fromfile(title, file, hide_title=False, **data):
+	return {'title':title, 'file':file, 'hide_title':hide_title, 'data':data}
 
 def create_sidebar_fromfile(file, **data):
 	return {'file':file, 'data':data}
@@ -102,7 +102,7 @@ def show_page(path):
 """
 def show_project(path):
 	project = model.project_get(path)
-	return render_page_standard(create_page_fromfile(None, file='frontend/projects/project.html', **project), True)
+	return render_page_standard(create_page_fromfile(project['name'], file='frontend/projects/project.html', hide_title=True, **project), True)
 
 
 """
@@ -123,7 +123,7 @@ class AdminPages(Enum):
 
 def show_admin(page):
 	if page is AdminPages.admin:
-		return create_page_admin('Admin', 'admin/overview.html', **model.get_admin_front())
+		return create_page_admin('Admin', 'admin/overview.html', hide_title=True, **model.get_admin_front())
 	if page is AdminPages.setup:
 		return create_page_admin('Setup', 'admin/setup.html', users=model.get_user_list(), **model.get_site_info())
 	if page is AdminPages.pages:
