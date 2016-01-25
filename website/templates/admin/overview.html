@@ -39,7 +39,7 @@
 					<td>/pages/{{ p.page.path }}/</td>
 					{% endif %}
 					<td class="text-right" style="padding:0px; vertical-align:middle"><div class="btn-group">
-						<a target="_blank" href="{% if path == '/' %}{{ url_for('main') }}{% else %}{{ url_for('page', page=p.page.path) }}/{% endif %}" class="btn btn-success" title="View Page">
+						<a target="_blank" href="{% if path == '/' %}{{ url_for('main') }}{% else %}{{ url_for('page', page=p.page.path) }}{% endif %}" class="btn btn-success" title="View Page">
 							<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
 							<span class="sr-only">View</span>
 						</a>

@@ -38,7 +38,7 @@ def get_site_info_embed():
 	return Site.query.first()
 
 def get_admin_front():
-	pages = LastPage.query.order_by(LastPage.time.desc()).all()
+	pages = PageLast.query.order_by(PageLast.time.desc()).all()
 	projects = ProjectLast.query.order_by(ProjectLast.time.desc()).all()
 	notes = Text.query.get('ADMIN_NOTES')
 	return {'pages':pages, 'projects':projects, 'notes':notes.text if notes else None, 'page_count':Page.query.count(), 'project_count':Project.query.count(), 'user_count':User.query.count(), 'message_count':Message.query.count()}
@@ -152,14 +152,7 @@ def page_get_admin(path):
 	private = PagePrivate.query.get(page.id)
 	if private:
 		ret['private'] = True
-	last = LastPage.query.get(page.id)
-	if last is None:
-		if LastPage.query.count() >= 5:
-			db.session.delete(LastPage.query.order_by('time').first())
-		db.session.add(LastPage(page))
-	else:
-		last.update()
-	db.session.commit()
+	PageLast.update(page)
 	return ret
 
 def page_list():
@@ -321,6 +314,7 @@ def project_get_admin(path):
 	project = db.session.query(Project.title, Project.text, Project.id, Project.thumbnail, Project.description, ProjectFeatured.priority).filter_by(path=path).outerjoin(ProjectFeatured).first()
 	if not project:
 		return None
+	ProjectLast.update(project.id)
 	return {'path':path, "name":project.title, "text":project.text, "thumbnail":project.thumbnail, "description":project.description, "featured":project.priority is not None, "priority":project.priority,\
 		"images":[img[0] for img in db.session.query(ProjectImage.image).filter_by(project_id=project.id).all()],\
 		"tagged":[tag[1] for tag in db.session.query(ProjectTagged.tag_id, ProjectTag.tag).filter_by(project_id=project.id).join(ProjectTag).all()],\
@@ -417,6 +411,7 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
 	project_tags_set(project, tags)
+	ProjectLast.update(project)
 	db.session.commit()
 	if flash_result:
 		flash('Project Updated', FLASH_SUCCESS)

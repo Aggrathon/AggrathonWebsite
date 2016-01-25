@@ -122,7 +122,7 @@ class PagePrivate(db.Model):
 	def __repr__(self):
 		return '<Private: Page %r>' %self.page.title
 
-class LastPage(db.Model):
+class PageLast(db.Model):
 	page_id = db.Column(db.Integer, db.ForeignKey('page.id'), primary_key=True)
 	page = db.relationship('Page')
 	time = db.Column(db.DateTime)
@@ -131,8 +131,15 @@ class LastPage(db.Model):
 		self.page = page
 		self.time = datetime.datetime.today()
 	
-	def update(self):
-		self.time = datetime.datetime.today()
+	def update(page):
+		last = PageLast.query.filter_by(page_id=page.id).first()
+		if last is None:
+			if PageLast.query.count() >= 5:
+				db.session.delete(PageLast.query.order_by('time').first())
+			db.session.add(PageLast(page))
+		else:
+			last.time = datetime.datetime.today()
+		db.session.commit()
 
 	def __repr__(self):
 		return '<Last Page: %r at %r>' %(self.page.title, self.time)
@@ -285,12 +292,24 @@ class ProjectLast(db.Model):
 	project = db.relationship('Project')
 	time = db.Column(db.DateTime)
 
-	def __init__(self, project):
-		self.project = project
+	def __init__(self, project=None, project_id=None):
+		if project is None:
+			if project_id is None:
+				return "No project provided"
+			self.project_id = project_id
+		else:
+			self.project = project
 		self.time = datetime.datetime.today()
 
-	def update(self):
-		self.time = datetime.datetime.today()
+	def update(project_id):
+		last = ProjectLast.query.filter_by(project_id=project_id).first()
+		if last is None:
+			if ProjectLast.query.count() >= 5:
+				db.session.delete(ProjectLast.query.order_by('time').first())
+			db.session.add(ProjectLast(project_id=project_id))
+		else:
+			last.time = datetime.datetime.today()
+		db.session.commit()
 
 	def __repr__(self):
 		return '<Last Project: %r at %r>' %(self.page.name, self.time)
@@ -440,7 +459,7 @@ def check_if_setup():
 		PageBlurb.query.first()
 		FeaturedPage.query.first()
 		PagePrivate.query.first()
-		LastPage.query.first()
+		PageLast.query.count()
 
 		Project.query.first()
 		ProjectImage.query.first()

@@ -45,6 +45,7 @@ class TestProjectModel(unittest.TestCase):
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], [], [], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		project_set("a1", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
+		#latest assignment moved to view instead of edit: self.assertEqual(Project.query.filter_by(path="a1").first().id,ProjectLast.query.order_by(ProjectLast.time.desc()).first().project_id, "Latest edited page not updated")
 		project_move("a", "a2")
 		project_move("a1", "a2")
 		project_move("a2", "a1")
