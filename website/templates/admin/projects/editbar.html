@@ -32,7 +32,10 @@
 			</span>
 		</label>
 	</div>
-	<a class="btn btn-primary btn-block" href="{{ url_for("projects_admin") }}">Manage Projects</a>
+	<div class="btn-group-vertical btn-block">
+		<a class="btn btn-info" href="{{ url_for("projects_admin") }}">Manage Projects</a>
+		<a class="btn btn-success" href="{{ url_for("project", project=content.data.path) }}">View Project</a>
+	</div>
 </div></div>
 <div class="panel">
 	<h3>Blurb</h3>

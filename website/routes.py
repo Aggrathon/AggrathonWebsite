@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for, send_from_directory
+from flask import Flask, request, flash, redirect, url_for, send_from_directory, jsonify, get_flashed_messages
 from app import app, login_manager, recaptcha
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
@@ -127,26 +127,35 @@ def projects_admin():
 @app.route('/admin/projects/edit/', methods=['GET', 'POST'])
 @login_required
 def projects_edit():
+	path = request.args.get('project')
 	if request.method == 'POST':
-		path = request.form.get('project')
+		if not path:
+			return "Invalid Project"
 		action = request.form.get('action')
 		if action == 'save':
 			title = request.form.get('title')
+			if not title:
+				return 'Title is missing'
 			text = request.form.get('text')
-			images = request.form.get('images')
+			if not text:
+				return 'Text is missing'
+			images = request.form.getlist('images[]')
+			flash(images,"info")
 			tags = request.form.get('tags')
-			featured = request.form.get('featured')
+			featured = request.form.get('featured') == "true"
 			priority = request.form.get('priority')
 			thumbnail = request.form.get('thumbnail')
 			description = request.form.get('description')
-			return str(request.form.to_dict(False))
+			if not thumbnail or not description or not tags:
+				flash("It's recommended to have a <b>thumbnail</b>, a <b>description</b> and <b>tags</b> to make navigation easier", "warning")
+			model.project_set(path, title, text, description, thumbnail, tags, images, [], [], featured, priority)
+			return jsonify(messages=get_flashed_messages(True))
 		elif action == 'move':
 			return model.project_move(path, request.form.get('target'))
 		elif action == 'delete':
 			return model.project_delete(path)
 		else:
 			return 'action not found'
-	path = request.args.get('project')
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
 	project = model.project_get_admin(path)

@@ -1,4 +1,4 @@
-﻿from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy
 from app import app
 from database import *
 from flask_login import make_secure_token
@@ -130,12 +130,12 @@ class PageLast(db.Model):
 	def __init__(self, page):
 		self.page = page
 		self.time = datetime.datetime.today()
+		if PageLast.query.count() >= 5:
+			db.session.delete(PageLast.query.order_by('time').first())
 	
 	def update(page):
 		last = PageLast.query.filter_by(page_id=page.id).first()
 		if last is None:
-			if PageLast.query.count() >= 5:
-				db.session.delete(PageLast.query.order_by('time').first())
 			db.session.add(PageLast(page))
 		else:
 			last.time = datetime.datetime.today()
@@ -292,21 +292,16 @@ class ProjectLast(db.Model):
 	project = db.relationship('Project')
 	time = db.Column(db.DateTime)
 
-	def __init__(self, project=None, project_id=None):
-		if project is None:
-			if project_id is None:
-				return "No project provided"
-			self.project_id = project_id
-		else:
-			self.project = project
+	def __init__(self, project):
+		self.project = project
 		self.time = datetime.datetime.today()
+		if ProjectLast.query.count() >= 5:
+			db.session.delete(ProjectLast.query.order_by('time').first())
 
-	def update(project_id):
-		last = ProjectLast.query.filter_by(project_id=project_id).first()
+	def update(project):
+		last = ProjectLast.query.filter_by(project_id=project.id).first()
 		if last is None:
-			if ProjectLast.query.count() >= 5:
-				db.session.delete(ProjectLast.query.order_by('time').first())
-			db.session.add(ProjectLast(project_id=project_id))
+			db.session.add(ProjectLast(project))
 		else:
 			last.time = datetime.datetime.today()
 		db.session.commit()

@@ -21,7 +21,7 @@ def get_random_code():
 	return ''.join(SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(app.config['CODE_LENGTH']))
 
 
-### SITE ###
+#region SITE
 
 def get_menu():
 	return Menu.query.all()
@@ -125,8 +125,10 @@ def set_user_list(list):
 		session.rollback()
 		return False
 
+#endregion
 
-### PAGES ###
+
+#region PAGES
 
 def page_get(path):
 	page = Page.query.filter_by(path=path).first()
@@ -214,8 +216,9 @@ def page_set(path, title, content, featured=False, priority=0, description="", t
 		if flash_result:
 			flash('Page Saved', FLASH_SUCCESS)
 
+#endregion
 
-### PAGE EDIT ACTIONS ###
+#region PAGE_EDIT_ACTIONS
 
 def page_action_edit(path, data):
 	title = data.get('title')
@@ -282,7 +285,10 @@ def page_action_check(path):
 		return 'No Page Found'
 	return 'exists'
 
-### FEATURED ###
+#endregion
+
+
+#region FEATURED
 
 def featured_pages():
 	pages = db.session.query(
@@ -297,8 +303,10 @@ def featured_projects():
 		.join(ProjectFeatured).filter(ProjectFeatured.project_id==Project.id).order_by(ProjectFeatured.priority).all()
 	return projects
 
+#endregion
 
-### PROJECT GET ###
+
+#region PROJECT_GET
 
 def project_get(path):
 	project = Project.query.filter_by(path=path).first()
@@ -314,7 +322,7 @@ def project_get_admin(path):
 	project = db.session.query(Project.title, Project.text, Project.id, Project.thumbnail, Project.description, ProjectFeatured.priority).filter_by(path=path).outerjoin(ProjectFeatured).first()
 	if not project:
 		return None
-	ProjectLast.update(project.id)
+	ProjectLast.update(project)
 	return {'path':path, "name":project.title, "text":project.text, "thumbnail":project.thumbnail, "description":project.description, "featured":project.priority is not None, "priority":project.priority,\
 		"images":[img[0] for img in db.session.query(ProjectImage.image).filter_by(project_id=project.id).all()],\
 		"tagged":[tag[1] for tag in db.session.query(ProjectTagged.tag_id, ProjectTag.tag).filter_by(project_id=project.id).join(ProjectTag).all()],\
@@ -342,10 +350,12 @@ def project_tags():
 	return db.session.query(ProjectTag.tag, sub.c.count).outerjoin(sub).order_by(db.desc("count")).all()
 
 def project_list_admin():
-	projects = db.session.query(Project.title, Project.path, ProjectFeatured.project_id.label('featured')).outerjoin(ProjectFeatured).all()
+	projects = db.session.query(Project.title, Project.path, ProjectFeatured.project_id.label('featured'), ProjectFeatured.priority).outerjoin(ProjectFeatured).all()
 	return projects
 
-### PROJECT EDIT ###
+#endregion
+
+#region PROJECT_EDIT
 
 def project_set(path, title, text, description, thumbnail, tags, images, link_titles, link_urls, featured=False, priority=0, private=False, flash_result=True):
 	project = Project.query.filter_by(path=path).first()
@@ -358,6 +368,8 @@ def project_create(path, title, text, description, thumbnail, tags, images, link
 	project = Project(path, title, text, description, thumbnail)
 	db.session.add(project)
 	if(featured and not private):
+		if priority is None:
+			priority = 0
 		db.session.add( ProjectFeatured(project, priority) )
 	counter = 0
 	while counter < len(images):
@@ -369,6 +381,7 @@ def project_create(path, title, text, description, thumbnail, tags, images, link
 		counter += 1
 	db.session.add(ProjectVersion(project, 0, 0, 0))
 	project_tags_set(project, tags)
+	db.session.add(ProjectLast(project))
 	db.session.commit()
 	if flash_result:
 		flash('New Project Created', FLASH_SUCCESS)
@@ -381,6 +394,8 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 	#featured
 	feat = ProjectFeatured.query.get(project.id)
 	if(featured and not private):
+		if priority is None:
+			priority = 0
 		if(feat is None):
 			db.session.add(ProjectFeatured(project, priority))
 		else:
@@ -412,9 +427,8 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 		counter += 1
 	project_tags_set(project, tags)
 	ProjectLast.update(project)
-	db.session.commit()
 	if flash_result:
-		flash('Project Updated', FLASH_SUCCESS)
+		flash('Project Saved', FLASH_SUCCESS)
 
 def project_move(path, newpath):
 	if db.session.query(Project.path).filter_by(path=newpath).first():
@@ -545,8 +559,10 @@ def project_delete(path):
 		db.session.commit()
 		return RETURN_SUCCESS
 
+#endregion
 
-### FILES ###
+
+#region FILES
 
 def files_check_path(path, flash_errors=True):
 	if path.startswith('/'):
@@ -610,8 +626,10 @@ def files_save_file(path, file):
 		return True
 	return False
 
+#endregion
 
-### MESSAGES ###
+
+#region MESSAGES
 
 def message_add(email, subject, message):
 	if MessageBlacklist.check_message(email):
@@ -646,7 +664,9 @@ def message_list(start=0, amount=20):
 def message_blacklist():
 	return MessageBlacklist.query.all();
 
-### MESSAGES ACTIONS ###
+#endregion
+
+#region MESSAGES_ACTIONS
 
 def message_action_unread(id):
 	mess = Message.query.get(id)
@@ -778,8 +798,10 @@ def message_forward(message):
 			Click here to read them: <a href=\""""+url+"\">"+url+"""</a>\n<br />\n<br />\n<br />
 			Click here to unsubscribe: <a href=\""""+url2+"\">"+url2+"</a>\n<br />")
 
+#endregion
 
-### LOGIN ###
+
+#region LOGIN
 @login_manager.user_loader
 def login_get_user_by_email(email:str):
 	return User.query.get(email)
@@ -819,8 +841,11 @@ def login_action_ceckcode(email, code):
 		user.verification_code = ''
 		return "Invalid Verification"
 
+#endregion
 
-### EMAIL ###
+
+#region EMAIL
+
 def email_send_text(subject:str, recipient:str, message:str, sender:str = None):
 	subject = subject.replace('\n', ' ')
 	if sender is None:
@@ -835,8 +860,10 @@ def email_send_html(subject:str, recipient:str, message:str, sender:str = None):
 	email = MailMessage(subject=subject, recipients=[recipient], html=message, sender=sender)
 	mail.send(email)
 
+#endregion
 
-### TESTDATA ###
+
+#region TESTDATA
 
 def create_test_data():
 	page_set("test", "Test Page 1", "[insert content here]", True, 10, "Description for test page 1", "/static/background.jpg", flash_result=False)
@@ -857,3 +884,5 @@ def create_debug_content():
 	reset_db()
 	create_default_menu()
 	create_test_data()
+
+#endregion

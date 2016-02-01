@@ -44,13 +44,15 @@
 			thumbnail = '';
 		var description = $("#description").val();
 
-		$.post("{{ url_for('projects_edit') }}",
-			{action: "save", project: "{{ content.data.path }}", title: title, text: text, images: images, tags: tags, featured: featured, priority: priority, thumbnail: thumbnail, description: description },
+		$.post(window.location,
+			{action: "save", title: title, text: text, images: images, tags: tags, featured: featured, priority: priority, thumbnail: thumbnail, description: description },
 			function (result) {
-				if (result == 'success') {
-					flash("Project saved", "success");
+				if (result.messages == undefined || result.messages == 'undefined' || result.messages == null) {
+					flash("Project could not be saved:<br />"+result, "danger")
 				} else {
-					flash("Project could not be saved:<br />\n" + result, "danger");
+					for (var i = 0; i < result.messages.length; i++) {
+						flash(result.messages[i][1], result.messages[i][0]);
+					}
 				}
 			});
 	}
@@ -71,8 +73,9 @@
 	<div class="form-group">
 		<textarea class="form-control" id="rich-text" name="text" required placeholder="Project Text">{% if content.data.text %}{{ content.data.text }}{% endif %}</textarea>
 		{{ rich_text('rich-text') }}
-	</div>
+	</div>	
+	<span class="pull-right">{{ rich_text_insert() }}</span>
+	<!-- TODO Project Links-->
 	<button type="submit" class="btn btn-info btn-lg">Save</button>
 	<button type="button" class="btn btn-warning btn-lg">Versions</button>
-	<span class="pull-right">{{ rich_text_insert() }}</span>
 </form>
