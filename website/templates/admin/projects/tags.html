@@ -9,12 +9,12 @@
 			return;
 		$.post('{{ url_for("project_tags") }}',
 			{ tag: oldtag, action: "rename", newtag: newtag},
-			function (data) {
-				if (data.result == 'success') {
+			function (result) {
+				if (result == 'success') {
 					tag.text(newtag);
 					flash("Tag '" + oldtag + "' renamed to '" + newtag + "'", "success");
 				} else {
-					flash("Tag '" + oldtag + "' could not be renamed to '" + newtag + "'\n:"+data.result, "danger");
+					flash("Tag '" + oldtag + "' could not be renamed to '" + newtag + "'\n:"+result, "danger");
 				}
 			});
 	}
@@ -24,12 +24,12 @@
 		if (confirm("Delete tag '" + oldtag + "'?")) {
 			$.post('{{ url_for("project_tags") }}',
 				{ tag: oldtag, action: "delete" },
-				function (data) {
-					if (data.result == 'success') {
+				function (result) {
+					if (result == 'success') {
 						tag.parent().remove();
 						flash("Tag '" + oldtag + "' deleted", "success");
 					} else {
-						flash("Tag '" + oldtag + "' could not be deleted\n:" + data.result, "danger");
+						flash("Tag '" + oldtag + "' could not be deleted\n:" + result, "danger");
 					}
 				});
 		}

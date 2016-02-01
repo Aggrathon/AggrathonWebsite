@@ -11,15 +11,15 @@
 			return;
 		$.post('{{ url_for("projects_edit") }}',
 			{ project: path, action: "move", target: newpath },
-			function (data) {
-				if (data.result == 'success') {
+			function (result) {
+				if (result == 'success') {
 					jpath.text(newpath);
 					proj.find("a[href]").attr("href", function () {
 						return this.href.substring(0, this.href.length - path - 2) + this.href.substring(this.href.length - path - 2, this.href.length).replace(path, newpath);
 					});
 					flash("Project '" + title + "' at '" + path + "' moved to '" + newpath + "'", "success");
 				} else {
-					flash("Project '" + title + "' at '" + path + "' could not be moved to '" + newpath + "':\n" + data.result, "danger");
+					flash("Project '" + title + "' at '" + path + "' could not be moved to '" + newpath + "':\n" + result, "danger");
 				}
 			});
 	}
@@ -30,12 +30,12 @@
 		if (confirm("Delete project '"+title+"' at '" + path + "'?")) {
 			$.post('{{ url_for("projects_edit") }}',
 				{ project: path, action: "delete" },
-				function (data) {
-					if (data.result == 'success') {
+				function (result) {
+					if (result == 'success') {
 						proj.remove();
 						flash("Project '"+title+"' at '" + path + "' deleted", "success");
 					} else {
-						flash("Project '" + title + "' at '" + path + "' could not be deleted:\n" + data.result, "danger");
+						flash("Project '" + title + "' at '" + path + "' could not be deleted:\n" + result, "danger");
 					}
 				});
 		}

@@ -1,7 +1,7 @@
 """
 	File containing all methods required for rendering pages
 """
-from flask import render_template, flash, abort, request, jsonify
+from flask import render_template, flash, abort, request
 from flask_login import current_user
 from app import app
 import model
@@ -103,16 +103,6 @@ def show_page(path):
 def show_project(path):
 	project = model.project_get(path)
 	return render_page_standard(create_page_fromfile(project['name'], file='frontend/projects/project.html', hide_title=True, **project), True)
-
-
-"""
-	Ajax Callback
-"""
-def ajax_return(**data):
-	return jsonify(**data)
-
-def ajax_result(result):
-	return ajax_return(result=result)
 
 
 """

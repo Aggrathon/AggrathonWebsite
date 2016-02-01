@@ -53,12 +53,12 @@
 			if (confirm("Delete page at '" + path + "'?")) {
 				$.post('{{ url_for("pages_edit") }}',
 					{ page: path, action: "delete" },
-					function (data) {
-						if (data.result == 'success') {
+					function (result) {
+						if (result == 'success') {
 							{% if success_functions %}deleteSuccess(path);{% endif %}
 							flash("Page at '" + path + "' deleted", "success");
 						} else {
-							flash("Page at '" + path + "' could not be deleted:\n" + data.result, "danger");
+							flash("Page at '" + path + "' could not be deleted:\n" + result, "danger");
 						}
 					});
 			}
@@ -68,12 +68,12 @@
 			if (newpath != null) {
 				$.post('{{ url_for("pages_edit") }}',
 					{ page: path, action: "move", target: newpath },
-					function (data) {
-						if (data.result == 'success') {
+					function (result) {
+						if (result == 'success') {
 							{% if success_functions %}moveSuccess(path, newpath);{% endif %}
 							flash("Page at '" + path + "' moved to '" + newpath + "'", "success");
 						} else {
-							flash("Page at '" + path + "' could not be moved to '" + newpath + "'\n:"+data.result, "danger");
+							flash("Page at '" + path + "' could not be moved to '" + newpath + "'\n:"+result, "danger");
 						}
 					});
 			}
@@ -83,12 +83,12 @@
 			if (newpath != null) {
 				$.post('{{ url_for("pages_edit") }}',
 					{ page: path, action: "copy", target: newpath },
-					function (data) {
-						if (data.result == 'success') {
+					function (result) {
+						if (result == 'success') {
 							{% if success_functions %}copySuccess(path, newpath);{% endif %}
 							flash("Page at '" + path + "' copied to '" + newpath + "'", "success");
 						} else {
-							flash("Page at '" + path + "' could not be copied to '" + newpath + "'\nCause: " + data.result, "danger");
+							flash("Page at '" + path + "' could not be copied to '" + newpath + "'\nCause: " + result, "danger");
 						}
 					});
 			}

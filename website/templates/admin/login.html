@@ -3,12 +3,12 @@
 <script type="text/javascript">
 	function submitLogin() {
 		$.post('{{ url_for("login") }}', { email: $('#email').val() },
-			function (data) {
-				if (data.result == 'success') {
+			function (result) {
+				if (result == 'success') {
 					$('#email').val('');
 					flash("Verification sent to email", "success");
 				} else {
-					flash("Error: "+data.result, "danger");
+					flash("Error: "+result, "danger");
 				}
 			});
 	}

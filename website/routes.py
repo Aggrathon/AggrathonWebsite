@@ -18,7 +18,7 @@ def admin():
 	if request.method == 'POST':
 		action = request.form.get('action')
 		if action == 'notes':
-			return ajax_result(model.set_admin_notes(request.form.get('notes')))
+			return model.set_admin_notes(request.form.get('notes'))
 		else:
 			return "Unrecognized Action"
 	return show_admin(AdminPages.admin)
@@ -30,7 +30,7 @@ def login():
 	elif request.method == 'POST':
 		email = request.form.get('email')
 		if email:
-			return ajax_result(model.login_action_sendcode(email))
+			return model.login_action_sendcode(email)
 	else:
 		email = request.args.get('email')
 		code = request.args.get('code')
@@ -100,12 +100,12 @@ def pages_edit():
 		else:
 			page = request.form.get('page')
 			if(action == 'delete'):
-				return ajax_result(model.page_action_delete(page))
+				return model.page_action_delete(page)
 			if(action == 'move'):
-				return ajax_result(model.page_action_move(page, request.form.get('target')))
+				return model.page_action_move(page, request.form.get('target'))
 			if(action == 'copy'):
-				return ajax_result(model.page_action_copy(page, request.form.get('target')))
-			return ajax_result('action not found')
+				return model.page_action_copy(page, request.form.get('target'))
+			return 'action not found'
 	page = request.args.get('page')
 	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_admin(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
@@ -115,7 +115,7 @@ def pages_create():
 	if request.method == 'POST':
 		action = request.form.get('action')
 		if action == 'check':
-			return ajax_result(model.page_action_check(request.form.get('path')))
+			return model.page_action_check(request.form.get('path'))
 	return show_admin(AdminPages.createpage)
 
 
@@ -131,11 +131,21 @@ def projects_edit():
 		path = request.form.get('project')
 		action = request.form.get('action')
 		if action == 'save':
-			return ajax_result(str(request.form.to_dict(False)))
+			title = request.form.get('title')
+			text = request.form.get('text')
+			images = request.form.get('images')
+			tags = request.form.get('tags')
+			featured = request.form.get('featured')
+			priority = request.form.get('priority')
+			thumbnail = request.form.get('thumbnail')
+			description = request.form.get('description')
+			return str(request.form.to_dict(False))
 		elif action == 'move':
-			return ajax_result(model.project_move(path, request.form.get('target')))
+			return model.project_move(path, request.form.get('target'))
 		elif action == 'delete':
-			return ajax_result(model.project_delete(path))
+			return model.project_delete(path)
+		else:
+			return 'action not found'
 	path = request.args.get('project')
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
@@ -159,19 +169,19 @@ def project_tags():
 			tag = request.form.get('tag')
 			if action == 'rename':
 				if not tag:
-					return ajax_result("No tag to rename")
+					return "No tag to rename"
 				newtag = request.form.get('newtag')
 				if not newtag:
-					return ajax_result("No new tag")
+					return "No new tag"
 				if tag == newtag:
-					return ajax_result("New tag same as old")
-				return  ajax_result(model.project_tags_rename(tag, newtag))
+					return "New tag same as old"
+				return  model.project_tags_rename(tag, newtag)
 			elif action == 'delete':
 				if tag:
 					model.project_tags_delete(tag)
-					return ajax_result(model.RETURN_SUCCESS)
+					return model.RETURN_SUCCESS
 				else:
-					return ajax_result("No tag to remove")
+					return "No tag to remove"
 		else:
 			newtag = request.form.get('newtag')
 			if newtag:
@@ -234,18 +244,22 @@ def files_embed():
 @login_required
 def messages():
 	if request.method == 'POST':
-		try:
-			action = request.form['action']
-			if action == 'read':
-				return ajax_result(model.message_action_read(request.form['message']))
-			if action == 'unread':
-				return ajax_result(model.message_action_unread(request.form['message']))
-			elif action == 'delete':
-				return ajax_result(model.message_action_delete(request.form['message']))
-			elif action == 'send':
-				return ajax_result(model.message_action_send(request.form.get('message')))
-		except KeyError as e:
-			return ajax_result(e.message)
+		action = request.form.get('action')
+		if action is None:
+			return 'Action not found'
+		message = request.form.get('message')
+		if message is None:
+			return 'Invalid Message'
+		if action == 'read':
+			return model.message_action_read(message)
+		elif action == 'unread':
+			return model.message_action_unread(message)
+		elif action == 'delete':
+			return model.message_action_delete(message)
+		elif action == 'send':
+			return model.message_action_send(message)
+		else:
+			return 'Action not found'
 	else:
 		return show_admin(AdminPages.messages)
 
@@ -253,17 +267,20 @@ def messages():
 @login_required
 def blacklist():
 	if request.method == 'POST':
-		try:
-			action = request.form['action']
-			if action == 'ban':
-				return ajax_result(model.message_action_ban(request.form['phrase']))
-			elif action == 'unban':
-				return ajax_result(model.message_action_unban(request.form['phrase']))
-			elif action == 'checkall':
-				return ajax_result(model.message_action_recheck_all())
-		except KeyError as e:
-			return ajax_result(e.message)
-		return ajax_result('Action not recognized')
+		action = request.form.get('action')
+		if action is None:
+			return 'Action not found'
+		if action == 'checkall':
+			return model.message_action_recheck_all()
+		phrase = request.form.get('phrase')
+		if phrase is None:
+			return 'Phrase not found'
+		elif action == 'ban':
+			return model.message_action_ban(phrase)
+		elif action == 'unban':
+			return model.message_action_unban(phrase)
+		else:
+			return 'Action not recognized'
 	else:
 		return show_admin(AdminPages.blacklist)
 
@@ -274,7 +291,7 @@ def forwarding():
 		action = request.form.get('action')
 		if action:
 			if action == 'remove':
-				return ajax_result(model.message_forward_remove(request.form.get('email')))
+				return model.message_forward_remove(request.form.get('email'))
 		else:
 			email = request.form.get('email')
 			type = request.form.get('type')

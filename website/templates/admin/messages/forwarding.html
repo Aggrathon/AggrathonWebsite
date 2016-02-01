@@ -8,12 +8,12 @@
 		var row = $(obj).parent().parent();
 		$.post("{{ url_for('forwarding') }}",
 			{ action: "remove", email: row.children("#email").html() },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					row.remove();
 				}
 				else
-					flash(data.result, 'danger');
+					flash(result, 'danger');
 			});
 	}
 	function editForward(email, type) {

@@ -19,8 +19,8 @@
 
 		$.post('{{ url_for("pages_create") }}',
 			{ page: path, action: "check", path: path },
-			function (data) {
-				if (data.result == 'exists') {
+			function (result) {
+				if (result == 'exists') {
 					flash('Page already exists', 'danger');
 				} else {
 					flash("Page at '" + path + "' created", "success");

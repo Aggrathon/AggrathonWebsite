@@ -10,8 +10,8 @@
 			return false;
 		$.post("{{ url_for('blacklist') }}",
 			{ action: "ban", phrase: phrase },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					var row = '<tr>\n\t<td id="phrase"></td>\n\t<td>'
 						+ '\n\t\t<button class="btn btn-danger" type="button" onclick="removeFromBlacklist(this);">'
 						+ '\n\t\t\t<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
@@ -22,7 +22,7 @@
 					$('input#blacklistadd').val('');
 				}
 				else
-					flash(data.result, 'danger');
+					flash(result, 'danger');
 			});
 	}
 	function removeFromBlacklist(btnObject) {
@@ -30,20 +30,20 @@
 		phrase = row.find('#phrase').text();
 		$.post("{{ url_for('blacklist') }}",
 			{ action: "unban", phrase: phrase },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					row.remove();
 				}
 				else
-					flash(data.result, 'danger');
+					flash(result, 'danger');
 			});
 
 	}
 	function checkAllMessages() {
 		$.post("{{ url_for('blacklist') }}",
 			{ action: "checkall" },
-			function (data) {
-				flash(data.result, 'warning');
+			function (result) {
+				flash(result, 'warning');
 			});
 	}
 </script>

@@ -4,13 +4,13 @@
 {% from 'macros.html' import rich_text, rich_text_insert %}
 <script type="text/javascript">
 	function saveNotes() {
-		$.post({{ url_for('admin') }},
+		$.post("{{ url_for('admin') }}",
 		{action: "notes", notes: CKEDITOR.instances['rich-text'].getData() },
-			function (data) {
-				if (data.result == 'success') {
+		function (result) {
+				if (result == 'success') {
 					flash("Notes saved", "success");
 				} else {
-					flash("Notes could not be saved:<br />\n"+data.result, "danger");
+					flash("Notes could not be saved:<br />\n"+result, "danger");
 				}
 			});
 	}

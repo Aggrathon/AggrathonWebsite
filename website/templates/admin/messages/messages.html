@@ -4,8 +4,8 @@
 	function addToBlacklist(phrase) {
 		$.post("{{ url_for('blacklist') }}",
 			{ action: "ban", phrase: phrase },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					flash("'" + phrase + "' Banned", "success");
 				}
 			});
@@ -19,8 +19,8 @@
 	function deleteMessage(messageId) {
 		$.post("{{ url_for('messages') }}",
 			{ action: "delete", message: messageId },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					$('#message' + messageId).remove();
 				}
 			});
@@ -28,8 +28,8 @@
 	function readMessage(messageId) {
 		$.post("{{ url_for('messages') }}",
 			{ action: "read", message: messageId },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					$('#messagelist').find('#message'+messageId).find('#read').html('\n\t\t<button class="btn btn-default" type="button" title="Mark Unread"'
 							+ ' onclick="unreadMessage(' + messageId + ');">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="sr-only">Read</span></button>');
 				}
@@ -37,8 +37,8 @@
 	}
 	function unreadMessage(messageId) {
 		$.post("{{ url_for('messages') }}", { action: "unread", message: messageId },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					$('#messagelist').children('#message' + messageId).children('#read').html('\n\t\t<button class="btn btn-default" type="button" title="Mark Read"'
 							+ ' onclick="readMessage(' + messageId + ');"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span class="sr-only">Unread</span></button>');
 				}
@@ -46,11 +46,11 @@
 	}
 	function sendEmail(messageId) {
 		$.post("{{ url_for('messages') }}", { action: "send", message: messageId },
-			function (data) {
-				if (data.result == "success") {
+			function (result) {
+				if (result == "success") {
 					flash("Message forwarded to your email", "success")
 				} else {
-					flash(data.result, 'danger')
+					flash(result, 'danger')
 				}
 			});
 	}
