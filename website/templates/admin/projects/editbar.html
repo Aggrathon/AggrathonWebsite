@@ -25,7 +25,7 @@
 	</div>
 	<div class="radio">
 		<label>
-			<input type="radio" name="status" value="featured" onchange="priorityToggle(this);" {% if content.data.featured %} checked{% endif %} />
+			<input type="radio" name="status" value="featured" onchange="priorityToggle(this);" id="status_featured" {% if content.data.featured %} checked{% endif %} />
 			<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>&ensp;Featured Project
 			<span {% if not content.data.featured %} hidden{% endif %} id="priority_container">
 				<input type="number" class="form-control" aria-label="Priority" placeholder="Priority" autocomplete="off" id="priority" name="priority" {% if content.data.priority is not none %}value="{{ content.data.priority }}" {% endif %} />

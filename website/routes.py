@@ -1,4 +1,4 @@
-from flask import Flask, request, flash, redirect, url_for, jsonify, send_from_directory
+from flask import Flask, request, flash, redirect, url_for, send_from_directory
 from app import app, login_manager, recaptcha
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
@@ -18,7 +18,7 @@ def admin():
 	if request.method == 'POST':
 		action = request.form.get('action')
 		if action == 'notes':
-			return jsonify(result=model.set_admin_notes(request.form.get('notes')))
+			return ajax_result(model.set_admin_notes(request.form.get('notes')))
 		else:
 			return "Unrecognized Action"
 	return show_admin(AdminPages.admin)
@@ -30,7 +30,7 @@ def login():
 	elif request.method == 'POST':
 		email = request.form.get('email')
 		if email:
-			return jsonify(result=model.login_action_sendcode(email))
+			return ajax_result(model.login_action_sendcode(email))
 	else:
 		email = request.args.get('email')
 		code = request.args.get('code')
@@ -100,12 +100,12 @@ def pages_edit():
 		else:
 			page = request.form.get('page')
 			if(action == 'delete'):
-				return jsonify(result=model.page_action_delete(page))
+				return ajax_result(model.page_action_delete(page))
 			if(action == 'move'):
-				return jsonify(result=model.page_action_move(page, request.form.get('target')))
+				return ajax_result(model.page_action_move(page, request.form.get('target')))
 			if(action == 'copy'):
-				return jsonify(result=model.page_action_copy(page, request.form.get('target')))
-			return jsonify(result='action not found')
+				return ajax_result(model.page_action_copy(page, request.form.get('target')))
+			return ajax_result('action not found')
 	page = request.args.get('page')
 	return render_page(create_page_fromfile('Edit Page \''+page+'\'', 'admin/pages/edit.html', **model.page_get_admin(page)), create_sidebar_fromfile('admin/pages/editbar.html'))
 
@@ -115,7 +115,7 @@ def pages_create():
 	if request.method == 'POST':
 		action = request.form.get('action')
 		if action == 'check':
-			return jsonify(result=model.page_action_check(request.form.get('path')))
+			return ajax_result(model.page_action_check(request.form.get('path')))
 	return show_admin(AdminPages.createpage)
 
 
@@ -130,10 +130,12 @@ def projects_edit():
 	if request.method == 'POST':
 		path = request.form.get('project')
 		action = request.form.get('action')
-		if action == 'move':
-			return jsonify(result=model.project_move(path, request.form.get('target')))
+		if action == 'save':
+			return ajax_result(str(request.form.to_dict(False)))
+		elif action == 'move':
+			return ajax_result(model.project_move(path, request.form.get('target')))
 		elif action == 'delete':
-			return jsonify(result=model.project_delete(path))
+			return ajax_result(model.project_delete(path))
 	path = request.args.get('project')
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
@@ -157,19 +159,19 @@ def project_tags():
 			tag = request.form.get('tag')
 			if action == 'rename':
 				if not tag:
-					return jsonify(result="No tag to rename")
+					return ajax_result("No tag to rename")
 				newtag = request.form.get('newtag')
 				if not newtag:
-					return jsonify(result="No new tag")
+					return ajax_result("No new tag")
 				if tag == newtag:
-					return jsonify(result="New tag same as old")
-				return  jsonify(result=model.project_tags_rename(tag, newtag))
+					return ajax_result("New tag same as old")
+				return  ajax_result(model.project_tags_rename(tag, newtag))
 			elif action == 'delete':
 				if tag:
 					model.project_tags_delete(tag)
-					return jsonify(result=model.RETURN_SUCCESS)
+					return ajax_result(model.RETURN_SUCCESS)
 				else:
-					return jsonify(result="No tag to remove")
+					return ajax_result("No tag to remove")
 		else:
 			newtag = request.form.get('newtag')
 			if newtag:
@@ -235,15 +237,15 @@ def messages():
 		try:
 			action = request.form['action']
 			if action == 'read':
-				return jsonify(result=model.message_action_read(request.form['message']))
+				return ajax_result(model.message_action_read(request.form['message']))
 			if action == 'unread':
-				return jsonify(result=model.message_action_unread(request.form['message']))
+				return ajax_result(model.message_action_unread(request.form['message']))
 			elif action == 'delete':
-				return jsonify(result=model.message_action_delete(request.form['message']))
+				return ajax_result(model.message_action_delete(request.form['message']))
 			elif action == 'send':
-				return jsonify(result=model.message_action_send(request.form.get('message')))
+				return ajax_result(model.message_action_send(request.form.get('message')))
 		except KeyError as e:
-			return jsonify(result=e.message)
+			return ajax_result(e.message)
 	else:
 		return show_admin(AdminPages.messages)
 
@@ -254,14 +256,14 @@ def blacklist():
 		try:
 			action = request.form['action']
 			if action == 'ban':
-				return jsonify(result=model.message_action_ban(request.form['phrase']))
+				return ajax_result(model.message_action_ban(request.form['phrase']))
 			elif action == 'unban':
-				return jsonify(result=model.message_action_unban(request.form['phrase']))
+				return ajax_result(model.message_action_unban(request.form['phrase']))
 			elif action == 'checkall':
-				return jsonify(result=model.message_action_recheck_all())
+				return ajax_result(model.message_action_recheck_all())
 		except KeyError as e:
-			return jsonify(result=e.message)
-		return jsonify(result='Action not recognized')
+			return ajax_result(e.message)
+		return ajax_result('Action not recognized')
 	else:
 		return show_admin(AdminPages.blacklist)
 
@@ -272,7 +274,7 @@ def forwarding():
 		action = request.form.get('action')
 		if action:
 			if action == 'remove':
-				return jsonify(result=model.message_forward_remove(request.form.get('email')))
+				return ajax_result(model.message_forward_remove(request.form.get('email')))
 		else:
 			email = request.form.get('email')
 			type = request.form.get('type')

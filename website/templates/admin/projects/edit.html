@@ -30,12 +30,36 @@
 		$('#project_images_drag').remove();
 		$('#project_images_remove').hide();
 	}
+	function project_save(event) {
+		event.preventDefault();
+
+		var title = $("#title").val();
+		var text = CKEDITOR.instances['rich-text'].getData();
+		var images = $("#images").children("img").map(function () { return $(this).attr("src"); }).get();
+		var tags = $("#tags").val();
+		var featured = $("#status_featured").prop("checked");
+		var priority = $("#priority").val();
+		var thumbnail = $("#thumbnail").attr("src");
+		if (thumbnail == undefined || thumbnail == 'undefined')
+			thumbnail = '';
+		var description = $("#description").val();
+
+		$.post("{{ url_for('projects_edit') }}",
+			{action: "save", project: "{{ content.data.path }}", title: title, text: text, images: images, tags: tags, featured: featured, priority: priority, thumbnail: thumbnail, description: description },
+			function (data) {
+				if (data.result == 'success') {
+					flash("Project saved", "success");
+				} else {
+					flash("Project could not be saved:<br />\n"+data.result, "danger");
+				}
+			});
+	}
 </script>
-<form method="post">
+<form onsubmit="project_save(event); return false;">
 	<div class="form-group">
-		<input type="text" class="form-control" name="title" placeholder="Project Title" required value="{{ content.data.name }}" />
+		<input type="text" class="form-control" name="title" id="title" placeholder="Project Title" required value="{{ content.data.name }}" />
 	</div>
-	<div class="well image-scroller" title="Drag images to reorder">
+	<div class="well image-scroller" title="Drag images to reorder" id="images">
 			{% for img in content.data.images %}
 			<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />
 			{% endfor %}
@@ -48,7 +72,6 @@
 		<textarea class="form-control" id="rich-text" name="text" required placeholder="Project Text">{% if content.data.text %}{{ content.data.text }}{% endif %}</textarea>
 		{{ rich_text('rich-text') }}
 	</div>
-	<div hidden id="additional_form_data"></div>
 	<button type="submit" class="btn btn-info btn-lg">Save</button>
 	<button type="button" class="btn btn-warning btn-lg">Versions</button>
 	<span class="pull-right">{{ rich_text_insert() }}</span>
