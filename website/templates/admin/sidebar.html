@@ -11,6 +11,8 @@
 	(url_for('messages'), 'Messages', [(url_for('blacklist'), 'Blacklist'),(url_for('forwarding'), 'Forwarding')], site.admin.unread),
 	(url_for('logout'), 'Log Out', [], '')
 ] %}
+{# <!-- OPTIONAL Backup --> #}
+{# <!-- OPTIONAL Cache --> #}
 <h2>Adminpanel</h2>
 
 {% for url, title, dropdown, badge in links %}

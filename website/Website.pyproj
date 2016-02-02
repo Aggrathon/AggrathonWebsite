@@ -156,6 +156,7 @@
     <Content Include="templates\admin\projects\projects.html" />
     <Content Include="templates\admin\overview.html" />
     <Content Include="templates\admin\projects\tags.html" />
+    <Content Include="templates\admin\projects\versions.html" />
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />

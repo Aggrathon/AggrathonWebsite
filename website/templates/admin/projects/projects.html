@@ -1,5 +1,7 @@
 {% from 'macros.html' import flash %}
 {{ flash() }}
+{% from 'admin/projects/versions.html' import versions %}
+{{ versions() }}
 <script>
 	function move_project(button) {
 		var proj = $(button).parent().parent().parent();
@@ -43,6 +45,44 @@
 		}
 	}
 	function toggle_featured(button) {
+		var top = $(button);
+		var proj = top.parent().parent();
+		var glyph = top.children().first()
+		var sr = top.children().eq(1)
+		if (glyph.hasClass('glyphicon-none')) {
+			var priority;
+			do {
+				var pri = prompt("Featured priority for project", 10);
+				if (pri == null)
+					return;
+				priority = parseInt(pri);
+			} while (isNaN(priority));
+			$.post(proj.find("#edit").attr("href"),
+				{ action: "feature", priority: priority }, function (result) {
+					if (result == "success") {
+						glyph.removeClass('glyphicon-none');
+						sr.text("Featured");
+						top.attr("title", "Featured (Priority: " + priority + ")");
+					} else {
+						flash("Could not remove featured status from project '"+proj.find("#title").text()+"' at '"+proj.find("#path").text()+"':<br />" + result, "danger");
+					}
+				});
+		} else {
+			$.post(proj.find("#edit").attr("href"),
+				{ action: "unfeature" }, function (result) {
+					if (result == "success") {
+						glyph.addClass('glyphicon-none');
+						sr.text("Not Featured");
+						top.attr("title", "Not Featured");
+					} else {
+						flash("Project '" + proj.find("#title").text() + "' at '" + proj.find("#path").text() + "' could not be made no longer featured:<br />" + result, "danger");
+					}
+				});
+		}
+	}
+	function edit_versions(button) {
+		var par = $(button).parent().parent().parent();
+		versions_open(par.find('#path').text(), par.find('#title').text());
 	}
 </script>
 <table class="table table-hover">
@@ -66,7 +106,7 @@
 				</button>
 				{% else %}
 				<button class="btn btn-default" onclick="toggle_featured(this);" title="Not Featured">
-					<span class="glyphicon glyphicon-bullhorn glyphicon-none"></span>
+					<span class="glyphicon glyphicon-bullhorn glyphicon-none"></span><span class="sr-only">Not Featured</span>
 				</button>
 				{% endif %}
 			</td>
@@ -80,6 +120,10 @@
 						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 						<span class="sr-only">Edit</span>
 					</a>
+					<button type="button" class="btn btn-default" title="Edit Versions" onclick="edit_versions(this);">
+						<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+						<span class="sr-only">Edit Versions</span>
+					</button>
 					<button type="button" class="btn btn-warning" title="Move Project" onclick="move_project(this);">
 						<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
 						<span class="sr-only">Move</span>

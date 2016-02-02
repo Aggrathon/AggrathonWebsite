@@ -140,22 +140,27 @@ def projects_edit():
 			if not text:
 				return 'Text is missing'
 			images = request.form.getlist('images[]')
-			flash(images,"info")
-			tags = request.form.get('tags')
+			tags = request.form.get('tags', "")
 			featured = request.form.get('featured') == "true"
-			priority = request.form.get('priority')
-			thumbnail = request.form.get('thumbnail')
-			description = request.form.get('description')
+			priority = request.form.get('priority', 10)
+			thumbnail = request.form.get('thumbnail', "")
+			description = request.form.get('description', "")
+			link_titles = request.form.getlist('link_titles[]')
+			link_targets = request.form.getlist('link_targets[]')
 			if not thumbnail or not description or not tags:
 				flash("It's recommended to have a <b>thumbnail</b>, a <b>description</b> and <b>tags</b> to make navigation easier", "warning")
-			model.project_set(path, title, text, description, thumbnail, tags, images, [], [], featured, priority)
+			model.project_set(path, title, text, description, thumbnail, tags, images, link_titles, link_targets, featured, priority)
 			return jsonify(messages=get_flashed_messages(True))
 		elif action == 'move':
 			return model.project_move(path, request.form.get('target'))
 		elif action == 'delete':
 			return model.project_delete(path)
+		elif action == 'feature':
+			return model.project_feature_set(path, True, request.form.get('priority', 10))
+		elif action == 'unfeature':
+			return model.project_feature_set(path, False)
 		else:
-			return 'action not found'
+			return 'Action not found'
 	if not path or path == '':
 		return show_admin(AdminPages.createproject)
 	project = model.project_get_admin(path)
@@ -196,6 +201,13 @@ def project_tags():
 			if newtag:
 				model.project_tags_create(newtag, True)
 	return show_admin(AdminPages.projecttags)
+
+@app.route('/admin/projects/versions/embed/', methods=['GET', 'POST'])
+@login_required
+def project_versions_embed():
+	if request.method == 'POST':
+		pass#TODO handle project version actions
+	return render_page_embed_fromfile(None, 'admin/projects/versions.html')
 
 
 @app.route('/admin/files/', methods=['GET', 'POST'])

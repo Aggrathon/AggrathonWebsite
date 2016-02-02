@@ -326,7 +326,8 @@ def project_get_admin(path):
 	return {'path':path, "name":project.title, "text":project.text, "thumbnail":project.thumbnail, "description":project.description, "featured":project.priority is not None, "priority":project.priority,\
 		"images":[img[0] for img in db.session.query(ProjectImage.image).filter_by(project_id=project.id).all()],\
 		"tagged":[tag[1] for tag in db.session.query(ProjectTagged.tag_id, ProjectTag.tag).filter_by(project_id=project.id).join(ProjectTag).all()],\
-		"tags":[tag[0] for tag in db.session.query(ProjectTag.tag).all()]}
+		"tags":[tag[0] for tag in db.session.query(ProjectTag.tag).all()],\
+		"links":db.session.query(ProjectLink.title, ProjectLink.link).filter_by(project_id=project.id).all()}
 
 def project_list(tags=None,order=None):
 	projects = None
@@ -339,7 +340,7 @@ def project_list(tags=None,order=None):
 	if order == 'name':
 		projects.sort(key=lambda p: p.title)
 	elif order == 'updated':
-		pass
+		pass#TODO Project timing
 	else: #order is 'created'
 		pass
 	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'tags':[t[0] for t in \
@@ -415,14 +416,15 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 		counter += 1
 	#links
 	counter = 0
-	while counter < len(project.links) and counter < len(link_titles):
+	link_length = min(len(link_titles), len(link_urls))
+	while counter < len(project.links) and counter < link_length:
 		project.links[counter].title = link_titles[counter]
 		project.links[counter].link = link_urls[counter]
 		counter += 1
 	while counter < len(project.links):
 		db.session.delete(project.links[counter])
 		counter += 1
-	while counter < len(link_titles):
+	while counter < link_length:
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
 	project_tags_set(project, tags)
@@ -516,6 +518,19 @@ def project_tags_create(tag, flash_result=False):
 	elif flash_result:
 		flash("Tag %r already exists"%tag, FLASH_ERROR)
 
+def project_feature_set(path, featured=False, priority=10):
+	project = Project.query.filter_by(path=path).first()
+	if not project:
+		return "Project not found"
+	pf = ProjectFeatured.query.get(project.id)
+	if featured:
+		if not pf:
+			db.session.add(ProjectFeatured(project, priority))
+			db.session.commit()
+	elif pf:
+		db.session.delete(pf)
+		db.session.commit()
+	return RETURN_SUCCESS
 		
 def project_tags_rename(tag, newtag):
 	t = ProjectTag.query.filter_by(tag=newtag).first()

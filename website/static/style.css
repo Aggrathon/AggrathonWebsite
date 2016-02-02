@@ -291,6 +291,11 @@ table.table.table-hover tbody tr:hover {
 	color: #333;
 }
 
+iframe {
+	border: 1px solid transparent;
+	border-radius: 0.4em;
+}
+
 
 .cke_source {
 	color: #333;

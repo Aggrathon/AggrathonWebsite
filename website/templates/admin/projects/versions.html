@@ -1,0 +1,120 @@
+{#
+	An embedded window for editing versions
+#}
+{% macro versions() %}	
+	{% if not macro_versions %}
+		{% set macro_versions = true %}
+		<div class="modal fade" id="versions_modal" onload="$('body').append($(this));">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" data-toggle="tooltip" data-placement="left" title="Remember to Save"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Edit Project Versions</h4>
+					</div>
+					<div class="modal-body" style="padding:0.2em;">
+						<iframe id="versions_iframe" style="width:100%;"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function versions_save() {
+				var modal = $("#versions_modal").modal('hide');
+			}
+			function versions_open(path, title) {
+				var url = "{{ url_for('project_versions_embed') }}";
+				var purl = url + "?project=" + encodeURIComponent(path);
+				var modal = $("#versions_modal");
+				var iframe = modal.find("#versions_iframe");
+				if (iframe.attr('src') == purl) {
+					modal.modal('show');
+				} else {
+					iframe.attr('src', purl);
+					modal.modal('show');
+				}
+				if (title) {
+					modal.find(".modal-title").text("Edit versions for project '"+title+"' at '"+path+"'");
+				} else {
+					modal.find(".modal-title").text("Edit Project Versions");
+				}
+			}
+			$('#versions_iframe').load(function () {
+				setTimeout(function () {
+					var iframe = $('#versions_iframe');
+					iframe.height(iframe.contents().height());
+				}, 200)
+			});
+			$(document).ready(function () {
+				$('#versions_modal .modal-header button').tooltip()
+			});
+		</script>
+	{% endif %}
+{% endmacro %}
+<script>
+
+</script>
+<div class="row">
+	<div class="col-sm-3">
+		<div class="well">
+			<h3>Versions</h3>
+			<ul class="nav nav-pills nav-stacked" role="tablist">
+				{% for version in range(0,10) %}
+					{% if version == 0 %}
+					<li role="presentation" class="active"><a href="#default" aria-controls="ver0" role="tab" data-toggle="tab">Default</a></li>
+					{% else %}
+					<li role="presentation"><a href="#ver{{ version }}" aria-controls="ver{{ version }}" role="tab" data-toggle="tab">Version {{ version }}</a></li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+			<br />
+			<button type="button" class="btn btn-success btn-block">New Version</button>
+		</div>
+	</div>
+	<div class="col-sm-9">
+		<div class="tab-content">			
+			{% for version in range(0,10) %}
+				{% if version == 0 %}
+				<div role="tabpanel" class="tab-pane active fade in" id="ver0">
+				{% else %}
+				<div role="tabpanel" class="tab-pane fade" id="ver{{ version }}">
+				{% endif %}
+					<form>
+						<h4>Version</h4>
+						<div class="form-group input-group">
+							<label for="major" class="input-group-addon">Major: </label>
+							<input type="number" class="form-control" required value="{{ version }}" id="major" name="major">
+						</div>
+						<div class="form-group input-group">
+							<label for="minor" class="input-group-addon">Minor: </label>
+							<input type="number" class="form-control" required value="{{ version }}" id="minor" name="minor">
+						</div>
+						<div class="form-group input-group">
+							<label for="patch" class="input-group-addon">Patch: </label>
+							<input type="number" class="form-control" required value="{{ version }}" id="patch" name="patch">
+						</div>
+						<h4>Files</h4>
+						<div class="form-inline" style="margin-bottom:3px;">
+							<input type="text" class="form-control" placeholder="Title" value="{{ version }}" name="link_title" id="link_title" aria-label="Title" title="Link Title" />
+							<input type="text" class="form-control" placeholder="Target" value="{{ version }}" name="link_target" id="link_target" aria-label="URL" title="Link Target" />
+							<button type="button" class="btn btn-success" onclick="add_link($(this).parent());" aria-label="Add" title="Add">+</button>
+							<button type="button" class="btn btn-danger" onclick="remove_link(this);" aria-label="Remove" title="Remove">X</button>
+						</div>
+						<div class="form-inline" style="margin-bottom:3px;">
+							<input type="text" class="form-control" placeholder="Title" value="{{ version }}" name="link_title" id="link_title" aria-label="Title" title="Link Title" />
+							<input type="text" class="form-control" placeholder="Target" value="{{ version }}" name="link_target" id="link_target" aria-label="URL" title="Link Target" />
+							<button type="button" class="btn btn-success" onclick="add_link($(this).parent());" aria-label="Add" title="Add">+</button>
+							<button type="button" class="btn btn-danger" onclick="remove_link(this);" aria-label="Remove" title="Remove">X</button>
+						</div>
+						<h4>Changelog</h4>
+						<textarea class="form-control" id="changelog" name="changelog"></textarea>
+						<h4>Date</h4>
+						<input class="form-control" id="date" name="date" placeholder="YYYY-MM-DD" />
+						<br />
+						<button class="btn btn-success btn-lg" type="submit">Save</button>
+					</form>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<!-- TODO Project Version Editing -->

@@ -36,16 +36,21 @@
 		var title = $("#title").val();
 		var text = CKEDITOR.instances['rich-text'].getData();
 		var images = $("#images").children("img").map(function () { return $(this).attr("src"); }).get();
-		var tags = $("#tags").val();
+
+		var link_titles = $("#links").children().children("#link_title").map(function () { return $(this).val(); }).get();
+		var link_targets = $("#links").children().children("#link_target").map(function () { return $(this).val(); }).get();
+
 		var featured = $("#status_featured").prop("checked");
 		var priority = $("#priority").val();
+
+		var tags = $("#tags").val();
 		var thumbnail = $("#thumbnail").attr("src");
 		if (thumbnail == undefined || thumbnail == 'undefined')
 			thumbnail = '';
 		var description = $("#description").val();
 
 		$.post(window.location,
-			{action: "save", title: title, text: text, images: images, tags: tags, featured: featured, priority: priority, thumbnail: thumbnail, description: description },
+			{ action: "save", title: title, text: text, images: images, tags: tags, featured: featured, priority: priority, thumbnail: thumbnail, description: description, link_titles: link_titles, link_targets: link_targets },
 			function (result) {
 				if (result.messages == undefined || result.messages == 'undefined' || result.messages == null) {
 					flash("Project could not be saved:<br />"+result, "danger")
@@ -56,12 +61,33 @@
 				}
 			});
 	}
+	function add_link(jq) {
+		jq.after('<div class="form-inline" style="margin-bottom:3px;">\n'
+			+ '<input type="text" class="form-control" placeholder="Title" name="link_title" id="link_title" aria-label="Title" title="Link Title" />\n'
+			+ '<input type="text" class="form-control" placeholder="Target" name="link_target" id="link_target" aria-label="URL" title="Link Target" />\n'
+			+ '<button type="button" class="btn btn-success" onclick="add_link($(this).parent());" aria-label="Add" title="Add">+</button>\n'
+			+ '<button type="button" class="btn btn-danger" onclick="remove_link(this);" aria-label="Remove" title="Remove">X</button>\n'
+			+ '</div>');
+		$("#project_link_add").hide();
+	}
+	function remove_link(button) {
+		var parent = $(button).parent();
+		if (parent.siblings().length < 4)
+			$("#project_link_add").show();
+		parent.remove();
+	}
+	$(document).ready(function () {
+		$('#images').tooltip()
+	});
 </script>
-<form onsubmit="project_save(event); return false;">
+<form onsubmit="project_save(event); return false;" name="project_edit">
 	<div class="form-group">
-		<input type="text" class="form-control" name="title" id="title" placeholder="Project Title" required value="{{ content.data.name }}" />
+		<div class="input-group">
+			<span class="input-group-addon">Title</span>
+			<input type="text" class="form-control" name="title" id="title" placeholder="Project Title" required value="{{ content.data.name }}" />
+		</div>
 	</div>
-	<div class="well image-scroller" title="Drag images to reorder" id="images">
+	<div class="well image-scroller" data-toggle="tooltip" data-placement="bottom" title="Drag images to reorder" id="images">
 			{% for img in content.data.images %}
 			<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />
 			{% endfor %}
@@ -73,9 +99,18 @@
 	<div class="form-group">
 		<textarea class="form-control" id="rich-text" name="text" required placeholder="Project Text">{% if content.data.text %}{{ content.data.text }}{% endif %}</textarea>
 		{{ rich_text('rich-text') }}
-	</div>	
-	<span class="pull-right">{{ rich_text_insert() }}</span>
-	<!-- TODO Project Links-->
-	<button type="submit" class="btn btn-info btn-lg">Save</button>
-	<button type="button" class="btn btn-warning btn-lg">Versions</button>
+	</div>
+	<div id="links">
+		<span class="pull-right" style="margin-top:-10px;">{{ rich_text_insert() }}</span>
+		<h3 style="text-align:left;">Links</h3>
+		<button type="button" class="btn btn-primary"{% if content.data.links|length > 0 %} style="display:none;"{% endif %} id="project_link_add" onclick="add_link($(this));">Add Link</button>
+		{% for item in content.data.links %}
+		<div class="form-inline" style="margin-bottom:3px;">
+			<input type="text" class="form-control" placeholder="Title" value="{{ item.title }}" name="link_title" id="link_title" aria-label="Title" title="Link Title" />
+			<input type="text" class="form-control" placeholder="Target" value="{{ item.link }}" name="link_target" id="link_target" aria-label="URL" title="Link Target" />
+			<button type="button" class="btn btn-success" onclick="add_link($(this).parent());" aria-label="Add" title="Add">+</button>
+			<button type="button" class="btn btn-danger" onclick="remove_link(this);" aria-label="Remove" title="Remove">X</button>
+		</div>
+		{% endfor %}
+	</div>
 </form>

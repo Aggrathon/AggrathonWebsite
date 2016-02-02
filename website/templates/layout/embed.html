@@ -1,2 +1,8 @@
-﻿{% extends "layout/layout.html" %}
-{% block header %}&nbsp;{% endblock %}
+{% extends "layout/layout.html" %}
+{% block header %}&nbsp;
+<script>
+	$(document).ready(function () {
+		$(".container").attr('class', 'container-fluid');
+	});
+</script>
+{% endblock %}
