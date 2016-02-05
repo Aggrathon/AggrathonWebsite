@@ -1,0 +1,50 @@
+{% macro versions() %}	
+{# 
+	This macro contains a modal window for editing versions
+	Open it with a button that calls 'versions_open(path, title);'
+#}
+	{% if not macro_versions %}
+		{% set macro_versions = true %}
+		<div class="modal fade" id="versions_modal" onload="$('body').append($(this));">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" data-toggle="tooltip" data-placement="left" title="Remember to Save"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Edit Project Versions</h4>
+					</div>
+					<div class="modal-body" style="padding:0.2em;">
+						<iframe id="versions_iframe" style="width:100%;"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function versions_open(path, title) {
+				var url = "{{ url_for('project_versions_embed') }}";
+				var purl = url + "?project=" + encodeURIComponent(path);
+				var modal = $("#versions_modal");
+				var iframe = modal.find("#versions_iframe");
+				if (iframe.attr('src') == purl) {
+					modal.modal('show');
+				} else {
+					iframe.attr('src', purl);
+					modal.modal('show');
+				}
+				if (title) {
+					modal.find(".modal-title").text("Edit versions for project '"+title+"' at '"+path+"'");
+				} else {
+					modal.find(".modal-title").text("Edit Project Versions");
+				}
+			}
+			$('#versions_iframe').load(function () {
+				setTimeout(function () {
+					var iframe = $('#versions_iframe');
+					iframe.height(iframe.contents().height());
+				}, 200)
+			});
+			$(document).ready(function () {
+				$('#versions_modal .modal-header button').tooltip()
+			});
+		</script>
+	{% endif %}
+{% endmacro %}

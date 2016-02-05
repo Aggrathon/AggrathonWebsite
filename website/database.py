@@ -168,10 +168,7 @@ class Project(db.Model):
 		self.thumbnail = thumbnail
 		
 	def get_latest_version(self):
-		ver = ProjectVersion.query.filter_by(project=self).order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).first()
-		if ver.major is 0 and ver.minor is 0 and ver.patch is 0:
-			return None
-		return ver
+		return ProjectVersion.query.filter_by(project=self).order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).first()
 
 	def __repr__(self):
 		return '<Project %r>' %self.title
@@ -212,22 +209,38 @@ class ProjectVersion(db.Model):
 	minor = db.Column(db.Integer)
 	patch = db.Column(db.Integer)
 	changelog = db.Column(db.Text)
+	date = db.Column(db.Date)
 	files = db.relationship("ProjectFile", back_populates="version")
 	__table_args__ = (None, db.UniqueConstraint('project_id', 'major', 'minor', 'patch', name='project_version_unique') )
 	
-	def __init__(self, project, major=1, minor=0, patch=0, changelog=""):
+	def __init__(self, project, major=1, minor=0, patch=0, changelog="", date=None):
 		self.project = project
 		self.major = major
 		self.minor = minor
 		self.patch = patch
 		self.changelog = changelog
+		if date is None:
+			self.date = datetime.date.today()
+		elif type(date) == str:
+			if not self.set_date(date):
+				self.date = datetime.date.today()
+		else:
+			self.date = date
+
+	def set_date(self, iso_date):
+		try:
+			d = datetime.datetime.strptime(iso_date, "%Y-%m-%d")
+			self.date = d.date()
+			return True
+		except ValueError:
+			return False
 	
 	def get_version(self):
 		ver = str(self.major)
 		if(self.minor is not 0 or self.patch is not 0):
-			ver += ".%r" %self.minor
+			ver += ".%d" %self.minor
 		if(self.patch != 0):
-			ver += ".%r" %self.patch
+			ver += ".%d" %self.patch
 		return ver
 
 	def __repr__(self):
@@ -239,7 +252,6 @@ class ProjectFile(db.Model):
 	version = db.relationship('ProjectVersion', back_populates="files")
 	title = db.Column(db.Text)
 	url = db.Column(db.Text)
-	__table_args__ = (None, db.UniqueConstraint('version_id', 'title', name='project_file_unique') )
 	
 	
 	def __init__(self, version, title, url):
@@ -248,7 +260,7 @@ class ProjectFile(db.Model):
 		self.url = url
 		
 	def __repr__(self):
-		return '<Project %r (%r.%r.%r) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
+		return '<Project %r (%d.%d.%d) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
 
 class ProjectTag(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -299,7 +311,7 @@ class ProjectLast(db.Model):
 			db.session.delete(ProjectLast.query.order_by('time').first())
 
 	def update(project):
-		last = ProjectLast.query.filter_by(project_id=project.id).first()
+		last = ProjectLast.query.get(project.id)
 		if last is None:
 			db.session.add(ProjectLast(project))
 		else:

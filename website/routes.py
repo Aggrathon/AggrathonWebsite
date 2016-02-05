@@ -205,9 +205,34 @@ def project_tags():
 @app.route('/admin/projects/versions/embed/', methods=['GET', 'POST'])
 @login_required
 def project_versions_embed():
-	if request.method == 'POST':
-		pass#TODO handle project version actions
-	return render_page_embed_fromfile(None, 'admin/projects/versions.html')
+	path = request.args.get('project')
+	if request.method == 'POST' and path:
+		action = request.form.get('action')
+		if action:
+			if action == 'delete':
+				major = request.form.get('major')
+				minor = request.form.get('minor')
+				patch = request.form.get('patch')
+				return model.project_version_delete(path, major, minor, patch)
+		else:
+			try:
+				major = int(request.form.get('major'))
+				minor = int(request.form.get('minor'))
+				patch = int(request.form.get('patch'))
+				changelog = request.form.get('changelog')
+				date = request.form.get('date')
+				file_titles = request.form.getlist('file_title')
+				file_urls = request.form.getlist('file_target')
+				if major is not None and minor is not None and patch is not None and changelog is not None and date:
+					model.project_version_set(path, major, minor, patch, changelog, date, file_titles, file_urls)
+				else:
+					flash("Could not save the version because of missing data:<br />\n%r"%request.form, model.FLASH_ERROR)
+				return render_page_embed_fromfile(None, 'admin/projects/versions.html', open_version="%d_%d_%d"%(major,minor,patch), **model.project_versions_get(path))
+			except ValueError:
+				flash("Invalid format on data (numbers must be integers)", model.FLASH_ERROR)
+	elif not path:
+		flash("No project specified", "danger")
+	return render_page_embed_fromfile(None, 'admin/projects/versions.html', **model.project_versions_get(path))
 
 
 @app.route('/admin/files/', methods=['GET', 'POST'])

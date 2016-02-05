@@ -1,4 +1,5 @@
 from flask import abort, flash, url_for
+from flask.json import dumps as jsondump
 from werkzeug import secure_filename
 from database import *
 from app import login_manager, mail
@@ -7,6 +8,8 @@ from flask_login import current_user
 import os
 from random import SystemRandom
 import string
+
+#OPTIONAL [Structure] Break theese big files into modules based on feature
 
 ### CONSTANTS ###
 RETURN_SUCCESS = 'success'
@@ -312,11 +315,10 @@ def project_get(path):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
 		abort(404)
-	files = ProjectVersion.query.filter_by(project=project, major=0, minor=0, patch=0).first().files
 	latest = project.get_latest_version()
 	if latest is not None:
-		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files + latest.files, "version":latest.get_version(), "changelog":latest.changelog}
-	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":files}
+		return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links, "files":latest.files, "version":latest.get_version(), "changelog":latest.changelog}
+	return {"name":project.title, "text":project.text, "images":project.images, "tags":[tag.tag.tag for tag in project.tags], "links":project.links}
 
 def project_get_admin(path):
 	project = db.session.query(Project.title, Project.text, Project.id, Project.thumbnail, Project.description, ProjectFeatured.priority).filter_by(path=path).outerjoin(ProjectFeatured).first()
@@ -340,7 +342,7 @@ def project_list(tags=None,order=None):
 	if order == 'name':
 		projects.sort(key=lambda p: p.title)
 	elif order == 'updated':
-		pass#TODO Project timing
+		pass#TODO [Project] Remember dates
 	else: #order is 'created'
 		pass
 	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'tags':[t[0] for t in \
@@ -353,6 +355,19 @@ def project_tags():
 def project_list_admin():
 	projects = db.session.query(Project.title, Project.path, ProjectFeatured.project_id.label('featured'), ProjectFeatured.priority).outerjoin(ProjectFeatured).all()
 	return projects
+
+def project_versions_get(path):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		flash("Project at %r not found" %path, FLASH_ERROR)
+	pvs = ProjectVersion.query.order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).all()
+	data = {}
+	list = []
+	for i in pvs:
+		id = 'ver%d_%d_%d'%(i.major,i.minor,i.patch)
+		data[id] = {'major':i.major, 'minor':i.minor, 'patch':i.patch, 'changelog':i.changelog, 'date':i.date.isoformat(), 'files': [{'title':f.title, 'url':f.url} for f in i.files]}
+		list.append({'id':id, 'name':i.get_version()})
+	return {'versions':jsondump(data), 'list':list}
 
 #endregion
 
@@ -380,10 +395,9 @@ def project_create(path, title, text, description, thumbnail, tags, images, link
 	while counter < len(link_titles):
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
-	db.session.add(ProjectVersion(project, 0, 0, 0))
 	project_tags_set(project, tags)
-	db.session.add(ProjectLast(project))
 	db.session.commit()
+	ProjectLast.update(Project.query.filter_by(path=path).first())
 	if flash_result:
 		flash('New Project Created', FLASH_SUCCESS)
 		
@@ -442,18 +456,19 @@ def project_move(path, newpath):
 		return RETURN_SUCCESS
 	return "Project '%r' not found" %path
 	
-def project_version_set(path, versions):
+def project_versions_set(path, versions):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
-		return "Project '%r' not found" %path
+		return "Project at '%r' not found" %path
 	counter = 0
 	for ver in versions:
 		pv = ProjectVersion.query.filter_by(project_id=project.id, major=ver['major'], minor=ver['minor'], patch=ver['patch']).first()
 		if pv is None:
-			project_version_create(project, ver['major'], ver['minor'], ver['patch'], ver['changelog'], ver.get('file_titles'), ver.get('file_urls'))
+			project_version_create(project, ver['major'], ver['minor'], ver['patch'], ver['changelog'], ver['date'], ver.get('file_titles'), ver.get('file_urls'))
 		else:
 			counter += 1
 			pv.changelog = ver['changelog']
+			pv.set_date(ver['date'])
 			project_files_set(pv, ver.get('file_titles'), ver.get('file_urls'))
 	if counter < len(project.versions):
 		for ver in project.versions:
@@ -465,11 +480,45 @@ def project_version_set(path, versions):
 			if delete:
 				db.session.delete(ver)
 	db.session.commit()
+
+def project_version_set(path, major, minor, patch, changelog, date, file_titles, file_urls, flash_result=True):
+	project = Project.query.filter_by(path=path).first()
+	if(project is None):
+		return "Project at '%r' not found" %path
+	pv = ProjectVersion.query.filter_by(project_id=project.id, major=major, minor=minor, patch=patch).first()
+	if not pv:
+		project_version_create(project, major, minor, patch, changelog, date, file_titles, file_urls)
+		db.session.commit()
+		if flash_result:
+			flash("Version '%d.%d.%d' for project %r at %r created" %(major, minor, patch, project.title, project.path), FLASH_SUCCESS)
+	else:
+		pv.major = major
+		pv.minor = minor
+		pv.patch = patch
+		pv.changelog = changelog
+		project_files_set(pv, file_titles, file_urls)
+		if not pv.set_date(date):
+			if flash_result:
+				flash("Invalid date format (use YYYY-MM-DD)", FLASH_WARNING)
+		db.session.commit()
+		if flash_result:
+			flash("Version %r for project %r at %r saved" %(pv.get_version(), project.title, project.path), FLASH_SUCCESS)
 	
-def project_version_create(project, major, minor, patch, changelog, file_titles, file_urls):
-	pv = ProjectVersion(project, major, minor, patch, changelog)
+def project_version_create(project, major, minor, patch, changelog, date, file_titles, file_urls):
+	pv = ProjectVersion(project, major, minor, patch, changelog, date)
 	db.session.add(pv)
 	project_files_set(pv, file_titles, file_urls)
+
+def project_version_delete(path, major, minor, patch):
+	project = db.session.query(Project.id).filter_by(path = path).first();
+	if not project:
+		return "Project at %r not found" %path
+	pv = ProjectVersion.query.filter_by(project_id=project.id, major=major, minor=minor, patch=patch).first()
+	if not pv:
+		return "Version %d.%d.%d for project at %r not found" %(major, minor, patch, path)
+	db.session.delete(pv)
+	db.session.commit()
+	return RETURN_SUCCESS
 		
 def project_files_set(version, titles, urls):
 	if titles is None:
@@ -527,6 +576,9 @@ def project_feature_set(path, featured=False, priority=10):
 		if not pf:
 			db.session.add(ProjectFeatured(project, priority))
 			db.session.commit()
+		elif pf.priority != priority:
+			pf.priority = priority
+			db.session.commit()
 	elif pf:
 		db.session.delete(pf)
 		db.session.commit()
@@ -567,6 +619,9 @@ def project_delete(path):
 		feat = ProjectFeatured.query.get(project.id)
 		if feat is not None:
 			db.session.delete(feat)
+		lat = ProjectLast.query.get(project.id)
+		if lat is not None:
+			db.session.delete(lat)
 		for tag in project.tags:
 			db.session.delete(tag)
 		db.session.commit()
@@ -886,7 +941,7 @@ def create_test_data():
 	page_set("test3", "Test Page 3", "[insert content here]", flash_result=False)
 	
 	project_set("test", "Test Project 1", "[insert content here]", "test project", "/static/background.jpg", "test", ["/static/background.jpg"], ["Ludum Dare"], ["http://ludumdare.com/compo/"], True, flash_result=False)
-	project_version_set("test", [{'major':0, 'minor':0, 'patch':0, 'changelog':""},{'major':99, 'minor':99, 'patch':99, 'changelog':"Feature 1\nFeature 2\nFeature 3\nFeature 4", 'file_titles':['File 1'], 'file_urls':['file.txt']}])
+	project_versions_set("test", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'date':'2016-01-01'},{'major':99, 'minor':99, 'patch':99, 'changelog':"Feature 1\nFeature 2\nFeature 3\nFeature 4", 'date':'2016-01-01', 'file_titles':['File 1'], 'file_urls':['file.txt']}])
 
 	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
 
