@@ -1,4 +1,4 @@
-﻿from flask import Flask
+from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_recaptcha import ReCaptcha
@@ -20,6 +20,11 @@ wsgi_app = app.wsgi_app
 #Include all routes
 from routes import *
 
+### List of work left todo:
+#	TODO		[Meta]		Write readme (and license?)
+#	OPTIONAL	[Structure]	Break the big files into modules based on feature
+#	OPTIONAL	[Feature]	Backup
+#	OPTIONAL	[Feature]	Cache
 
 if __name__ == '__main__':
 	import os

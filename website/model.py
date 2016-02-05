@@ -9,7 +9,6 @@ import os
 from random import SystemRandom
 import string
 
-#OPTIONAL [Structure] Break theese big files into modules based on feature
 
 ### CONSTANTS ###
 RETURN_SUCCESS = 'success'
