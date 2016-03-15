@@ -41,6 +41,8 @@ HOOK_DATABASE_CREATE = "database_create"
 HOOK_DATABASE_RESET = "database_reset"
 HOOK_ADMIN_SIDEBAR = "admin_sidebar"
 HOOK_ADMIN_WIDGET = "admin_widget"
+HOOK_ADMIN_BUTTONS = "admin_buttons"
+HOOK_TEST_CONTENT = "create_test_content"
 
 import database
 add_hook(HOOK_DATABASE_CREATE, database.create_self)

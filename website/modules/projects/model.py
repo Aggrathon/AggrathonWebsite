@@ -1,5 +1,6 @@
 from .database import *
 from flask import abort, flash, url_for
+from model import RETURN_SUCCESS, FLASH_SUCCESS, FLASH_WARNING, FLASH_ERROR
 
 #region PROJECT_GET
 
@@ -332,3 +333,7 @@ def project_delete(path):
 		return RETURN_SUCCESS
 
 #endregion
+
+def create_test_data():
+	project_set("test", "Test Project 1", "[insert content here]", "test project", "/static/background.jpg", "test", ["/static/background.jpg"], ["Ludum Dare"], ["http://ludumdare.com/compo/"], True, flash_result=False)
+	project_versions_set("test", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'date':'2016-01-01'},{'major':99, 'minor':99, 'patch':99, 'changelog':"Feature 1\nFeature 2\nFeature 3\nFeature 4", 'date':'2016-01-01', 'file_titles':['File 1'], 'file_urls':['file.txt']}])

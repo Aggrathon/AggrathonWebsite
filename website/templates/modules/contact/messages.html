@@ -12,7 +12,7 @@
 		return false;
 	}
 	function banSender(messageId) {
-		addToBlacklist(messages[messageId].email);
+		addToBlacklist($('#message' + messageId).find("#email").text());
 		deleteMessage(messageId);
 	}
 
@@ -159,7 +159,7 @@
 						<div id="time" hidden>{{ mess.time.year }}-{{ mess.time.month }}-{{ mess.time.day }} {{ mess.time.hour }}:{{ mess.time.minute }}</div>
 					</td>
 					<td colspan="4">
-						<div class=" btn-group">
+						<div class="btn-group">
 							<button class="btn btn-success" type="button" title="Send to Email" onclick="sendEmail({{ mess.id }});">
 								<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
 								<span class="sr-only">Send to Email</span>
@@ -169,7 +169,7 @@
 								<span class="sr-only">Reply to Email</span>
 							</button>
 						</div>
-						<div class=" btn-group pull-right">
+						<div class="btn-group pull-right">
 							<button class="btn btn-danger" type="button" title="Ban Sender" onclick="banSender({{ mess.id }});">
 								<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
 								<span class="sr-only">Ban Sender</span>

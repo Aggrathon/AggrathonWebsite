@@ -97,7 +97,6 @@ def create_sidebar_admin():
 		]
 	for link in get_hook(HOOK_ADMIN_SIDEBAR):
 		links.append(link())
-	links.append((url_for('messages'), 'Messages', [(url_for('blacklist'), 'Blacklist'),(url_for('forwarding'), 'Forwarding')], ''))
 	links.append((url_for('files'), 'Files', [], ''))
 	links.append((url_for('logout'), 'Log Out', [], ''))
 	return create_sidebar_fromfile("admin/sidebar.html", links=links)
@@ -114,29 +113,6 @@ def show_page(path):
 """
 	Admin pages
 """
-from enum import Enum
-class AdminPages(Enum):
-	setup = 2
-	pages = 3
-	messages = 6
-	blacklist = 7
-	forwarding = 9
-
-def show_admin(page):
-	if page is AdminPages.setup:
-		return create_page_admin('Setup', 'admin/setup.html', users=model.get_user_list(), **model.get_site_info())
-	if page is AdminPages.pages:
-		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list_admin())
-	if page is AdminPages.messages:
-		return create_page_admin('Messages', 'admin/messages/messages.html', **model.message_list(try_int(request.args.get("start"), 1) - 1, try_int(request.args.get("amount"), 20)))
-	if page is AdminPages.blacklist:
-		return create_page_admin("Message Blacklist", 'admin/messages/blacklist.html', blacklist=model.message_blacklist())
-	if page is AdminPages.forwarding:
-		return create_page_admin("Message Forwarding", 'admin/messages/forwarding.html', forwardlist=model.message_forward_list())
-	else:
-		flash("Unrecognized call for adminpage, showing main adminpage", "warning")
-		return create_page_admin('Admin', 'admin/overview.html', hide_title=True, **model.get_admin_front())
-
 def create_page_admin(title, file, **kwargs):
 	return render_page(create_page_fromfile(title, file, **kwargs), create_sidebar_admin())
 

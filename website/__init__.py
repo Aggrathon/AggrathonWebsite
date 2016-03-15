@@ -2,7 +2,7 @@ __all__ = ["app", "database", "model", "routes", "view", "modules"]
 
 ### List of work left:
 #	TODO		[Meta]		Write readme (and license?)
-#	OPTIONAL	[Structure]	Break the big files into modules based on feature
+#	TODO		[Files]		Improve file management
 #	OPTIONAL	[Feature]		Backup
 #	OPTIONAL	[Feature]		Cache
 
