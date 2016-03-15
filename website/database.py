@@ -1,5 +1,6 @@
 from flask.ext.sqlalchemy import SQLAlchemy
-from app import app
+from app import app, get_hook, HOOK_DATABASE_CREATE, HOOK_DATABASE_RESET, HOOK_DATABASE_SETUP_CHECK
+from flask import url_for
 from database import *
 from flask_login import make_secure_token
 from os import urandom
@@ -19,12 +20,6 @@ db = SQLAlchemy(app)
 	PageBlurb(page_id, description, image)
 	FeaturedPage(page_id, priority)
 	PagePrivate(page_id)
-
-	Project(id, title, content, ...)
-	ProjectBlurb(project_id, description, image)
-	FeaturedProject(project_id, priority)
-
-	MORE PROJECT STUFF COMING
 
 	Message(id, email, subject, message, time)
 	MessageUnread(message_id)
@@ -77,6 +72,10 @@ class Page(db.Model):
 	path = db.Column(db.Text, unique=True)
 	title = db.Column(db.Text)
 	content = db.Column(db.Text)
+
+	@property
+	def url(self):
+		return url_for("page", self.path)
 
 	def __init__(self, path, title, content):
 		self.title = title
@@ -143,183 +142,6 @@ class PageLast(db.Model):
 
 	def __repr__(self):
 		return '<Last Page: %r at %r>' %(self.page.title, self.time)
-
-
-###  PROJECTS  ###
-
-class Project(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	path = db.Column(db.Text, unique=True)
-	title = db.Column(db.Text)
-	text = db.Column(db.Text)
-	description = db.Column(db.Text)
-	thumbnail = db.Column(db.Text)
-	images = db.relationship("ProjectImage", back_populates="project")
-	links = db.relationship("ProjectLink", back_populates="project")
-	versions = db.relationship("ProjectVersion", back_populates="project")
-	tags = db.relationship("ProjectTagged", back_populates="project")
-	
-
-	def __init__(self, path, title, text, description, thumbnail):
-		self.title = title
-		self.path = path
-		self.text = text
-		self.description = description
-		self.thumbnail = thumbnail
-		
-	def get_latest_version(self):
-		return ProjectVersion.query.filter_by(project=self).order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).first()
-
-	def __repr__(self):
-		return '<Project %r>' %self.title
-	
-class ProjectImage(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	project = db.relationship('Project', back_populates="images")
-	image = db.Column(db.Text)
-
-	def __init__(self, project, image):
-		self.project = project
-		self.image = image
-
-	def __repr__(self):
-		return '<Project %r Image: %r>' %(self.project.title, self.image)
-
-class ProjectLink(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	project = db.relationship('Project', back_populates="links")
-	link = db.Column(db.Text)
-	title = db.Column(db.Text)
-	
-	def __init__(self, project, title, link):
-		self.project = project
-		self.title = title
-		self.link = link
-
-	def __repr__(self):
-		return '<Project %r Link: %r>' %(self.project.title, self.link)
-
-class ProjectVersion(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	project = db.relationship('Project', back_populates="versions")
-	major = db.Column(db.Integer)
-	minor = db.Column(db.Integer)
-	patch = db.Column(db.Integer)
-	changelog = db.Column(db.Text)
-	date = db.Column(db.Date)
-	files = db.relationship("ProjectFile", back_populates="version")
-	__table_args__ = (None, db.UniqueConstraint('project_id', 'major', 'minor', 'patch', name='project_version_unique') )
-	
-	def __init__(self, project, major=1, minor=0, patch=0, changelog="", date=None):
-		self.project = project
-		self.major = major
-		self.minor = minor
-		self.patch = patch
-		self.changelog = changelog
-		if date is None:
-			self.date = datetime.date.today()
-		elif type(date) == str:
-			if not self.set_date(date):
-				self.date = datetime.date.today()
-		else:
-			self.date = date
-
-	def set_date(self, iso_date):
-		try:
-			d = datetime.datetime.strptime(iso_date, "%Y-%m-%d")
-			self.date = d.date()
-			return True
-		except ValueError:
-			return False
-	
-	def get_version(self):
-		ver = str(self.major)
-		if(self.minor is not 0 or self.patch is not 0):
-			ver += ".%d" %self.minor
-		if(self.patch != 0):
-			ver += ".%d" %self.patch
-		return ver
-
-	def __repr__(self):
-		return '<Project %r Version: %r.%r.%r>' %(self.project.title, self.major, self.minor, self.patch)
-
-class ProjectFile(db.Model):	
-	id = db.Column(db.Integer, primary_key=True)
-	version_id = db.Column(db.Integer, db.ForeignKey('project_version.id'))
-	version = db.relationship('ProjectVersion', back_populates="files")
-	title = db.Column(db.Text)
-	url = db.Column(db.Text)
-	
-	
-	def __init__(self, version, title, url):
-		self.version = version
-		self.title = title
-		self.url = url
-		
-	def __repr__(self):
-		return '<Project %r (%d.%d.%d) File: %r>' %(self.version.project.title, self.version.major, self.version.minor, self.version.patch, self.title)
-
-class ProjectTag(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	tag = db.Column(db.String, unique=True)
-	projects = db.relationship('ProjectTagged', back_populates="tag")
-	
-	def __init__(self, tag):
-		self.tag = tag
-		
-	def __repr__(self):
-		return '<Tag: %r>' %self.tag
-	
-class ProjectTagged(db.Model):
-	tag_id = db.Column(db.Integer, db.ForeignKey('project_tag.id'), primary_key=True)
-	tag =  db.relationship("ProjectTag", back_populates="projects")
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	project = db.relationship("Project", back_populates="tags")
-	
-	def __init__(self, project, tag):
-		self.tag = tag
-		self.project = project
-	
-	def __repr__(self):
-		return "<Project Tag: '%r' '%r'>" %(self.project.title, self.tag.tag)
-	
-	
-class ProjectFeatured(db.Model):
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	project = db.relationship('Project')
-	priority = db.Column(db.Integer)
-
-	def __init__(self, project, priority=0):
-		self.project = project
-		self.priority = priority
-
-	def __repr__(self):
-		return '<Featured: Project %r>' %self.project.title
-
-class ProjectLast(db.Model):
-	project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-	project = db.relationship('Project')
-	time = db.Column(db.DateTime)
-
-	def __init__(self, project):
-		self.project = project
-		self.time = datetime.datetime.today()
-		if ProjectLast.query.count() >= 5:
-			db.session.delete(ProjectLast.query.order_by('time').first())
-
-	def update(project):
-		last = ProjectLast.query.get(project.id)
-		if last is None:
-			db.session.add(ProjectLast(project))
-		else:
-			last.time = datetime.datetime.today()
-		db.session.commit()
-
-	def __repr__(self):
-		return '<Last Project: %r at %r>' %(self.page.name, self.time)
 
 
 ###  MESSAGES  ###
@@ -431,60 +253,71 @@ class User(db.Model):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
-### SETUP ####
+#region SETUP
+
+def setup_db():
+	try:
+		for dbf in get_hook(HOOK_DATABASE_SETUP_CHECK):
+			dbf()
+	except Exception as e:
+		print('\033[93m'+format(e)+'\033[0m')
+		if app.config['DATABASE_SCHEMA_ERROR_ACTION'] == 'NOTHING':
+			print('\033[93m'+"The Database Schema doesn't match the website, check the database or use the 'Reset Database' function (in /admin/setup/) to remove old data"+'\033[0m')
+		else:
+			reset_db()
+			print('\033[93m'+"The Database has been reset due to not matching the website"+'\033[0m')
 
 def create_db():
 	db.create_all()
 	db.session.commit()
 	session = SQLAlchemy.create_scoped_session(db)
+	for dbf in get_hook(HOOK_DATABASE_CREATE):
+		dbf(session)
+	session.commit();
+
+def reset_db():
+	for dbf in get_hook(HOOK_DATABASE_RESET):
+		dbf()
+	db.drop_all()
+	create_db()
+
+#endregion
+
+#region SETUP SELF
+
+def setup_self():
+	if(Site.query.first() is None):
+		raise Exception ("Site information not found")
+	Menu.query.first()
+	Text.query.first()
+
+	Page.query.first()
+	PageBlurb.query.first()
+	FeaturedPage.query.first()
+	PagePrivate.query.first()
+	PageLast.query.count()
+
+	MessageBlacklist.query.first()
+	MessageUnread.query.first()
+	Message.query.first()
+	MessageForwarding.query.first();
+
+	User.query.first()
+
+def create_self(session):
 	session.add(Site(app.config['WEBSITE_NAME'], app.config['WEBSITE_HEADER'], app.config['WEBSITE_LANGUAGE']))
 	for item in app.config['WEBSITE_MENU']:
 		session.add(Menu(item['title'], item['target'] ))
 	for user in app.config['WEBSITE_ADMIN']:
 		session.add(User(user))
 	session.add( Page('/', '', 'This is the main page') )
-	session.commit();
 
-def reset_db():
+def reset_self():
 	try:
 		for user in User.query.all():
 			if user.email not in app.config['WEBSITE_ADMIN']:
 				app.config['WEBSITE_ADMIN'].append(user.email)
 	except:
 		pass
-	db.drop_all()
-	create_db()
 
-def check_if_setup():
-	try:
-		if(Site.query.first() is None):
-			raise Exception ("Site information not found")
-		Menu.query.first()
-		Text.query.first()
-
-		Page.query.first()
-		PageBlurb.query.first()
-		FeaturedPage.query.first()
-		PagePrivate.query.first()
-		PageLast.query.count()
-
-		Project.query.first()
-		ProjectImage.query.first()
-		ProjectLink.query.first()
-		ProjectVersion.query.first()
-		ProjectFile.query.first()
-		ProjectTag.query.first()
-		ProjectTagged.query.first()
-		ProjectFeatured.query.first()
-		ProjectLast.query.first()
-
-		MessageBlacklist.query.first()
-		MessageUnread.query.first()
-		Message.query.first()
-		MessageForwarding.query.first();
-
-		User.query.first()
-	except Exception as e:
-		print('\033[93m'+format(e)+'\033[0m')
-		return False
-	return True
+#endregion

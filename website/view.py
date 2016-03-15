@@ -1,9 +1,9 @@
 """
 	File containing all methods required for rendering pages
 """
-from flask import render_template, flash, abort, request
+from flask import render_template, flash, abort, request, url_for
 from flask_login import current_user
-from app import app
+from app import app, get_hook, HOOK_SIDEBAR_FEATURED_LIST, HOOK_ADMIN_SIDEBAR
 import model
 
 """
@@ -28,6 +28,7 @@ import model
 		file: url to a file containing a custom sidebar
 		data: the data to send to the sidebarfile
 """
+
 def __render_page(siteInfo, pageInfo, sidebarInfo=None):
 	return render_template("layout/layout.html", site=siteInfo, content=pageInfo, sidebar=sidebarInfo)
 
@@ -78,15 +79,28 @@ def create_sidebar_fromfile(file, **data):
 	Standard sidebars
 """
 def create_sidebar_featured():
-	pages = model.featured_pages()
-	projects = model.featured_projects()
-	if(pages is None and projects is None):
+	feats = []
+	for list in get_hook(HOOK_SIDEBAR_FEATURED_LIST):
+		result = list()
+		if result:
+			feats.append(result)
+	if(len(feats) == 0):
 		return None
 	else:
-		return create_sidebar_fromfile("frontend/sidebar_featured.html", featuredPages=pages, featuredProjects=projects)
+		return create_sidebar_fromfile("frontend/sidebar_featured.html", featured=feats)
 
 def create_sidebar_admin():
-	return create_sidebar_fromfile("admin/sidebar.html")
+	links = [
+		(url_for('admin'), 'Overview', [], ''), 
+		(url_for('setup'), 'Setup', [], ''), 
+		(url_for('pages_admin'), 'Pages', [(url_for('pages_create'), 'Create Page')], '')
+		]
+	for link in get_hook(HOOK_ADMIN_SIDEBAR):
+		links.append(link())
+	links.append((url_for('messages'), 'Messages', [(url_for('blacklist'), 'Blacklist'),(url_for('forwarding'), 'Forwarding')], ''))
+	links.append((url_for('files'), 'Files', [], ''))
+	links.append((url_for('logout'), 'Log Out', [], ''))
+	return create_sidebar_fromfile("admin/sidebar.html", links=links)
 
 
 """
@@ -98,44 +112,21 @@ def show_page(path):
 
 
 """
-	Methods for rendering projects of standard types
-"""
-def show_project(path):
-	project = model.project_get(path)
-	return render_page_standard(create_page_fromfile(project['name'], file='frontend/projects/project.html', hide_title=True, **project), True)
-
-
-"""
 	Admin pages
 """
 from enum import Enum
 class AdminPages(Enum):
-	admin = 1
 	setup = 2
 	pages = 3
-	createpage = 8
-	projects = 4
-	createproject = 10
-	projecttags = 11
 	messages = 6
 	blacklist = 7
 	forwarding = 9
 
 def show_admin(page):
-	if page is AdminPages.admin:
-		return create_page_admin('Admin', 'admin/overview.html', hide_title=True, **model.get_admin_front())
 	if page is AdminPages.setup:
 		return create_page_admin('Setup', 'admin/setup.html', users=model.get_user_list(), **model.get_site_info())
 	if page is AdminPages.pages:
 		return create_page_admin('Pages', 'admin/pages/pages.html', pages=model.page_list_admin())
-	if page is AdminPages.createpage:
-		return create_page_admin('Create Page', 'admin/pages/create.html')
-	if page is AdminPages.projects:
-		return create_page_admin('Projects', 'admin/projects/projects.html', projects=model.project_list_admin())
-	if page is AdminPages.createproject:
-		return create_page_admin('Create Project', 'admin/projects/create.html')
-	if page is AdminPages.projecttags:
-		return create_page_admin('Project Tags', 'admin/projects/tags.html', tags=model.project_tags())
 	if page is AdminPages.messages:
 		return create_page_admin('Messages', 'admin/messages/messages.html', **model.message_list(try_int(request.args.get("start"), 1) - 1, try_int(request.args.get("amount"), 20)))
 	if page is AdminPages.blacklist:
@@ -144,7 +135,7 @@ def show_admin(page):
 		return create_page_admin("Message Forwarding", 'admin/messages/forwarding.html', forwardlist=model.message_forward_list())
 	else:
 		flash("Unrecognized call for adminpage, showing main adminpage", "warning")
-		return show_admin(AdminPages.admin)
+		return create_page_admin('Admin', 'admin/overview.html', hide_title=True, **model.get_admin_front())
 
 def create_page_admin(title, file, **kwargs):
 	return render_page(create_page_fromfile(title, file, **kwargs), create_sidebar_admin())
@@ -154,4 +145,3 @@ def try_int(value, default):
 		return int(value)
 	except (ValueError, TypeError):
 		return default
-

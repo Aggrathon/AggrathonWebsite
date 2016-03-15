@@ -17,7 +17,7 @@
 	{% endfor %}
 </div>
 {% endmacro %}
-{% macro changelog() %}
+{% macro changelog() %} <!-- TODO		[Project_Version]	View Versions -->
 <div class="panel">
 	<h3>Changelog (Version {{ content.data.version }})</h3>
 	<pre>{{ content.data.changelog | safe }}</pre>
@@ -69,5 +69,4 @@
 	{{ files() }}
 {% elif content.data.changelog %}
 	{{ changelog() }}
-	<!-- TODO [Project_Version] View Versions -->
 {% endif %}

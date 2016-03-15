@@ -3,21 +3,21 @@
 	This file recieves data in the form of:
 
 	sidebar.data.featuredPages: list of pages to be automatically shown in the sidebar, item = {img, title, description}
-	sidebar.data.featuredProjects: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
+	sidebar.data.featured: list of projects to be automatically shown in the sidebar, item = {url, img, title, description}
 		url: link target
 		img: url to thumbnail
 		title: header
 		description: short text describing the item
 #}
 
-{% if sidebar.data.featuredPages %}
+{% if sidebar.data.featured %}
+{% for feats in sidebar.data.featured %}
 <div class="blurb-list">
-	<h3>Featured Pages</h3>
+	<h3>{{ feats.title }}</h3>
 	<ul class="media-list">
-		{% for item in sidebar.data.featuredPages %}
+		{% for item in feats.list %}
 		<li class="media">
-			{% if item.path == '/' %}{% set url = url_for(main) %}{% else %}{% set url = url_for('page', page=item.path) %}{% endif %}
-			<a class="btn btn-default{% if request.path == url %} active{% endif %}" href="{{ url }}">
+			<a class="btn btn-default{% if request.path == item.url %} active{% endif %}" href="{{ item.url }}">
 				{% if item.img %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
 				<div class="media-body">
 					<h4 class="media-heading">{{ item.title }}</h4>
@@ -28,29 +28,9 @@
 		{% endfor %}
 	</ul>
 </div>
-{% endif %}
-
-{% if sidebar.data.featuredPages and sidebar.data.featuredProjects %}
+{% if not loop.last %}
 	</div>
 	<div class="panel">
 {% endif %}
-
-{% if sidebar.data.featuredProjects %}	
-<div class="blurb-list">
-	<h3>Featured Projects</h3>
-	<ul class="media-list">
-		{% for item in sidebar.data.featuredProjects %}
-		{% set url = url_for('project', project=item.path) %}
-		<li class="media">
-			<a class="btn btn-default{% if request.path == url %} active{% endif %}" href="{{ url }}">
-				{% if item.img %}<div class="media-left"><img class="media-object img-rounded" src="{{ item.img }}" /></div>{% endif %}
-				<div class="media-body">
-					<h4 class="media-heading">{{ item.title }}</h4>
-					{{ item.description }}
-				</div>
-			</a>
-		</li>
-		{% endfor %}
-	</ul>
-</div>
+{% endfor %}
 {% endif %}

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_recaptcha import ReCaptcha
+import os
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
@@ -17,28 +18,43 @@ recaptcha = ReCaptcha(app=app)
 wsgi_app = app.wsgi_app
 
 
-#Include all routes
-from routes import *
+#region hooks
+"""
+	This is the central point in the application where modules can register callbacks for events (rendering or otherwise)
+	The implementation is a dictionary (with strings as keys) that holds lists of functions 
+"""
+hook_manager = dict()
+def add_hook(type:str, func, index:int = 9999):
+	hook = hook_manager.get(type)
+	if not hook:
+		hook_manager[type] = [func]
+	else:
+		hook.insert(index, func)
 
-### List of work left todo:
-#	TODO		[Meta]		Write readme (and license?)
-#	OPTIONAL	[Structure]	Break the big files into modules based on feature
-#	OPTIONAL	[Feature]	Backup
-#	OPTIONAL	[Feature]	Cache
+def get_hook(type:str):
+	return hook_manager.get(type, [])
 
-if __name__ == '__main__':
-	import os
-	HOST = os.environ.get('SERVER_HOST', 'localhost')
-	try:
-		PORT = int(os.environ.get('SERVER_PORT', '5555'))
-	except ValueError:
-		PORT = 5555
-	import database
-	if not database.check_if_setup():
-		if app.config['DATABASE_SCHEMA_ERROR_ACTION'] == 'NOTHING':
-			print('\033[93m'+"The Database Schema doesn't match the website, check the database or use the 'Reset Database' function (in /admin/setup/) to remove old data"+'\033[0m')
-		else:
-			database.reset_db()
-			print('\033[93m'+"The Database has been reset due to not matching the website"+'\033[0m')
-	os.makedirs(os.path.join('files','projects'), exist_ok=True)
-	app.run(HOST, PORT)
+### STANDARD HOOKS ###
+HOOK_SIDEBAR_FEATURED_LIST = "featured_sidebar_list"
+HOOK_DATABASE_SETUP_CHECK = "database_setup_check"
+HOOK_DATABASE_CREATE = "database_create"
+HOOK_DATABASE_RESET = "database_reset"
+HOOK_ADMIN_SIDEBAR = "admin_sidebar"
+HOOK_ADMIN_WIDGET = "admin_widget"
+
+import database
+add_hook(HOOK_DATABASE_CREATE, database.create_self)
+add_hook(HOOK_DATABASE_RESET, database.reset_self)
+add_hook(HOOK_DATABASE_SETUP_CHECK, database.setup_self)
+import model
+add_hook(HOOK_SIDEBAR_FEATURED_LIST, model.featured_pages)
+
+
+#endregion
+
+# Init all scripts
+import routes
+from modules import *
+
+#Check database
+database.setup_db()

@@ -1,0 +1,25 @@
+{% from 'macros.html' import rich_text, rich_text_insert %}
+<script type="text/javascript">
+	function saveNotes() {
+		$.post("{{ url_for('admin_notes') }}",
+		{action: "notes", notes: CKEDITOR.instances['rich-text'].getData() },
+		function (result) {
+				if (result == 'success') {
+					flash("Notes saved", "success");
+				} else {
+					flash("Notes could not be saved:<br />\n"+result, "danger");
+				}
+			});
+	}
+</script>
+<form>
+	<div>
+		<textarea class="form-control" id="rich-text" rows="10">{% if data and data.text %}{{ data.text }}{% endif %}</textarea>
+		{{ rich_text('rich-text') }}
+	</div>
+	<br />
+	<div>
+		<span>{{ rich_text_insert('rich-text') }}</span>
+		<span class="pull-right"><button type="button" class="btn btn-success" onclick="saveNotes();">Save</button></span>
+	</div>
+</form>

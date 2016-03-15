@@ -10,18 +10,18 @@ def profile_time(func):
         print("Elapsed time in %r: %f" % (str(func), end_ts - beg_ts))
     return wrapper
 
-def setup_db():
+def setup():
 	app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+	app.config['DATABASE_SCHEMA_ERROR_ACTION'] = 'RESET'
 	db = SQLAlchemy(app)
-	if not check_if_setup():
-		reset_db()
+	setup_db()
 
 class TestProjectModel(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
-		setup_db()
+		setup()
 	
-	#@profile_time
+	@profile_time
 	def test_projects_create(self):
 		path = "a"
 		while Project.query.filter_by(path=path).first() is not None:
@@ -31,7 +31,7 @@ class TestProjectModel(unittest.TestCase):
 		db.session.expire_all()
 		self.assertEqual(num+1, Project.query.count(), "Project not created")
 	
-	#@profile_time
+	@profile_time
 	def test_projects_edit(self):
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		project_set("a", "a", "text", "short", "img", None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], False, flash_result=False)
@@ -53,7 +53,7 @@ class TestProjectModel(unittest.TestCase):
 		project_move("a2", "a")
 		project_move("a3", "a4")
 		
-	#@profile_time
+	@profile_time
 	def test_projects_delete(self):
 		project_set("a", "a", "text", "short", "img",  None, ["im", "ag", "es"], ["1", "2"], ["1", "2"], True, flash_result=False)
 		num = Project.query.count()
@@ -69,7 +69,7 @@ class TestProjectModel(unittest.TestCase):
 		self.assertEqual(num_feat-1, ProjectFeatured.query.count(), "Project not removed from featured")
 		self.assertEqual(num_last-1, ProjectLast.query.count(), "Project not removed from latest")
 	
-	#@profile_time
+	@profile_time
 	def test_projects_version(self):
 		project_set("a", "a", "text", "short", "img", None, [], [], [], True, flash_result=False)
 		project_versions_set("a", [{'major':0, 'minor':0, 'patch':0, 'changelog':"", 'date':'2016-01-01'},{'major':2, 'minor':3, 'patch':0, 'changelog':"asdds 2", 'date':'2016-01-01'},{'major':1, 'minor':4, 'patch':1, 'changelog':"asdds 1", 'date':'2016-01-01'}])
@@ -161,5 +161,5 @@ class TestProjectModel(unittest.TestCase):
 		self.assertEqual(ProjectFeatured.query.get(pid).priority, 5, "Project featured priority not set with method")
 
 if __name__ == '__main__':
-	setup_db()
+	setup()
 	unittest.main()

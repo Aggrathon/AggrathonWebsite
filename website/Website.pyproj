@@ -7,7 +7,7 @@
     <ProjectGuid>1f92efa6-97ee-410a-9a4e-ab0d1d395aa2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <ProjectTypeGuids>{789894c7-04a9-4a11-a6b5-3f4435165112};{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
-    <StartupFile>app.py</StartupFile>
+    <StartupFile>__init__.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -40,9 +40,31 @@
     <Compile Include="config.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\notes\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\projects\database.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\projects\model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\projects\view.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\projects\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\__init__.py" />
     <Compile Include="routes.py" />
-    <Compile Include="unit.py" />
+    <Compile Include="modules\projects\unit.py" />
+    <Compile Include="templates\modules\projects\admin\widget.html">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="view.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -152,16 +174,18 @@
     <Content Include="templates\admin\pages\editbar.html" />
     <Content Include="templates\admin\pages\pages.html" />
     <Content Include="templates\admin\messages\messages.html" />
-    <Content Include="templates\admin\projects\create.html" />
-    <Content Include="templates\admin\projects\macros.html" />
-    <Content Include="templates\admin\projects\projects.html" />
+    <Content Include="templates\admin\pages\widget.html" />
+    <Content Include="templates\modules\notes\widget.html" />
+    <Content Include="templates\modules\projects\admin\create.html" />
+    <Content Include="templates\modules\projects\admin\macros.html" />
+    <Content Include="templates\modules\projects\admin\projects.html" />
     <Content Include="templates\admin\overview.html" />
-    <Content Include="templates\admin\projects\tags.html" />
-    <Content Include="templates\admin\projects\versions.html" />
+    <Content Include="templates\modules\projects\admin\tags.html" />
+    <Content Include="templates\modules\projects\admin\versions.html" />
     <Content Include="templates\admin\sidebar.html" />
     <Content Include="templates\admin\setup.html" />
     <Content Include="templates\admin\login.html" />
-    <Content Include="templates\frontend\projects\sidebar.html" />
+    <Content Include="templates\modules\projects\frontend\sidebar.html" />
     <Content Include="templates\layout\embed.html" />
     <Content Include="templates\macros.html" />
     <Content Include="templates\frontend\contact.html" />
@@ -170,15 +194,18 @@
     <Content Include="templates\frontend\sidebar_featured.html" />
     <Content Include="templates\layout\layout.html" />
     <Content Include="templates\frontend\pages.html" />
-    <Content Include="templates\admin\projects\edit.html" />
-    <Content Include="templates\admin\projects\editbar.html" />
-    <Content Include="templates\frontend\projects\project.html" />
-    <Content Include="templates\frontend\projects\projects.html" />
+    <Content Include="templates\modules\projects\admin\edit.html" />
+    <Content Include="templates\modules\projects\admin\editbar.html" />
+    <Content Include="templates\modules\projects\frontend\project.html" />
+    <Content Include="templates\modules\projects\frontend\projects.html" />
     <Content Include="templates\layout\sidebar.html" />
     <Content Include="templates\layout\header.html" />
     <Content Include="templates\layout\content.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="modules\" />
+    <Folder Include="modules\notes\" />
+    <Folder Include="modules\projects\" />
     <Folder Include="static\" />
     <Folder Include="static\external\" />
     <Folder Include="static\external\bootstrap-3.3.5\" />
@@ -233,11 +260,14 @@
     <Folder Include="templates\" />
     <Folder Include="templates\admin\" />
     <Folder Include="templates\admin\messages\" />
-    <Folder Include="templates\admin\projects\" />
+    <Folder Include="templates\modules\" />
+    <Folder Include="templates\modules\notes\" />
+    <Folder Include="templates\modules\projects\admin\" />
     <Folder Include="templates\admin\pages\" />
     <Folder Include="templates\layout\" />
     <Folder Include="templates\frontend\" />
-    <Folder Include="templates\frontend\projects\" />
+    <Folder Include="templates\modules\projects\" />
+    <Folder Include="templates\modules\projects\frontend\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
