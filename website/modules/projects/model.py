@@ -1,5 +1,6 @@
 from .database import *
 from flask import abort, flash, url_for
+from flask.json import dumps as jsondump
 from model import RETURN_SUCCESS, FLASH_SUCCESS, FLASH_WARNING, FLASH_ERROR
 
 #region PROJECT_GET
@@ -53,6 +54,7 @@ def project_versions_get(path):
 	project = Project.query.filter_by(path=path).first()
 	if(project is None):
 		flash("Project at %r not found" %path, FLASH_ERROR)
+		return {}
 	pvs = ProjectVersion.query.order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).all()
 	data = {}
 	list = []

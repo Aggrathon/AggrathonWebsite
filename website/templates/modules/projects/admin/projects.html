@@ -1,6 +1,6 @@
 {% from 'macros.html' import flash %}
 {{ flash() }}
-{% from 'admin/projects/macros.html' import versions %}
+{% from 'modules/projects/admin/macros.html' import versions %}
 {{ versions() }}
 <script>
 	function move_project(button) {
@@ -139,4 +139,4 @@
 	</tbody>
 </table>
 </div><div class="panel">
-{% include 'admin/projects/create.html' %}
+{% include 'modules/projects/admin/create.html' %}

@@ -189,7 +189,7 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 ### Own ignores ###
-/website/__pycache__
+__pycache__
 /website/env
 /website/*.db
 /website/ptvs_virtualenv_proxy.py

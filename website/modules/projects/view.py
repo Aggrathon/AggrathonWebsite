@@ -15,7 +15,7 @@ def projects_admin():
 @app.route('/admin/projects/edit/', methods=['GET', 'POST'])
 @login_required
 def projects_edit():
-	path = request.args.get('project')
+	path = request.args.get('path')
 	if request.method == 'POST':
 		if not path:
 			return "Invalid Project"
@@ -49,10 +49,10 @@ def projects_edit():
 			return model.project_feature_set(path, False)
 		else:
 			return 'Action not found'
-	if not path or path == '':
-		return show_admin(AdminPages.createproject)
+	if not path or path == '' or path == None:
+		return projects_create()
 	project = model.project_get_admin(path)
-	if not project:
+	if not project or project is None:
 		flash("Saving will create the new project", model.RETURN_SUCCESS)
 		project = { 'path': path }
 	return render_page(create_page_fromfile('Edit Project %r'%path, 'modules/projects/admin/edit.html', **project), create_sidebar_fromfile('modules/projects/admin/editbar.html'))
@@ -118,9 +118,9 @@ def project_versions_embed():
 				return render_page_embed_fromfile(None, 'modules/projects/admin/versions.html', open_version="%d_%d_%d"%(major,minor,patch), **model.project_versions_get(path))
 			except ValueError:
 				flash("Invalid format on data (numbers must be integers)", model.FLASH_ERROR)
-	elif not path:
+	elif not path or path == None:
 		flash("No project specified", "danger")
-	return render_page_embed_fromfile(None, 'modules/projects/admin/versions.html', **model.project_versions_get(path))
+	return render_page_embed_fromfile("Versions", 'modules/projects/admin/versions.html', **model.project_versions_get(path))
 
 #endregion
 
@@ -136,7 +136,7 @@ def projects():
 			title += " (Tag: %s)" %tags[0]
 		else:
 			title += " (Tags: %s)" %', '.join(tags)
-	return render_page(create_page_fromfile(title, 'modules/projects/projects/frontend/projects.html', projects=model.project_list(tags, order)),\
+	return render_page(create_page_fromfile(title, 'modules/projects/frontend/projects.html', projects=model.project_list(tags, order)),\
 	    create_sidebar_fromfile("modules/projects/frontend/sidebar.html", tags=model.project_tags()), True)
 
 @app.route('/projects/<path:project>/')

@@ -1,6 +1,6 @@
 {% from 'macros.html' import file_selector %}
 {{ file_selector() }}
-{% from 'admin/projects/macros.html' import versions %}
+{% from 'modules/projects/admin/macros.html' import versions %}
 {{ versions() }}
 <script>
 	function priorityToggle(radio) {
@@ -36,7 +36,7 @@
 	</div>
 	<div class="btn-group-vertical btn-block">
 		<a class="btn btn-info" href="{{ url_for("projects_admin") }}">Manage Projects</a>
-		<a class="btn btn-success" href="{{ url_for("project", project=content.data.path) }}">View Project</a>
+		<a class="btn btn-success"{% if content.data.path %} href="{{ url_for("project", project=content.data.path) }}"{% else %} disabled{% endif %}>View Project</a>
 	</div>
 </div></div>
 <div class="panel">

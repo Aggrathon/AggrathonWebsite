@@ -292,7 +292,7 @@ def featured_pages():
 		.join(FeaturedPage).filter(FeaturedPage.page_id==Page.id).join(PageBlurb).filter(PageBlurb.page_id==Page.id)\
 		.order_by(FeaturedPage.priority).all()
 	if pages and len(pages) > 0:
-		return {"title": "Featured Projects", "list": \
+		return {"title": "Featured Pages", "list": \
 			[{'url': url_for('page', page=item.path), 'title': item.title, 'description': item.description, 'img': item.img} for item in pages]}
 	else:
 		return None
