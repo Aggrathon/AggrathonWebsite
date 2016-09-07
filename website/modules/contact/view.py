@@ -1,4 +1,4 @@
-from . import model
+from modules.contact import model
 from view import render_page_standard, create_page_fromfile, try_int, create_page_admin
 from app import app
 from flask_login import login_required, current_user

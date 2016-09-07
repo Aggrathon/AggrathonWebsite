@@ -1,8 +1,8 @@
-from . import database, model, view
+__all__ = ["database", "model", "view"]
+
+from modules.projects import database, model, view
 from flask import url_for
 import app
-
-__all__ = ["database", "model", "view"]
 
 # Initialize plugin by registring hooks
 app.add_hook(app.HOOK_DATABASE_SETUP_CHECK, database.setup)

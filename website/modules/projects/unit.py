@@ -1,6 +1,8 @@
 import unittest
 import timeit
-from model import *
+import app
+from modules.projects.model import *
+from database import reset_db
 
 def profile_time(func):
     def wrapper(*args, **kwargs):
@@ -11,10 +13,10 @@ def profile_time(func):
     return wrapper
 
 def setup():
-	app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+	app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///:memory:"
 	app.config['DATABASE_SCHEMA_ERROR_ACTION'] = 'RESET'
 	db = SQLAlchemy(app)
-	setup_db()
+	reset_db()
 
 class TestProjectModel(unittest.TestCase):
 	@classmethod

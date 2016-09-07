@@ -1,4 +1,4 @@
-from .database import *
+from modules.contact.database import *
 from database import db
 from flask import abort, flash, url_for
 from model import RETURN_SUCCESS, FLASH_SUCCESS, FLASH_WARNING, FLASH_ERROR, get_random_code, email_send_text, email_send_html

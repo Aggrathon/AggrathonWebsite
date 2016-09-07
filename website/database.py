@@ -20,10 +20,6 @@ db = SQLAlchemy(app)
 	PageBlurb(page_id, description, image)
 	FeaturedPage(page_id, priority)
 	PagePrivate(page_id)
-
-	Message(id, email, subject, message, time)
-	MessageUnread(message_id)
-	MessageBlacklist(text)
 """
 
 #region SITE

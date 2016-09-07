@@ -1,6 +1,15 @@
 from database import db
 import datetime
 
+"""
+	Database scheme:
+
+	Message(id, email, subject, message, time)
+	MessageUnread(message_id)
+	MessageBlacklist(text)
+	MessageForwarding(email,type,code)
+"""
+
 class Message(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.Text)

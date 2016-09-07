@@ -1,8 +1,8 @@
+__all__ = ["database", "model", "view"]
+
 import app
 from flask import url_for
-from . import database, model, view
-
-__all__ = ["database", "model", "view"]
+from modules.contact import database, model, view
 
 
 # Initialize hooks
