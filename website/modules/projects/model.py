@@ -32,13 +32,13 @@ def project_list(tags=None,order=None):
 		pq = db.session.query(ProjectTagged.project_id).join(tq).group_by(ProjectTagged.project_id).subquery()
 		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail).join(pq).order_by(Project.title).all()
 	else:
-		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail).all()
+		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail, Project.edited, Project.created).all()
 	if order == 'name':
 		projects.sort(key=lambda p: p.title)
 	elif order == 'updated':
-		pass#TODO		[Project]		Remember dates
+		projects.sort(reverse=True, key=lambda p: p.edited)
 	else: #order is 'created'
-		pass
+		projects.sort(reverse=True, key=lambda p: p.created)
 	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'tags':[t[0] for t in \
 		db.session.query(ProjectTag.tag).join(db.session.query(ProjectTagged.tag_id).filter_by(project_id=p.id).subquery()).all()]} for p in projects]
 
@@ -147,7 +147,7 @@ def project_update(project, title, text, description, thumbnail, tags, images, l
 		db.session.add(ProjectLink(project, link_titles[counter], link_urls[counter]))
 		counter += 1
 	project_tags_set(project, tags)
-	ProjectLast.update(project)
+	project.set_edited()
 	if flash_result:
 		flash('Project Saved', FLASH_SUCCESS)
 
@@ -157,7 +157,7 @@ def project_move(path, newpath):
 	p = Project.query.filter_by(path=path).first()
 	if p:
 		p.path = newpath
-		db.session.commit()
+		p.set_edited()
 		return RETURN_SUCCESS
 	return "Project '%r' not found" %path
 	
@@ -184,7 +184,7 @@ def project_versions_set(path, versions):
 					break
 			if delete:
 				db.session.delete(ver)
-	db.session.commit()
+	project.set_edited()
 
 def project_version_set(path, major, minor, patch, changelog, date, file_titles, file_urls, flash_result=True):
 	project = Project.query.filter_by(path=path).first()
@@ -193,7 +193,7 @@ def project_version_set(path, major, minor, patch, changelog, date, file_titles,
 	pv = ProjectVersion.query.filter_by(project_id=project.id, major=major, minor=minor, patch=patch).first()
 	if not pv:
 		project_version_create(project, major, minor, patch, changelog, date, file_titles, file_urls)
-		db.session.commit()
+		project.set_edited()
 		if flash_result:
 			flash("Version '%d.%d.%d' for project %r at %r created" %(major, minor, patch, project.title, project.path), FLASH_SUCCESS)
 	else:
@@ -205,7 +205,7 @@ def project_version_set(path, major, minor, patch, changelog, date, file_titles,
 		if not pv.set_date(date):
 			if flash_result:
 				flash("Invalid date format (use YYYY-MM-DD)", FLASH_WARNING)
-		db.session.commit()
+		project.set_edited()
 		if flash_result:
 			flash("Version %r for project %r at %r saved" %(pv.get_version(), project.title, project.path), FLASH_SUCCESS)
 	

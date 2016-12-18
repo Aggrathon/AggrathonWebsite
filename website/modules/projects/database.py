@@ -30,6 +30,8 @@ class Project(db.Model):
 	links = db.relationship("ProjectLink", back_populates="project")
 	versions = db.relationship("ProjectVersion", back_populates="project")
 	tags = db.relationship("ProjectTagged", back_populates="project")
+	created = db.Column(db.DateTime)
+	edited = db.Column(db.DateTime)
 	
 
 	def __init__(self, path, title, text, description, thumbnail):
@@ -38,9 +40,16 @@ class Project(db.Model):
 		self.text = text
 		self.description = description
 		self.thumbnail = thumbnail
+		today =  datetime.datetime.today()
+		self.created = today
+		self.edited = today
 		
 	def get_latest_version(self):
 		return ProjectVersion.query.filter_by(project=self).order_by(ProjectVersion.major.desc(),ProjectVersion.minor.desc(),ProjectVersion.patch.desc()).first()
+
+	def set_edited(self):
+		self.edited = datetime.datetime.today()
+		ProjectLast.update(self)
 
 	def __repr__(self):
 		return '<Project %r>' %self.title

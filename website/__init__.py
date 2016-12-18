@@ -1,11 +1,14 @@
 __all__ = ["app", "database", "model", "routes", "view", "modules"]
 
 ### List of work left:
+#	TODO		[Bugs]		Fix Project Creation Date
 #	TODO		[Bugs]		Fix Project Versions
+#	TODO		[Bugs]		Edit Project button in admin list not working
 #	TODO		[Meta]		Write readme (and license?)
 #	TODO		[Files]		Improve file management
 #	OPTIONAL	[Feature]		Backup
 #	OPTIONAL	[Feature]		Cache
+#	OPTIONAL	[Admin]		Create a sub-setup page with raw access to css and other files
 
 from app import app
 
