@@ -116,8 +116,17 @@ def show_page(path):
 def create_page_admin(title, file, **kwargs):
 	return render_page(create_page_fromfile(title, file, **kwargs), create_sidebar_admin())
 
+
+"""
+	Utils
+"""
+
 def try_int(value, default):
 	try:
 		return int(value)
 	except (ValueError, TypeError):
 		return default
+
+@app.template_filter('datetime')
+def _jinja2_filter_datetime(date):
+    return date.strftime('%Y-%m-%d') 

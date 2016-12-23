@@ -35,11 +35,11 @@ def project_list(tags=None,order=None):
 		projects = db.session.query(Project.id, Project.path, Project.title, Project.description, Project.thumbnail, Project.edited, Project.created).all()
 	if order == 'name':
 		projects.sort(key=lambda p: p.title)
-	elif order == 'updated':
+	elif order == 'edited':
 		projects.sort(reverse=True, key=lambda p: p.edited)
 	else: #order is 'created'
 		projects.sort(reverse=True, key=lambda p: p.created)
-	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'tags':[t[0] for t in \
+	return [{'path':p.path, 'title':p.title, 'description':p.description, 'thumbnail':p.thumbnail, 'created':p.created, 'edited':p.edited, 'tags':[t[0] for t in \
 		db.session.query(ProjectTag.tag).join(db.session.query(ProjectTagged.tag_id).filter_by(project_id=p.id).subquery()).all()]} for p in projects]
 
 def project_tags():

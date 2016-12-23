@@ -14,8 +14,8 @@
 						</small>
 						{% endif %}
 						<small style="display: inline-block;">
-							Created:&nbsp;2016-05-31 &nbsp;
-							Updated:&nbsp;2016-07-23
+							Created:&nbsp;{{ project.created | datetime }}&nbsp;
+							Updated:&nbsp;{{ project.edited | datetime }}
 						</small>
 					</h3>
 					{% if project.description %}{{ project.description }}{% endif %}

@@ -1,7 +1,7 @@
 __all__ = ["app", "database", "model", "routes", "view", "modules"]
 
 ### List of work left:
-#	TODO		[Bugs]		Fix Project Creation Date
+#	TODO		[Bugs]		Show Project Dates on project page
 #	TODO		[Bugs]		Fix Project Versions
 #	TODO		[Bugs]		Edit Project button in admin list not working
 #	TODO		[Meta]		Write readme (and license?)
