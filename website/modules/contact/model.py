@@ -1,6 +1,6 @@
 from modules.contact.database import *
 from database import db
-from flask import abort, flash, url_for
+from flask import abort, flash, url_for, redirect
 from model import RETURN_SUCCESS, FLASH_SUCCESS, FLASH_WARNING, FLASH_ERROR, get_random_code, email_send_text, email_send_html
 
 #region MESSAGES
@@ -187,3 +187,8 @@ def message_forward(message):
 
 def create_test_data():
 	message_add("example@not.real", "Test Content", "Remember to remove all test-content on a real site")
+
+def edit_callbak(path):
+	if path == '/contact/':
+		return redirect(url_for('messages'), 303)
+	return None

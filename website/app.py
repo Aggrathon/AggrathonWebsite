@@ -43,6 +43,8 @@ HOOK_ADMIN_SIDEBAR = "admin_sidebar"
 HOOK_ADMIN_WIDGET = "admin_widget"
 HOOK_ADMIN_BUTTONS = "admin_buttons"
 HOOK_TEST_CONTENT = "create_test_content"
+HOOK_EDIT_CONTENT = "edit_content"
+
 
 import database
 add_hook(HOOK_DATABASE_CREATE, database.create_self)
@@ -50,6 +52,7 @@ add_hook(HOOK_DATABASE_RESET, database.reset_self)
 add_hook(HOOK_DATABASE_SETUP_CHECK, database.setup_self)
 import model
 add_hook(HOOK_SIDEBAR_FEATURED_LIST, model.featured_pages)
+add_hook(HOOK_EDIT_CONTENT, model.page_edit_callback)
 
 
 #endregion

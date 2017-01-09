@@ -1,4 +1,4 @@
-from flask import abort, flash, url_for
+from flask import abort, flash, url_for, redirect
 from flask.json import dumps as jsondump
 from werkzeug import secure_filename
 from database import *
@@ -280,6 +280,15 @@ def page_action_check(path):
 	if page is None:
 		return 'No Page Found'
 	return 'exists'
+
+def page_edit_callback(path):
+	if path == "/":
+		return redirect(url_for('pages_edit', page=path), 303)
+	elif path == "/pages/":
+		return redirect(url_for('pages_admin'), 303)
+	elif path.startswith("/pages/"):
+		return redirect(url_for('pages_edit', page=path.split('/pages/', 1)[1][:-1]), 303)
+	return None
 
 #endregion
 

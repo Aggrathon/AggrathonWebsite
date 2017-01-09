@@ -1,5 +1,5 @@
 from flask import Flask, request, flash, redirect, url_for, send_from_directory, jsonify, get_flashed_messages
-from app import app, login_manager, recaptcha
+from app import app, login_manager, recaptcha, HOOK_EDIT_CONTENT, get_hook
 from flask_login import login_user, logout_user, login_required, current_user
 from view import *
 import model
@@ -168,18 +168,10 @@ def files_embed():
 def edit_item():
 	path = request.args.get('path')
 	if path:
-		if path == '/':
-			return redirect(url_for('pages_edit', page=path), 303)
-		if '/pages/' == path:
-			return redirect(url_for('pages_admin'), 303)
-		if '/pages/' in path:
-			return redirect(url_for('pages_edit', page=path.split('/pages/', 1)[1][:-1]), 303)
-		if path == '/contact/':
-			return redirect(url_for('messages'), 303)
-		if '/projects/' == path:
-			return redirect(url_for('projects_admin'), 303)
-		if '/projects/' in path:
-			return redirect(url_for('projects_edit', project=path.split('/projects/', 1)[1][:-1]), 303)
+		for hook in get_hook(HOOK_EDIT_CONTENT):
+			ret = hook(path)
+			if ret is not None:
+				return ret
 	flash('Path not recognized', 'error')
 	return redirect(url_for('admin'), 303)
 

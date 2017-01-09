@@ -1,5 +1,5 @@
 from .database import *
-from flask import abort, flash, url_for
+from flask import abort, flash, url_for, redirect
 from flask.json import dumps as jsondump
 from model import RETURN_SUCCESS, FLASH_SUCCESS, FLASH_WARNING, FLASH_ERROR
 
@@ -333,6 +333,13 @@ def project_delete(path):
 		db.session.delete(project)
 		db.session.commit()
 		return RETURN_SUCCESS
+
+def project_edit_callback(path):
+	if '/projects/' == path:
+		return redirect(url_for('projects_admin'), 303)
+	elif path.startswith('/projects/'):
+		return redirect(url_for('projects_edit', path=path.split('/projects/', 1)[1][:-1]), 303)
+	return None
 
 #endregion
 
