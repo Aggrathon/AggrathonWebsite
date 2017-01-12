@@ -1,6 +1,5 @@
-﻿{% if content.data.images %}
-	{% if content.data.images|length == 0 %}
-	{% elif content.data.images|length == 1 %}
+{% if content.data and content.data.images and content.data.images|length > 0 %}
+	{% if content.data.images|length == 1 %}
 		<div class="panel">
 			<img class="img-rounded center-block image-carousel-control" src="{{ content.data.images[0].image }}" />
 		</div>

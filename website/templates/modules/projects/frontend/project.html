@@ -1,4 +1,3 @@
-{% from 'macros.html' import image_viewer %}
 {% macro links() %}
 <div id="project-links" class="panel">
 	<h3>Links</h3>
@@ -24,7 +23,6 @@
 	<button class="btn btn-primary">Older downloads and changelogs</button>
 </div>
 {% endmacro %}
-{% if content.data.images %}{{ image_viewer(content.data.images) }}</div><div class="panel">{% endif %}
 
 <h2>
 	{{content.data.name}} &nbsp;&nbsp;

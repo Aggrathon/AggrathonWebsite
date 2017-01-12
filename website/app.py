@@ -44,7 +44,7 @@ HOOK_ADMIN_WIDGET = "admin_widget"
 HOOK_ADMIN_BUTTONS = "admin_buttons"
 HOOK_TEST_CONTENT = "create_test_content"
 HOOK_EDIT_CONTENT = "edit_content"
-HOOK_PAGE_MODULE_ABOVE = "page_module_above"	#value = (html_file, add_data_func, save_data_func)
+HOOK_PAGE_MODULE_ABOVE = "page_module_above"	#value = (html_file, add_data_func, admin_html, save_data_func)
 
 
 import database

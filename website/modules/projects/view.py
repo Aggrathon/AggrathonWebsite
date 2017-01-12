@@ -142,6 +142,6 @@ def projects():
 @app.route('/projects/<path:project>/')
 def project(project):
 	proj = model.project_get(project)
-	return render_page_standard(create_page_fromfile(proj['name'], file='modules/projects/frontend/project.html', hide_title=True, **proj), True)
+	return render_page_standard(create_page_fromfile(proj['name'], file='modules/projects/frontend/project.html', hide_title=True, page_modules=True, **proj), True)
 
 #endregion

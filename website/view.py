@@ -3,7 +3,7 @@
 """
 from flask import render_template, flash, abort, request, url_for
 from flask_login import current_user
-from app import app, get_hook, HOOK_SIDEBAR_FEATURED_LIST, HOOK_ADMIN_SIDEBAR
+from app import app, get_hook, HOOK_SIDEBAR_FEATURED_LIST, HOOK_ADMIN_SIDEBAR, HOOK_PAGE_MODULE_ABOVE
 import model
 
 """
@@ -58,8 +58,11 @@ def render_page_embed_fromfile(title, file, **data):
 """
 	Methods for creating custom pages and sidebars inline
 """
-def create_page(title, html):
-	return {'title':title, 'html':html}
+def create_page(title, html, page_modules=False):
+	if page_modules:
+		return {'title':title, 'html':html, 'above':[h[0] for h in get_hook(HOOK_PAGE_MODULE_ABOVE)]}
+	else:
+		return {'title':title, 'html':html}
 
 def create_sidebar(sidebar):
 	return {'html':sidebar}
@@ -68,8 +71,11 @@ def create_sidebar(sidebar):
 """
 	Methods for creating custom pages and sidebars from files
 """
-def create_page_fromfile(title, file, hide_title=False, **data):
-	return {'title':title, 'file':file, 'hide_title':hide_title, 'data':data}
+def create_page_fromfile(title, file, hide_title=False, page_modules=False, **data):
+	if page_modules:
+		return {'title':title, 'file':file, 'hide_title':hide_title, 'data':data, 'above':[h[0] for h in get_hook(HOOK_PAGE_MODULE_ABOVE)]}
+	else:
+		return {'title':title, 'file':file, 'hide_title':hide_title, 'data':data}
 
 def create_sidebar_fromfile(file, **data):
 	return {'file':file, 'data':data}
@@ -107,7 +113,7 @@ def create_sidebar_admin():
 """
 def show_page(path):
 	page = model.page_get(path)
-	return render_page_standard(create_page(page.title, page.content), True)
+	return render_page_standard(create_page(page.title, page.content, page_modules=True), True)
 
 
 """

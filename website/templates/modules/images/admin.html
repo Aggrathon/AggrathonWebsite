@@ -1,39 +1,39 @@
 ﻿{% from 'macros.html' file_selector %}
 {{ file_selector() }}
 <script>
-	function project_images_add(button) {
+	function page_images_add(button) {
 		file_selector(function (src) {
 			if(src != "")
-				$(button).parent().before('<img src="' + src + '" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />');
+				$(button).parent().before('<img src="' + src + '" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()" />');
 		}, true);
 	}
-	function project_images_drag(event, image) {
-		$('#project_images_drag').attr('id', '')
-		$(image).attr('id', 'project_images_drag')
-		$('#project_images_remove').show();
+	function page_images_drag(event, image) {
+		$('#page_images_drag').attr('id', '')
+		$(image).attr('id', 'page_images_drag')
+		$('#page_images_remove').show();
 	}
-	function project_images_drop(event, target) {
+	function page_images_drop(event, target) {
 		event.preventDefault();
-		var from = $('#project_images_drag');
+		var from = $('#page_images_drag');
 		from.attr('id', '')
 		var to = $(target);
 		var src = from.attr('src');
 		from.attr('src', to.attr('src'));
 		to.attr('src', src);
-		$('#project_images_remove').hide();
+		$('#page_images_remove').hide();
 	}
-	function project_images_remove(event) {
+	function page_images_remove(event) {
 		event.preventDefault();
-		$('#project_images_drag').remove();
-		$('#project_images_remove').hide();
+		$('#page_images_drag').remove();
+		$('#page_images_remove').hide();
 	}
 </script>
 <div class="well image-scroller" data-toggle="tooltip" data-placement="bottom" title="Drag images to reorder" id="images">
 	{% for img in content.data.images %}
-	<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="project_images_drag(event, this);" ondrop="project_images_drop(event, this);" ondragover="event.preventDefault()" />
+	<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()" />
 	{% endfor %}
 	<span style="display:inline-block;">
-		<button class="btn btn-primary" type="button" onclick="project_images_add(this);">Add Image</button>
-		<p class="alert alert-danger" hidden ondrop="project_images_remove(event);" ondragover="event.preventDefault()" id="project_images_remove"><big>Drag here to remove</big></p>
+		<button class="btn btn-primary" type="button" onclick="page_images_add(this);">Add Image</button>
+		<p class="alert alert-danger" hidden ondrop="page_images_remove(event);" ondragover="event.preventDefault()" id="page_images_remove"><big>Drag here to remove</big></p>
 	</span>
 </div>

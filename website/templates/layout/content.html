@@ -17,7 +17,10 @@
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	</div>
 {% endfor %}
-<div id="content">
+<div id="content">	
+	{% if content.above %}{% for file in content.above %}
+		{% include file %}
+	{% endfor %}{% endif %}
 	<div class="panel">
 		{% block panel %}
 		{% if content.title and not content.hide_title %}<h2>{{ content.title }}</h2>{% endif %}
@@ -25,4 +28,7 @@
 		{% if content.file %} {% include content.file %} {% endif %}
 		{% endblock %}
 	</div>
+	{% if content.below %}{% for file in content.below %}
+		{% include file %}
+	{% endfor %}{% endif %}
 </div>
