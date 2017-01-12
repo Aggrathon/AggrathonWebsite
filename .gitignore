@@ -198,3 +198,4 @@ __pycache__
 /website/files
 .pydevproject
 .project
+*.pyproj
