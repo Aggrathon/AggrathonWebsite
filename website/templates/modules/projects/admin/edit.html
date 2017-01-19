@@ -1,8 +1,9 @@
 {#
 	This file handles the editing of projects
 #}
-{% from 'macros.html' import rich_text, rich_text_insert, file_selector %}
-{{ file_selector() }}
+{% require 'admin/utils/file_selector.html' %}
+{% require 'admin/utils/rich_text.html' %}
+{% from 'admin/utils/rich_text.html' import rich_text, rich_text_insert %}
 <script>
 	function project_images_add(button) {
 		file_selector(function (src) {

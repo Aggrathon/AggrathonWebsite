@@ -1,39 +1,50 @@
-﻿{% from 'macros.html' file_selector %}
-{{ file_selector() }}
-<script>
+﻿{% require 'admin/utils/file_selector.html' %}
+<script type="text/javascript">
 	function page_images_add(button) {
 		file_selector(function (src) {
-			if(src != "")
-				$(button).parent().before('<img src="' + src + '" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()" />');
+			if (src != "") {
+				$(button).parent().before('<img src="' + src + '" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondragend="page_images_dragend(event);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()"><input type="text" hidden name="page_images" value="' + src + '" /></img>');
+			}
 		}, true);
 	}
 	function page_images_drag(event, image) {
-		$('#page_images_drag').attr('id', '')
-		$(image).attr('id', 'page_images_drag')
+		$('#page_images_drag').attr('id', '');
+		$(image).attr('id', 'page_images_drag');
 		$('#page_images_remove').show();
+		$('#page_images_add').hide();
 	}
 	function page_images_drop(event, target) {
 		event.preventDefault();
 		var from = $('#page_images_drag');
-		from.attr('id', '')
+		from.attr('id', '');
 		var to = $(target);
-		var src = from.attr('src');
-		from.attr('src', to.attr('src'));
-		to.attr('src', src);
+		var toc = to.clone();
+		var fromc = from.clone();
+		to.replaceWith(fromc);
+		from.replaceWith(toc);
 		$('#page_images_remove').hide();
+		$('#page_images_add').show();
+	}
+	function page_images_dragend(event) {
+		$('#page_images_drag').attr('id', '');
+		$('#page_images_remove').hide();
+		$('#page_images_add').show();
 	}
 	function page_images_remove(event) {
 		event.preventDefault();
 		$('#page_images_drag').remove();
 		$('#page_images_remove').hide();
+		$('#page_images_add').show();
 	}
 </script>
 <div class="well image-scroller" data-toggle="tooltip" data-placement="bottom" title="Drag images to reorder" id="images">
 	{% for img in content.data.images %}
-	<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()" />
+	<img src="{{ img }}" class="img-responsive img-rounded" draggable="true" ondragstart="page_images_drag(event, this);" ondragend="page_images_dragend(event);" ondrop="page_images_drop(event, this);" ondragover="event.preventDefault()">
+		<input type="text" hidden name="page_images" value="{{ img }}" />
+	</img>
 	{% endfor %}
 	<span style="display:inline-block;">
-		<button class="btn btn-primary" type="button" onclick="page_images_add(this);">Add Image</button>
+		<button class="btn btn-primary" id="page_images_add" type="button" onclick="page_images_add(this);">Add Image</button>
 		<p class="alert alert-danger" hidden ondrop="page_images_remove(event);" ondragover="event.preventDefault()" id="page_images_remove"><big>Drag here to remove</big></p>
 	</span>
 </div>

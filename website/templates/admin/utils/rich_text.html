@@ -1,0 +1,29 @@
+﻿{% require 'admin/utils/file_selector.html' %}
+<script src="{{ config.EDITOR }}"></script>
+{% macro rich_text(id='rich-text') %}
+	<script type="text/javascript">
+		{{ config.EDITOR_CONFIG | replace("TEXTAREA_ID", id) | safe }}
+		function rich_text_insert_{{ id | replace("-", "_") }}(html) {
+			{{ config.EDITOR_JS_INSERT | replace("TEXTAREA_ID", id) | replace('INSERT_HTML', 'html') | safe }}
+		}
+	</script>
+{% endmacro %}
+{% macro rich_text_insert(id='rich-text') %}
+	<script>
+		function rich_text_select_file() {
+			file_selector(rich_text_insert_file, false);
+		}
+		function rich_text_insert_file(path) {
+			if (path) {
+				var split = path.split('.');
+				var type = split[split.length - 1];
+				if (['png', 'jpg', 'jpeg', 'gif'].indexOf(type) != -1) {
+					rich_text_insert_{{ id | replace("-", "_") }}('<img src="' + path + '" class="img-responsive img-rounded" />');
+				} else {
+					rich_text_insert_{{ id | replace("-", "_") }}('<a href="'+path+'">'+path+'</a>');
+				}
+			}
+		}
+	</script>
+	<button type="button" class="btn btn-primary" onclick="rich_text_select_file();">Insert File</button>
+{% endmacro %}

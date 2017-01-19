@@ -5,6 +5,7 @@ from flask_recaptcha import ReCaptcha
 import os
 
 app = Flask(__name__)
+app.jinja_env.add_extension("jinja2_extension.RequireExtension")
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 app.config.from_pyfile("config.py")

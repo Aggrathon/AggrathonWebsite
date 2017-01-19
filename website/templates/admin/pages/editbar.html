@@ -1,5 +1,6 @@
 {% from 'admin/pages/macros.html' import toolbar, ajax_functions %}
 {{ ajax_functions(true) }}
+{% require 'admin/utils/file_selector.html' %}
 <script>
 	function deleteSuccess(path) {
 		window.location.href = '/admin/pages/';
@@ -18,9 +19,6 @@
 			$('#priority_container').slideUp(200);
 	}
 </script>
-
-{% from 'macros.html' import file_selector %}
-{{ file_selector() }}
 
 <div class="text-center">
 	<h3>Toolbar</h3>

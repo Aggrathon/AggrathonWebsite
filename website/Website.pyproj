@@ -32,6 +32,9 @@
     <Compile Include="database.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="jinja2_extension.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="model.py">
       <SubType>Code</SubType>
     </Compile>
@@ -50,6 +53,8 @@
     <Compile Include="modules\contact\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\images\model.py" />
+    <Compile Include="modules\images\__init__.py" />
     <Compile Include="modules\notes\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -68,6 +73,9 @@
     <Compile Include="modules\__init__.py" />
     <Compile Include="routes.py" />
     <Compile Include="modules\projects\unit.py" />
+    <Compile Include="templates\admin\utils\file_selector.html">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="templates\modules\projects\admin\widget.html">
       <SubType>Code</SubType>
     </Compile>
@@ -178,6 +186,7 @@
     <Content Include="static\favicon.ico" />
     <Content Include="static\style.css" />
     <Content Include="templates\admin\files.html" />
+    <Content Include="templates\admin\utils\rich_text.html" />
     <Content Include="templates\modules\contact\blacklist.html" />
     <Content Include="templates\modules\contact\forwarding.html" />
     <Content Include="templates\admin\pages\create.html" />
@@ -185,6 +194,8 @@
     <Content Include="templates\admin\pages\pages.html" />
     <Content Include="templates\modules\contact\messages.html" />
     <Content Include="templates\admin\pages\widget.html" />
+    <Content Include="templates\modules\images\admin.html" />
+    <Content Include="templates\modules\images\carousel.html" />
     <Content Include="templates\modules\notes\widget.html" />
     <Content Include="templates\modules\projects\admin\create.html" />
     <Content Include="templates\modules\projects\admin\macros.html" />
@@ -215,6 +226,7 @@
   <ItemGroup>
     <Folder Include="modules\" />
     <Folder Include="modules\contact\" />
+    <Folder Include="modules\images\" />
     <Folder Include="modules\notes\" />
     <Folder Include="modules\projects\" />
     <Folder Include="static\" />
@@ -270,8 +282,10 @@
     <Folder Include="static\external\CKEditor\custom-4.5.1\skins\moono-dark\images\hidpi\" />
     <Folder Include="templates\" />
     <Folder Include="templates\admin\" />
+    <Folder Include="templates\admin\utils\" />
     <Folder Include="templates\modules\" />
     <Folder Include="templates\modules\contact\" />
+    <Folder Include="templates\modules\images\" />
     <Folder Include="templates\modules\notes\" />
     <Folder Include="templates\modules\projects\admin\" />
     <Folder Include="templates\admin\pages\" />

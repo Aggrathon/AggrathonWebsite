@@ -1,8 +1,9 @@
 {#
 	This file handles the editing of pages
 #}
-{% from 'macros.html' import rich_text, rich_text_insert, file_selector %}
-{{ file_selector() }}
+{% require 'admin/utils/file_selector.html' %}
+{% require 'admin/utils/rich_text.html' %}
+{% from 'admin/utils/rich_text.html' import rich_text, rich_text_insert %}
 <script>
 	function addFormData() {
 		var hidden = $('#additional_form_data');
@@ -20,6 +21,7 @@
 	<div class="form-group">
 		<input type="text" class="form-control" name="title" placeholder="Page Title" {% if request.args.get('page') != '/' %}required{% endif %} {% if content.data.header %}value="{{ content.data.header }}"{% endif %}   />
 	</div>
+	{% include 'modules/images/admin.html' %}
 	<div class="form-group">
 		<textarea class="form-control" id="rich-text" name="content" required placeholder="Page Content">{% if content.data.content %}{{ content.data.content }}{% endif %}</textarea>		
 		{{ rich_text('rich-text') }}

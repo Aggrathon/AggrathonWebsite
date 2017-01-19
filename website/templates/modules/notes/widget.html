@@ -1,4 +1,6 @@
-{% from 'macros.html' import rich_text, rich_text_insert %}
+{% require 'admin/utils/file_selector.html' %}
+{% require 'admin/utils/rich_text.html' %}
+{% from 'admin/utils/rich_text.html' import rich_text, rich_text_insert %}
 <script type="text/javascript">
 	function saveNotes() {
 		$.post("{{ url_for('admin_notes') }}",

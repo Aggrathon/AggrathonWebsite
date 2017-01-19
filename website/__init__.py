@@ -1,8 +1,9 @@
-__all__ = ["app", "database", "model", "routes", "view", "modules"]
+__all__ = ["app", "database", "model", "routes", "view", "modules", "jinja2_extension"]
 
 ### List of work left:
 #	TODO	[Projects]	Change projects to using pages
 #	TODO	[Pages]		Create modules for pages
+#	TODO	[Pages]		Create module for image carousel
 #	TODO	[Bugs]		Show Project Dates on project page
 #	TODO	[Bugs]		Fix Project Versions
 #	TODO	[Meta]		Write readme (and license?)

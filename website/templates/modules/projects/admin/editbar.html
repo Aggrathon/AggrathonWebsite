@@ -1,5 +1,4 @@
-{% from 'macros.html' import file_selector %}
-{{ file_selector() }}
+{% require 'admin/utils/file_selector.html' %}
 {% from 'modules/projects/admin/macros.html' import versions %}
 {{ versions() }}
 <script>
